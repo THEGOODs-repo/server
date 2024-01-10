@@ -9,8 +9,8 @@
 
 # 🏢 협업 방식
 
-- Git workflow 기반
-- Issue & PR Template 활용 
+- `Git workflow` 기반
+- `Issue & PR Template` 적용
 
 # 🛠️ 개발 과정
 
