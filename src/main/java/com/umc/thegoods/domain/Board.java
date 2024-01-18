@@ -1,4 +1,6 @@
 package com.umc.thegoods.domain;
 
-public class Board {
+import com.umc.thegoods.domain.common.BaseEntity;
+
+public class Board extends BaseEntity {
 }
