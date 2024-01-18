@@ -1,6 +1,6 @@
 package com.umc.thegoods.domain;
 
-import com.umc.thegoods.domain.common.BaseEntity;
+import com.umc.thegoods.domain.common.BaseDateTimeEntity;
 
-public class Payment extends BaseEntity {
+public class Payment extends BaseDateTimeEntity {
 }

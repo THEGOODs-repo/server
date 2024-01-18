@@ -1,6 +1,6 @@
 package com.umc.thegoods.domain;
 
-import com.umc.thegoods.domain.common.BaseEntity;
+import com.umc.thegoods.domain.common.BaseDateTimeEntity;
 
-public class Board extends BaseEntity {
+public class Board extends BaseDateTimeEntity {
 }
