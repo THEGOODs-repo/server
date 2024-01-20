@@ -1,12 +1,15 @@
 package com.umc.thegoods.domain;
 
 import com.umc.thegoods.domain.common.BaseDateTimeEntity;
+import lombok.*;
 
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
+@Entity
+@Getter
+@Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class Category extends BaseDateTimeEntity {
 
     @Id
@@ -15,5 +18,5 @@ public class Category extends BaseDateTimeEntity {
 
     @Column(nullable = false, length = 30)
     private String name;
-    
+
 }

@@ -2,9 +2,15 @@ package com.umc.thegoods.domain;
 
 import com.umc.thegoods.domain.common.BaseDateTimeEntity;
 import com.umc.thegoods.domain.enums.OrderStatus;
+import lombok.*;
 
 import javax.persistence.*;
 
+@Entity
+@Getter
+@Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class OrderDetail extends BaseDateTimeEntity {
 
     @Id
