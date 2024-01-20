@@ -1,12 +1,15 @@
 package com.umc.thegoods.domain.images;
 
 import com.umc.thegoods.domain.common.BaseDateTimeEntity;
+import lombok.*;
 
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
+@Entity
+@Getter
+@Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class ReviewImg extends BaseDateTimeEntity {
 
     @Id
