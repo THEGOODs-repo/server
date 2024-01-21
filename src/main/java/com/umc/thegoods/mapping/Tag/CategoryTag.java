@@ -1,12 +1,11 @@
 package com.umc.thegoods.mapping.Tag;
 
+import com.umc.thegoods.domain.Category;
+import com.umc.thegoods.domain.Tag;
 import com.umc.thegoods.domain.common.BaseDateTimeEntity;
 import lombok.*;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
 @Getter
@@ -19,4 +18,11 @@ public class CategoryTag extends BaseDateTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "CATEGORY_ID")
+    private Category category;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "TAG_ID")
+    private Tag tag;
 }

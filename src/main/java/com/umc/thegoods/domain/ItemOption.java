@@ -4,6 +4,8 @@ import com.umc.thegoods.domain.common.BaseDateTimeEntity;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -25,4 +27,10 @@ public class ItemOption extends BaseDateTimeEntity {
     @Column(nullable = false, length = 6)
     private Integer stock;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ITEM_ID", nullable = false)
+    private Item item;
+
+    @OneToMany(mappedBy = "itemOption", cascade = CascadeType.ALL)
+    private List<OrderDetail> orderDetailList = new ArrayList<>();
 }
