@@ -1,7 +1,7 @@
 package com.umc.thegoods.domain;
 
-import com.umc.thegoods.domain.Types.OrderCancelReasonType;
 import com.umc.thegoods.domain.common.BaseDateTimeEntity;
+import com.umc.thegoods.domain.types.OrderCancelReasonType;
 import lombok.*;
 
 import javax.persistence.*;

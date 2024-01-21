@@ -1,4 +1,4 @@
-package com.umc.thegoods.domain;
+package com.umc.thegoods.domain.community;
 
 import com.umc.thegoods.domain.common.BaseDateTimeEntity;
 import com.umc.thegoods.domain.enums.BoardStatus;
@@ -25,7 +25,7 @@ public class Board extends BaseDateTimeEntity {
 
 //    @ManyToOne(fetch = FetchType.LAZY)
 //    @JoinColumn(name = "user_id")
-//    private Users user;
+//    private User user;
 
 //    @JoinColumn(name = "item_id")
 //    private Item item;

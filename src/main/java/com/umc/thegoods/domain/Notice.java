@@ -1,7 +1,7 @@
 package com.umc.thegoods.domain;
 
-import com.umc.thegoods.domain.Types.NoticeType;
 import com.umc.thegoods.domain.common.BaseDateTimeEntity;
+import com.umc.thegoods.domain.types.NoticeType;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
