@@ -1,6 +1,7 @@
 package com.umc.thegoods.domain.mypage;
 
 import com.umc.thegoods.domain.common.BaseDateTimeEntity;
+import com.umc.thegoods.domain.user.User;
 import lombok.*;
 
 import javax.persistence.*;
@@ -22,5 +23,9 @@ public class ContactTime extends BaseDateTimeEntity {
 
     @Column(columnDefinition = "VARCHAR(1) DEFAULT 'O'")
     private String all;
+
+    @OneToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
 }

@@ -1,6 +1,7 @@
 package com.umc.thegoods.domain.mypage;
 
 import com.umc.thegoods.domain.common.BaseDateTimeEntity;
+import com.umc.thegoods.domain.user.User;
 import lombok.*;
 
 import javax.persistence.*;
@@ -26,4 +27,9 @@ public class WithdrawReason extends BaseDateTimeEntity {
 
     @Column(nullable = false)
     private Integer reason; // 탈퇴 사유
+
+
+    @OneToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 }

@@ -2,6 +2,7 @@ package com.umc.thegoods.domain.mypage;
 
 
 import com.umc.thegoods.domain.common.BaseDateTimeEntity;
+import com.umc.thegoods.domain.user.User;
 import lombok.*;
 
 import javax.persistence.*;
@@ -24,4 +25,8 @@ public class Account extends BaseDateTimeEntity {
     @Column(columnDefinition = "VARCHAR(16)", nullable = false)
     private String accountNum;
 
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 }

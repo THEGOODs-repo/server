@@ -1,9 +1,12 @@
 package com.umc.thegoods.domain.user;
 
 import com.umc.thegoods.domain.common.BaseDateTimeEntity;
+import com.umc.thegoods.mapping.user.UserNotification;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Entity
@@ -23,5 +26,6 @@ public class Notification extends BaseDateTimeEntity {
     @Column(columnDefinition = "TEXT", nullable = false)
     private String content;
 
-
+    @OneToMany(mappedBy = "notification", cascade = CascadeType.ALL)
+    private List<UserNotification> memberMissionList = new ArrayList<>();
 }
