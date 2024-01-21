@@ -1,7 +1,7 @@
 package com.umc.thegoods.domain;
 
-import com.umc.thegoods.domain.Types.PayType;
 import com.umc.thegoods.domain.common.BaseDateTimeEntity;
+import com.umc.thegoods.domain.types.PayType;
 import com.umc.thegoods.domain.user.User;
 import lombok.*;
 

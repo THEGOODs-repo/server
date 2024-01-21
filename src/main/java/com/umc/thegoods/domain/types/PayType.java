@@ -1,4 +1,4 @@
-package com.umc.thegoods.domain.Types;
+package com.umc.thegoods.domain.types;
 
 public enum PayType {
     CARD, ACCOUNT

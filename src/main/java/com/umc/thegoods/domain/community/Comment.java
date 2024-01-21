@@ -1,4 +1,4 @@
-package com.umc.thegoods.domain;
+package com.umc.thegoods.domain.community;
 
 import com.umc.thegoods.domain.common.BaseDateTimeEntity;
 import lombok.AccessLevel;
