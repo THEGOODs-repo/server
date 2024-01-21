@@ -3,10 +3,17 @@ package com.umc.thegoods.domain;
 import com.umc.thegoods.domain.Types.DeliveryType;
 import com.umc.thegoods.domain.common.BaseDateTimeEntity;
 import com.umc.thegoods.domain.enums.ItemStatus;
+import com.umc.thegoods.domain.images.ItemImg;
+import com.umc.thegoods.domain.user.User;
+import com.umc.thegoods.mapping.Dibs;
+import com.umc.thegoods.mapping.Tag.ItemTag;
+import com.umc.thegoods.mapping.ViewSearch.ItemView;
 import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -61,4 +68,32 @@ public class Item extends BaseDateTimeEntity {
     @Column(nullable = false)
     private Long salesCount;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "CATEGORY_ID", nullable = false)
+    private Category category;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "USER_ID")
+    private User user;
+
+    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL)
+    private List<ItemImg> itemImgList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL)
+    private List<ItemOption> itemOptionList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL)
+    private List<OrderDetail> orderDetailList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL)
+    private List<ItemTag> itemTagList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL)
+    private List<ItemView> itemViewList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL)
+    private List<Dibs> dibsList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL)
+    private List<Review> reviewList = new ArrayList<>();
 }

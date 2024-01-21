@@ -1,9 +1,14 @@
 package com.umc.thegoods.domain;
 
 import com.umc.thegoods.domain.common.BaseDateTimeEntity;
+import com.umc.thegoods.mapping.Tag.CategoryTag;
+import com.umc.thegoods.mapping.Tag.ItemTag;
+import com.umc.thegoods.mapping.ViewSearch.TagSearch;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -19,4 +24,12 @@ public class Tag extends BaseDateTimeEntity {
     @Column(nullable = false, length = 30)
     private String name;
 
+    @OneToMany(mappedBy = "tag", cascade = CascadeType.ALL)
+    private List<CategoryTag> categoryTagList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "tag", cascade = CascadeType.ALL)
+    private List<ItemTag> itemTagList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "tag", cascade = CascadeType.ALL)
+    private List<TagSearch> tagSearchList = new ArrayList<>();
 }

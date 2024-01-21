@@ -1,5 +1,6 @@
 package com.umc.thegoods.domain.images;
 
+import com.umc.thegoods.domain.Item;
 import com.umc.thegoods.domain.common.BaseDateTimeEntity;
 import lombok.*;
 
@@ -22,4 +23,7 @@ public class ItemImg extends BaseDateTimeEntity {
     @Column(columnDefinition = "TEXT", nullable = false)
     private String url;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ITEM_ID", nullable = false)
+    private Item item;
 }

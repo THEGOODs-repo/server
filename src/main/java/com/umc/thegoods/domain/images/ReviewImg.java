@@ -1,5 +1,6 @@
 package com.umc.thegoods.domain.images;
 
+import com.umc.thegoods.domain.Review;
 import com.umc.thegoods.domain.common.BaseDateTimeEntity;
 import lombok.*;
 
@@ -18,4 +19,8 @@ public class ReviewImg extends BaseDateTimeEntity {
 
     @Column(columnDefinition = "TEXT", nullable = false)
     private String url;
+
+    @OneToOne
+    @JoinColumn(name = "REVIEW_ID", nullable = false)
+    private Review review;
 }

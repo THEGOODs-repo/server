@@ -2,9 +2,12 @@ package com.umc.thegoods.domain;
 
 import com.umc.thegoods.domain.Types.PayType;
 import com.umc.thegoods.domain.common.BaseDateTimeEntity;
+import com.umc.thegoods.domain.user.User;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -43,4 +46,11 @@ public class Order extends BaseDateTimeEntity {
 
     @Column(nullable = false, length = 20)
     private String refundOwner;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "USER_ID")
+    private User user;
+
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+    private List<OrderDetail> orderDetailList = new ArrayList<>();
 }
