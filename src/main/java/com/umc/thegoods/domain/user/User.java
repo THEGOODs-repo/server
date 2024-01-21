@@ -5,10 +5,16 @@ import com.umc.thegoods.domain.enums.Gender;
 import com.umc.thegoods.domain.enums.SocialType;
 import com.umc.thegoods.domain.enums.UserRole;
 import com.umc.thegoods.domain.enums.UserStatus;
+import com.umc.thegoods.domain.mypage.*;
+import com.umc.thegoods.mapping.user.UserCategory;
+import com.umc.thegoods.mapping.user.UserNotification;
+import com.umc.thegoods.mapping.user.UserTerm;
 import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -56,4 +62,36 @@ public class User extends BaseDateTimeEntity {
 
     @Column(columnDefinition = "TEXT")
     private String naverAuth;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<UserCategory> userCategoryList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<UserNotification> userNotificationList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<UserTerm> userTermList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Address> userAddressList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Account> userAccountList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Declaration> userDeclarationList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Survey> userSurveyList = new ArrayList<>();
+
+    @OneToOne(mappedBy = "user")
+    private ContactTime contactTime;
+
+    @OneToOne(mappedBy = "user")
+    private Revenue revenue;
+
+    @OneToOne(mappedBy = "user")
+    private WithdrawReason withdrawReason;
+
+
 }
