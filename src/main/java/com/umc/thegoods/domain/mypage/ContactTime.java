@@ -17,12 +17,12 @@ public class ContactTime extends BaseDateTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Integer start;
+    private Integer startTime;
 
-    private Integer end;
+    private Integer endTime;
 
     @Column(columnDefinition = "VARCHAR(1) DEFAULT 'O'")
-    private String all;
+    private String allTime;
 
     @OneToOne
     @JoinColumn(name = "member_id")
