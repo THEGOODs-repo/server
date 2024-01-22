@@ -2,7 +2,7 @@ package com.umc.thegoods.domain.order;
 
 import com.umc.thegoods.domain.common.BaseDateTimeEntity;
 import com.umc.thegoods.domain.item.ItemOption;
-import com.umc.thegoods.domain.user.User;
+import com.umc.thegoods.domain.member.Member;
 import lombok.*;
 
 import javax.persistence.*;
@@ -22,8 +22,8 @@ public class Cart extends BaseDateTimeEntity {
     private Integer amount;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "USER_ID", nullable = false)
-    private User user;
+    @JoinColumn(name = "member_id", nullable = false)
+    private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "OPTION_ID", nullable = false)

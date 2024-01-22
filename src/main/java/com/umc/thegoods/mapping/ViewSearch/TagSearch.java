@@ -2,7 +2,7 @@ package com.umc.thegoods.mapping.ViewSearch;
 
 import com.umc.thegoods.domain.common.BaseDateTimeEntity;
 import com.umc.thegoods.domain.item.Tag;
-import com.umc.thegoods.domain.user.User;
+import com.umc.thegoods.domain.member.Member;
 import lombok.*;
 
 import javax.persistence.*;
@@ -24,5 +24,5 @@ public class TagSearch extends BaseDateTimeEntity {
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "USER_ID", nullable = false)
-    private User user;
+    private Member member;
 }

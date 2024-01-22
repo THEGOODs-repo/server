@@ -1,14 +1,14 @@
-package com.umc.thegoods.domain.user;
+package com.umc.thegoods.domain.member;
 
 import com.umc.thegoods.domain.common.BaseDateTimeEntity;
 import com.umc.thegoods.domain.enums.Gender;
+import com.umc.thegoods.domain.enums.MemberRole;
+import com.umc.thegoods.domain.enums.MemberStatus;
 import com.umc.thegoods.domain.enums.SocialType;
-import com.umc.thegoods.domain.enums.UserRole;
-import com.umc.thegoods.domain.enums.UserStatus;
 import com.umc.thegoods.domain.mypage.*;
-import com.umc.thegoods.mapping.user.UserCategory;
-import com.umc.thegoods.mapping.user.UserNotification;
-import com.umc.thegoods.mapping.user.UserTerm;
+import com.umc.thegoods.mapping.member.MemberCategory;
+import com.umc.thegoods.mapping.member.MemberNotification;
+import com.umc.thegoods.mapping.member.MemberTerm;
 import lombok.*;
 
 import javax.persistence.*;
@@ -21,7 +21,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class User extends BaseDateTimeEntity {
+public class Member extends BaseDateTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,7 +29,7 @@ public class User extends BaseDateTimeEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, columnDefinition = "VARCHAR(10)")
-    private UserRole userRole;
+    private MemberRole memberRole;
 
     @Column(columnDefinition = "VARCHAR(15)")
     private String nickname;
@@ -55,7 +55,7 @@ public class User extends BaseDateTimeEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, columnDefinition = "VARCHAR(15) DEFAULT 'ACTIVE'")
-    private UserStatus userStatus;
+    private MemberStatus memberStatus;
 
     @Column(columnDefinition = "TEXT")
     private String kakaoAuth;
@@ -63,34 +63,34 @@ public class User extends BaseDateTimeEntity {
     @Column(columnDefinition = "TEXT")
     private String naverAuth;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<UserCategory> userCategoryList = new ArrayList<>();
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    private List<MemberCategory> memberCategoryList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<UserNotification> userNotificationList = new ArrayList<>();
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    private List<MemberNotification> memberNotificationList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<UserTerm> userTermList = new ArrayList<>();
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    private List<MemberTerm> memberTermList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<Address> userAddressList = new ArrayList<>();
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    private List<Address> memberAddressList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<Account> userAccountList = new ArrayList<>();
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    private List<Account> memberAccountList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<Declaration> userDeclarationList = new ArrayList<>();
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    private List<Declaration> memberDeclarationList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<Survey> userSurveyList = new ArrayList<>();
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    private List<Survey> memberSurveyList = new ArrayList<>();
 
-    @OneToOne(mappedBy = "user")
+    @OneToOne(mappedBy = "member")
     private ContactTime contactTime;
 
-    @OneToOne(mappedBy = "user")
+    @OneToOne(mappedBy = "member")
     private Revenue revenue;
 
-    @OneToOne(mappedBy = "user")
+    @OneToOne(mappedBy = "member")
     private WithdrawReason withdrawReason;
 
 

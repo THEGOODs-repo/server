@@ -1,8 +1,8 @@
-package com.umc.thegoods.mapping.user;
+package com.umc.thegoods.mapping.member;
 
 import com.umc.thegoods.domain.common.BaseDateTimeEntity;
-import com.umc.thegoods.domain.user.Term;
-import com.umc.thegoods.domain.user.User;
+import com.umc.thegoods.domain.member.Member;
+import com.umc.thegoods.domain.member.Notification;
 import lombok.*;
 
 import javax.persistence.*;
@@ -12,7 +12,7 @@ import javax.persistence.*;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class UserTerm extends BaseDateTimeEntity {
+public class MemberNotification extends BaseDateTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,10 +23,10 @@ public class UserTerm extends BaseDateTimeEntity {
     private String agree;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User user;
+    @JoinColumn(name = "member_id")
+    private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "term_id")
-    private Term term;
+    @JoinColumn(name = "notification_id")
+    private Notification notification;
 }

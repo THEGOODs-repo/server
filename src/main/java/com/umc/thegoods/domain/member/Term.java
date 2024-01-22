@@ -1,7 +1,7 @@
-package com.umc.thegoods.domain.user;
+package com.umc.thegoods.domain.member;
 
 import com.umc.thegoods.domain.common.BaseDateTimeEntity;
-import com.umc.thegoods.mapping.user.UserTerm;
+import com.umc.thegoods.mapping.member.MemberTerm;
 import lombok.*;
 
 import javax.persistence.*;
@@ -31,5 +31,5 @@ public class Term extends BaseDateTimeEntity {
 
 
     @OneToMany(mappedBy = "term", cascade = CascadeType.ALL)
-    private List<UserTerm> userTermList = new ArrayList<>();
+    private List<MemberTerm> memberTermList = new ArrayList<>();
 }
