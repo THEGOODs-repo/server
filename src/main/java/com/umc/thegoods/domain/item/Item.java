@@ -1,8 +1,9 @@
-package com.umc.thegoods.domain;
+package com.umc.thegoods.domain.item;
 
 import com.umc.thegoods.domain.common.BaseDateTimeEntity;
 import com.umc.thegoods.domain.enums.ItemStatus;
 import com.umc.thegoods.domain.images.ItemImg;
+import com.umc.thegoods.domain.order.OrderDetail;
 import com.umc.thegoods.domain.types.DeliveryType;
 import com.umc.thegoods.domain.user.User;
 import com.umc.thegoods.mapping.Dibs;

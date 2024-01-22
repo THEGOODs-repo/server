@@ -1,7 +1,9 @@
-package com.umc.thegoods.domain;
+package com.umc.thegoods.domain.order;
 
 import com.umc.thegoods.domain.common.BaseDateTimeEntity;
 import com.umc.thegoods.domain.enums.OrderStatus;
+import com.umc.thegoods.domain.item.Item;
+import com.umc.thegoods.domain.item.ItemOption;
 import lombok.*;
 
 import javax.persistence.*;

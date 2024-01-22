@@ -1,7 +1,7 @@
 package com.umc.thegoods.domain.images;
 
-import com.umc.thegoods.domain.Item;
 import com.umc.thegoods.domain.common.BaseDateTimeEntity;
+import com.umc.thegoods.domain.item.Item;
 import lombok.*;
 
 import javax.persistence.*;

@@ -1,4 +1,4 @@
-package com.umc.thegoods.domain;
+package com.umc.thegoods.domain.order;
 
 import com.umc.thegoods.domain.common.BaseDateTimeEntity;
 import com.umc.thegoods.domain.types.OrderCancelReasonType;
