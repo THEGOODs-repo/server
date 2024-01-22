@@ -32,6 +32,6 @@ public class ItemOption extends BaseDateTimeEntity {
     @JoinColumn(name = "ITEM_ID", nullable = false)
     private Item item;
 
-    @OneToMany(mappedBy = "itemOption", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "item_option", cascade = CascadeType.ALL)
     private List<OrderDetail> orderDetailList = new ArrayList<>();
 }
