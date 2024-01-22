@@ -1,7 +1,7 @@
 package com.umc.thegoods.mapping.ViewSearch;
 
-import com.umc.thegoods.domain.Tag;
 import com.umc.thegoods.domain.common.BaseDateTimeEntity;
+import com.umc.thegoods.domain.item.Tag;
 import com.umc.thegoods.domain.user.User;
 import lombok.*;
 

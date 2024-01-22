@@ -1,8 +1,9 @@
-package com.umc.thegoods.domain;
+package com.umc.thegoods.domain.item;
 
 import com.umc.thegoods.domain.common.BaseDateTimeEntity;
 import com.umc.thegoods.mapping.Tag.CategoryTag;
-import com.umc.thegoods.mapping.user.UserCategory;
+import com.umc.thegoods.mapping.Tag.ItemTag;
+import com.umc.thegoods.mapping.ViewSearch.TagSearch;
 import lombok.*;
 
 import javax.persistence.*;
@@ -14,7 +15,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class Category extends BaseDateTimeEntity {
+public class Tag extends BaseDateTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,13 +24,12 @@ public class Category extends BaseDateTimeEntity {
     @Column(nullable = false, length = 30)
     private String name;
 
-    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
-    private List<UserCategory> userCategoryList = new ArrayList<>();
-
-    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "tag", cascade = CascadeType.ALL)
     private List<CategoryTag> categoryTagList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
-    private List<Item> itemList = new ArrayList<>();
+    @OneToMany(mappedBy = "tag", cascade = CascadeType.ALL)
+    private List<ItemTag> itemTagList = new ArrayList<>();
 
+    @OneToMany(mappedBy = "tag", cascade = CascadeType.ALL)
+    private List<TagSearch> tagSearchList = new ArrayList<>();
 }

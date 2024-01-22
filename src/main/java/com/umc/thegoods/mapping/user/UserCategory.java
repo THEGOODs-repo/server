@@ -1,7 +1,7 @@
 package com.umc.thegoods.mapping.user;
 
-import com.umc.thegoods.domain.Category;
 import com.umc.thegoods.domain.common.BaseDateTimeEntity;
+import com.umc.thegoods.domain.item.Category;
 import com.umc.thegoods.domain.user.User;
 import lombok.*;
 
