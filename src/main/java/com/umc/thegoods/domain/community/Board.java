@@ -24,8 +24,8 @@ public class Board extends BaseDateTimeEntity {
     private BoardStatus status;
 
 //    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "user_id")
-//    private User user;
+//    @JoinColumn(name = "member_id")
+//    private Member member;
 
 //    @JoinColumn(name = "item_id")
 //    private Item item;
