@@ -1,7 +1,7 @@
 package com.umc.thegoods.domain.mypage;
 
 import com.umc.thegoods.domain.common.BaseDateTimeEntity;
-import com.umc.thegoods.domain.user.User;
+import com.umc.thegoods.domain.member.Member;
 import lombok.*;
 
 import javax.persistence.*;
@@ -21,6 +21,6 @@ public class Survey extends BaseDateTimeEntity {
     private String tag;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User user;
+    @JoinColumn(name = "member_id")
+    private Member member;
 }

@@ -1,5 +1,5 @@
 package com.umc.thegoods.domain.enums;
 
-public enum UserRole {
+public enum MemberRole {
     BUYER, SELLER
 }

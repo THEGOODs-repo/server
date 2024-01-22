@@ -3,9 +3,9 @@ package com.umc.thegoods.domain.item;
 import com.umc.thegoods.domain.common.BaseDateTimeEntity;
 import com.umc.thegoods.domain.enums.ItemStatus;
 import com.umc.thegoods.domain.images.ItemImg;
+import com.umc.thegoods.domain.member.Member;
 import com.umc.thegoods.domain.order.OrderDetail;
 import com.umc.thegoods.domain.types.DeliveryType;
-import com.umc.thegoods.domain.user.User;
 import com.umc.thegoods.mapping.Dibs;
 import com.umc.thegoods.mapping.Tag.ItemTag;
 import com.umc.thegoods.mapping.ViewSearch.ItemView;
@@ -74,8 +74,8 @@ public class Item extends BaseDateTimeEntity {
     private Category category;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "USER_ID")
-    private User user;
+    @JoinColumn(name = "member_id")
+    private Member member;
 
     @OneToMany(mappedBy = "item", cascade = CascadeType.ALL)
     private List<ItemImg> itemImgList = new ArrayList<>();

@@ -1,8 +1,8 @@
 package com.umc.thegoods.domain.order;
 
 import com.umc.thegoods.domain.common.BaseDateTimeEntity;
+import com.umc.thegoods.domain.member.Member;
 import com.umc.thegoods.domain.types.PayType;
-import com.umc.thegoods.domain.user.User;
 import lombok.*;
 
 import javax.persistence.*;
@@ -49,8 +49,8 @@ public class Order extends BaseDateTimeEntity {
     private String refundOwner;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "USER_ID")
-    private User user;
+    @JoinColumn(name = "member_id")
+    private Member member;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private List<OrderDetail> orderDetailList = new ArrayList<>();

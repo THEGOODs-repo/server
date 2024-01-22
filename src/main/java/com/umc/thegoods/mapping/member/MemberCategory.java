@@ -1,8 +1,8 @@
-package com.umc.thegoods.mapping.user;
+package com.umc.thegoods.mapping.member;
 
 import com.umc.thegoods.domain.common.BaseDateTimeEntity;
 import com.umc.thegoods.domain.item.Category;
-import com.umc.thegoods.domain.user.User;
+import com.umc.thegoods.domain.member.Member;
 import lombok.*;
 
 import javax.persistence.*;
@@ -12,15 +12,15 @@ import javax.persistence.*;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class UserCategory extends BaseDateTimeEntity {
+public class MemberCategory extends BaseDateTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User user;
+    @JoinColumn(name = "member_id")
+    private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")

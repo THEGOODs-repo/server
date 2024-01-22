@@ -1,5 +1,5 @@
 package com.umc.thegoods.domain.enums;
 
-public enum UserStatus {
+public enum MemberStatus {
     ACTIVE, INACTIVE
 }

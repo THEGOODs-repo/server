@@ -2,7 +2,7 @@ package com.umc.thegoods.domain.mypage;
 
 
 import com.umc.thegoods.domain.common.BaseDateTimeEntity;
-import com.umc.thegoods.domain.user.User;
+import com.umc.thegoods.domain.member.Member;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 
@@ -32,6 +32,6 @@ public class Revenue extends BaseDateTimeEntity {
     private Integer withdrawPredicted; //출금 예상
 
     @OneToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    @JoinColumn(name = "member_id")
+    private Member member;
 }

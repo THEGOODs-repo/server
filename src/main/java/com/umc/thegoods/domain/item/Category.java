@@ -2,7 +2,7 @@ package com.umc.thegoods.domain.item;
 
 import com.umc.thegoods.domain.common.BaseDateTimeEntity;
 import com.umc.thegoods.mapping.Tag.CategoryTag;
-import com.umc.thegoods.mapping.user.UserCategory;
+import com.umc.thegoods.mapping.member.MemberCategory;
 import lombok.*;
 
 import javax.persistence.*;
@@ -24,7 +24,7 @@ public class Category extends BaseDateTimeEntity {
     private String name;
 
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
-    private List<UserCategory> userCategoryList = new ArrayList<>();
+    private List<MemberCategory> memberCategoryList = new ArrayList<>();
 
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
     private List<CategoryTag> categoryTagList = new ArrayList<>();
