@@ -18,6 +18,7 @@ public class Declaration extends BaseDateTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "declaration_id")
     private Long id;
 
     @Column(columnDefinition = "VARCHAR(10)", nullable = false)

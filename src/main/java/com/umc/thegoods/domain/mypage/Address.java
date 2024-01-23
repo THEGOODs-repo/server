@@ -15,6 +15,7 @@ public class Address extends BaseDateTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "address_id")
     private Long id;
 
     @Column(columnDefinition = "VARCHAR(80)", nullable = false)

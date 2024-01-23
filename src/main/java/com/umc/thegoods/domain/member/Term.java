@@ -17,6 +17,7 @@ public class Term extends BaseDateTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "term_id")
     private Long id;
 
 

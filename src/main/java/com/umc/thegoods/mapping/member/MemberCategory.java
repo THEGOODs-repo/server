@@ -16,6 +16,7 @@ public class MemberCategory extends BaseDateTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "member_category_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)

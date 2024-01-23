@@ -18,6 +18,7 @@ public class Notification extends BaseDateTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "notification_id")
     private Long id;
 
     @Column(nullable = false, columnDefinition = "VARCHAR(30)")

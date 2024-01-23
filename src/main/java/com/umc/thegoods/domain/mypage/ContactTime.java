@@ -15,6 +15,7 @@ public class ContactTime extends BaseDateTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "contact_time_id")
     private Long id;
 
     private Integer startTime;

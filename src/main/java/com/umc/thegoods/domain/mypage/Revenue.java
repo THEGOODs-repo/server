@@ -17,6 +17,7 @@ public class Revenue extends BaseDateTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "revenue_id")
     private Long id;
 
     @Column(nullable = false)

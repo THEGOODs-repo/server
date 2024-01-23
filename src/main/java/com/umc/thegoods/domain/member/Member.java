@@ -40,6 +40,7 @@ public class Member extends BaseDateTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "member_id")
     private Long id;
 
     @Enumerated(EnumType.STRING)
