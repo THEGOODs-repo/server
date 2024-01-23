@@ -1,4 +1,4 @@
-package com.umc.thegoods.domain;
+package com.umc.thegoods.domain.member;
 
 import com.umc.thegoods.domain.common.BaseDateTimeEntity;
 import com.umc.thegoods.domain.types.NoticeType;
@@ -16,7 +16,7 @@ public class Notice extends BaseDateTimeEntity {
     // user: 관리자 권한
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "notice_id")
     private Long id;
 
@@ -30,8 +30,12 @@ public class Notice extends BaseDateTimeEntity {
     @Column(columnDefinition = "VARCHAR(20)", nullable = false)
     private String writer;
 
-    @Column(columnDefinition = "TEXT", nullable = true)
+    @Column(columnDefinition = "TEXT")
     private String content;
 
     private Long view;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id")
+    private Member member;
 }
