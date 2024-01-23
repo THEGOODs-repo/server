@@ -1,6 +1,7 @@
 package com.umc.thegoods.domain.community;
 
 import com.umc.thegoods.domain.common.BaseDateTimeEntity;
+import com.umc.thegoods.domain.images.PostImg;
 import com.umc.thegoods.domain.member.Member;
 import com.umc.thegoods.mapping.post.PostLike;
 import lombok.AccessLevel;
@@ -26,7 +27,7 @@ public class Post extends BaseDateTimeEntity {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "TEXT", nullable = false)
     private String content;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
@@ -35,4 +36,6 @@ public class Post extends BaseDateTimeEntity {
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     private List<Comment> commentList = new ArrayList<>();
 
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
+    private List<PostImg> postImgList = new ArrayList<>();
 }
