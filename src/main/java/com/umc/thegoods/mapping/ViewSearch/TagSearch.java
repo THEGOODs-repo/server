@@ -19,10 +19,10 @@ public class TagSearch extends BaseDateTimeEntity {
     private Long id;
 
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "TAG_ID", nullable = false)
+    @JoinColumn(name = "tag_id", nullable = false)
     private Tag tag;
 
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "USER_ID", nullable = false)
+    @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 }

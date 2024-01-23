@@ -24,6 +24,6 @@ public class ItemImg extends BaseDateTimeEntity {
     private String url;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ITEM_ID", nullable = false)
+    @JoinColumn(name = "item_id", nullable = false)
     private Item item;
 }
