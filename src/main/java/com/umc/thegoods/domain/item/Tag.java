@@ -19,6 +19,7 @@ public class Tag extends BaseDateTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "tag_id")
     private Long id;
 
     @Column(nullable = false, length = 30)

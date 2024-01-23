@@ -16,6 +16,7 @@ public class Dibs extends BaseDateTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "dibs_id")
     private Long id;
 
     @ManyToOne(cascade = CascadeType.ALL)

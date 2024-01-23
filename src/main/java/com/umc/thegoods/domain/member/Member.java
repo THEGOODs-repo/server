@@ -5,7 +5,14 @@ import com.umc.thegoods.domain.enums.Gender;
 import com.umc.thegoods.domain.enums.MemberRole;
 import com.umc.thegoods.domain.enums.MemberStatus;
 import com.umc.thegoods.domain.enums.SocialType;
+import com.umc.thegoods.domain.item.Item;
+import com.umc.thegoods.domain.item.Review;
 import com.umc.thegoods.domain.mypage.*;
+import com.umc.thegoods.domain.order.Cart;
+import com.umc.thegoods.domain.order.Orders;
+import com.umc.thegoods.mapping.Dibs;
+import com.umc.thegoods.mapping.ViewSearch.ItemView;
+import com.umc.thegoods.mapping.ViewSearch.TagSearch;
 import com.umc.thegoods.mapping.member.MemberCategory;
 import com.umc.thegoods.mapping.member.MemberNotification;
 import com.umc.thegoods.mapping.member.MemberTerm;
@@ -92,6 +99,33 @@ public class Member extends BaseDateTimeEntity {
 
     @OneToOne(mappedBy = "member")
     private WithdrawReason withdrawReason;
+
+    // item 양방향 매핑
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    private List<Item> itemList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    private List<ItemView> itemViewList = new ArrayList<>();
+
+    // dibs 양방향 매핑
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    private List<Dibs> dibsList = new ArrayList<>();
+
+    // review 양방향 매핑
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    private List<Review> reviewList = new ArrayList<>();
+
+    // cart 양방향 매핑
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    private List<Cart> cartList = new ArrayList<>();
+
+    // orders 양방향 매핑
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    private List<Orders> ordersList = new ArrayList<>();
+
+    // tag_search 양방향 매핑
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    private List<TagSearch> tagSearchList = new ArrayList<>();
 
 
 }

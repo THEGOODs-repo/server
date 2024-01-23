@@ -15,6 +15,7 @@ public class ItemImg extends BaseDateTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "item_img_id")
     private Long id;
 
     @Column(columnDefinition = "BOOLEAN", nullable = false)

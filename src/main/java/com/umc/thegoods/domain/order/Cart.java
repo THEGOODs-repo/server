@@ -16,6 +16,7 @@ public class Cart extends BaseDateTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "cart_id")
     private Long id;
 
     @Column(nullable = false)
@@ -26,6 +27,6 @@ public class Cart extends BaseDateTimeEntity {
     private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "option_id", nullable = false)
+    @JoinColumn(name = "item_option_id", nullable = false)
     private ItemOption itemOption;
 }

@@ -11,14 +11,14 @@ import java.util.List;
 
 @Entity
 @Getter
-@Table(name = "orders")
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class Order extends BaseDateTimeEntity {
+public class Orders extends BaseDateTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "orders_id")
     private Long id;
 
     @Column(nullable = false, length = 30)
@@ -52,6 +52,6 @@ public class Order extends BaseDateTimeEntity {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "orders", cascade = CascadeType.ALL)
     private List<OrderDetail> orderDetailList = new ArrayList<>();
 }
