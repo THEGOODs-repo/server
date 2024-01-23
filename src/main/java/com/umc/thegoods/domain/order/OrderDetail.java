@@ -33,14 +33,14 @@ public class OrderDetail extends BaseDateTimeEntity {
     private String deliveryNum;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ORDER_ID", nullable = false)
+    @JoinColumn(name = "order_id", nullable = false)
     private Order order;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ITEM_ID", nullable = false)
+    @JoinColumn(name = "item_id", nullable = false)
     private Item item;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "OPTION_ID", nullable = false)
+    @JoinColumn(name = "option_id", nullable = false)
     private ItemOption itemOption;
 }

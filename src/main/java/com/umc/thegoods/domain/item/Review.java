@@ -33,10 +33,10 @@ public class Review extends BaseDateTimeEntity {
     private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ITEM_ID", nullable = false)
+    @JoinColumn(name = "item_id", nullable = false)
     private Item item;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "OPTION_ID", nullable = false)
+    @JoinColumn(name = "option_id", nullable = false)
     private ItemOption itemOption;
 }

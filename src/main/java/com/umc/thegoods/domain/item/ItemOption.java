@@ -29,7 +29,7 @@ public class ItemOption extends BaseDateTimeEntity {
     private Integer stock;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ITEM_ID", nullable = false)
+    @JoinColumn(name = "item_id", nullable = false)
     private Item item;
 
     @OneToMany(mappedBy = "item_option", cascade = CascadeType.ALL)

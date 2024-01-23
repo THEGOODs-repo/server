@@ -21,6 +21,6 @@ public class ReviewImg extends BaseDateTimeEntity {
     private String url;
 
     @OneToOne
-    @JoinColumn(name = "REVIEW_ID", nullable = false)
+    @JoinColumn(name = "review_id", nullable = false)
     private Review review;
 }

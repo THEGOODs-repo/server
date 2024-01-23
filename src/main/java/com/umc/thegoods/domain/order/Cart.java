@@ -26,6 +26,6 @@ public class Cart extends BaseDateTimeEntity {
     private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "OPTION_ID", nullable = false)
+    @JoinColumn(name = "option_id", nullable = false)
     private ItemOption itemOption;
 }
