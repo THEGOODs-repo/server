@@ -15,6 +15,7 @@ public class OrderCancel extends BaseDateTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "order_cancel_id")
     private Long id;
 
     @Column(columnDefinition = "VARCHAR(20)", nullable = false)
@@ -24,6 +25,6 @@ public class OrderCancel extends BaseDateTimeEntity {
     private String reasonDetail;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "orderdetail_id", nullable = false)
+    @JoinColumn(name = "order_detail_id", nullable = false)
     private OrderDetail orderDetail;
 }

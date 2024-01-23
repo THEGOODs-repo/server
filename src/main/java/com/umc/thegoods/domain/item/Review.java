@@ -2,7 +2,9 @@ package com.umc.thegoods.domain.item;
 
 import com.umc.thegoods.domain.common.BaseDateTimeEntity;
 import com.umc.thegoods.domain.enums.ReviewStatus;
+import com.umc.thegoods.domain.images.ReviewImg;
 import com.umc.thegoods.domain.member.Member;
+import com.umc.thegoods.domain.order.OrderDetail;
 import lombok.*;
 
 import javax.persistence.*;
@@ -16,6 +18,7 @@ public class Review extends BaseDateTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "review_id")
     private Long id;
 
     @Column(nullable = false, length = 1500)
@@ -37,6 +40,10 @@ public class Review extends BaseDateTimeEntity {
     private Item item;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "option_id", nullable = false)
-    private ItemOption itemOption;
+    @JoinColumn(name = "order_detail_id", nullable = false)
+    private OrderDetail orderDetail;
+
+    @OneToOne(mappedBy = "review", cascade = CascadeType.ALL)
+    private ReviewImg reviewImg;
+
 }

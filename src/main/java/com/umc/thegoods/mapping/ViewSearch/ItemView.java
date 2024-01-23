@@ -16,6 +16,7 @@ public class ItemView extends BaseDateTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "item_view_id")
     private Long id;
 
     @ManyToOne(cascade = CascadeType.ALL)

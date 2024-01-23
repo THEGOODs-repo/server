@@ -15,6 +15,7 @@ public class ReviewImg extends BaseDateTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "review_img_id")
     private Long id;
 
     @Column(columnDefinition = "TEXT", nullable = false)

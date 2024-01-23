@@ -16,6 +16,7 @@ public class TagSearch extends BaseDateTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "tag_search_id")
     private Long id;
 
     @ManyToOne(cascade = CascadeType.ALL)

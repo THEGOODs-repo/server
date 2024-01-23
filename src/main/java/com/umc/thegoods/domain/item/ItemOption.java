@@ -1,6 +1,7 @@
 package com.umc.thegoods.domain.item;
 
 import com.umc.thegoods.domain.common.BaseDateTimeEntity;
+import com.umc.thegoods.domain.order.Cart;
 import com.umc.thegoods.domain.order.OrderDetail;
 import lombok.*;
 
@@ -17,6 +18,7 @@ public class ItemOption extends BaseDateTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "item_option_id")
     private Long id;
 
     @Column(nullable = false, length = 60)
@@ -32,6 +34,9 @@ public class ItemOption extends BaseDateTimeEntity {
     @JoinColumn(name = "item_id", nullable = false)
     private Item item;
 
-    @OneToMany(mappedBy = "item_option", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "itemOption", cascade = CascadeType.ALL)
     private List<OrderDetail> orderDetailList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "itemOption", cascade = CascadeType.ALL)
+    private List<Cart> cartList = new ArrayList<>();
 }

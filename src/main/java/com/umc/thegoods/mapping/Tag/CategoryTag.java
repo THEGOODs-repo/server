@@ -16,6 +16,7 @@ public class CategoryTag extends BaseDateTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "category_tag_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
