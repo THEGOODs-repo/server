@@ -1,34 +1,31 @@
 package com.umc.thegoods.domain.member;
 
-import com.umc.thegoods.domain.Payment;
 import com.umc.thegoods.domain.common.BaseDateTimeEntity;
 import com.umc.thegoods.domain.community.Comment;
-import com.umc.thegoods.domain.community.Inquiry;
 import com.umc.thegoods.domain.community.Notice;
 import com.umc.thegoods.domain.community.Post;
 import com.umc.thegoods.domain.enums.Gender;
 import com.umc.thegoods.domain.enums.MemberRole;
 import com.umc.thegoods.domain.enums.MemberStatus;
-import com.umc.thegoods.domain.enums.SocialType;
 import com.umc.thegoods.domain.item.Item;
 import com.umc.thegoods.domain.item.Review;
 import com.umc.thegoods.domain.mypage.*;
 import com.umc.thegoods.domain.order.Cart;
 import com.umc.thegoods.domain.order.Orders;
+import com.umc.thegoods.domain.types.SocialType;
 import com.umc.thegoods.mapping.Dibs;
 import com.umc.thegoods.mapping.ViewSearch.ItemView;
 import com.umc.thegoods.mapping.ViewSearch.TagSearch;
 import com.umc.thegoods.mapping.comment.CommentLike;
 import com.umc.thegoods.mapping.comment.CommentMention;
 import com.umc.thegoods.mapping.member.MemberCategory;
-import com.umc.thegoods.mapping.member.MemberNotification;
 import com.umc.thegoods.mapping.member.MemberTerm;
 import com.umc.thegoods.mapping.post.PostLike;
 import lombok.*;
 
 import javax.persistence.*;
-import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -56,8 +53,8 @@ public class Member extends BaseDateTimeEntity {
     @Column(columnDefinition = "VARCHAR(20)")
     private String password;
 
-    @Column(columnDefinition = "LocalDate")
-    private LocalDate birthday;
+    @Temporal(TemporalType.DATE)
+    private Date birthday;
 
     @Column(columnDefinition = "VARCHAR(13)")
     private String phone;
@@ -79,11 +76,21 @@ public class Member extends BaseDateTimeEntity {
     @Column(columnDefinition = "TEXT")
     private String naverAuth;
 
+    //메세지 관련 수신 동의
+    @Column(columnDefinition = "varchar(1) DEFAULT 'X'")
+    private String messageNotice;
+
+    //상품 관련 수신 동의
+    @Column(columnDefinition = "varchar(1) DEFAULT 'X'")
+    private String itemNotice;
+
+    //마케팅 수신 동의
+    @Column(columnDefinition = "varchar(1) DEFAULT 'X'")
+    private String marketingNotice;
+
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<MemberCategory> memberCategoryList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
-    private List<MemberNotification> memberNotificationList = new ArrayList<>();
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<MemberTerm> memberTermList = new ArrayList<>();
@@ -108,6 +115,10 @@ public class Member extends BaseDateTimeEntity {
 
     @OneToOne(mappedBy = "member")
     private WithdrawReason withdrawReason;
+
+    //notification 양방향 매핑
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    private List<Notification> notification = new ArrayList<>();
 
     // item 양방향 매핑
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
@@ -168,10 +179,10 @@ public class Member extends BaseDateTimeEntity {
     private List<CommentMention> commentMentionList = new ArrayList<>();
 
     // Inquiry 양방향 매핑
-    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
-    private List<Inquiry> inquiryList = new ArrayList<>();
+    //@OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    //private List<Inquiry> inquiryList = new ArrayList<>();
 
     // Payment 양방향 매핑
-    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
-    private List<Payment> paymentList = new ArrayList<>();
+    //@OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    //private List<Payment> paymentList = new ArrayList<>();
 }

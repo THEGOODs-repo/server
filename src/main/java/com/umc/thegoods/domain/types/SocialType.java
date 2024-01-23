@@ -1,4 +1,4 @@
-package com.umc.thegoods.domain.enums;
+package com.umc.thegoods.domain.types;
 
 public enum SocialType {
     NAVER, KAKAO

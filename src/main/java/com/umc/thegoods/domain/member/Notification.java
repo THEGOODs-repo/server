@@ -1,12 +1,10 @@
 package com.umc.thegoods.domain.member;
 
 import com.umc.thegoods.domain.common.BaseDateTimeEntity;
-import com.umc.thegoods.mapping.member.MemberNotification;
+import com.umc.thegoods.domain.types.AlarmType;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 
 
 @Entity
@@ -21,12 +19,18 @@ public class Notification extends BaseDateTimeEntity {
     @Column(name = "notification_id")
     private Long id;
 
+    @Enumerated(EnumType.STRING)
+    private AlarmType dtype;
+
     @Column(nullable = false, columnDefinition = "VARCHAR(30)")
-    private String type;
+    private String title;
 
     @Column(columnDefinition = "TEXT", nullable = false)
     private String content;
 
-    @OneToMany(mappedBy = "notification", cascade = CascadeType.ALL)
-    private List<MemberNotification> memberMissionList = new ArrayList<>();
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id")
+    private Member member;
+
+
 }
