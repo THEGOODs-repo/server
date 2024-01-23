@@ -1,6 +1,10 @@
 package com.umc.thegoods.domain.member;
 
+import com.umc.thegoods.domain.Payment;
 import com.umc.thegoods.domain.common.BaseDateTimeEntity;
+import com.umc.thegoods.domain.community.Comment;
+import com.umc.thegoods.domain.community.Inquiry;
+import com.umc.thegoods.domain.community.Post;
 import com.umc.thegoods.domain.enums.Gender;
 import com.umc.thegoods.domain.enums.MemberRole;
 import com.umc.thegoods.domain.enums.MemberStatus;
@@ -13,9 +17,12 @@ import com.umc.thegoods.domain.order.Orders;
 import com.umc.thegoods.mapping.Dibs;
 import com.umc.thegoods.mapping.ViewSearch.ItemView;
 import com.umc.thegoods.mapping.ViewSearch.TagSearch;
+import com.umc.thegoods.mapping.comment.CommentLike;
+import com.umc.thegoods.mapping.comment.CommentMention;
 import com.umc.thegoods.mapping.member.MemberCategory;
 import com.umc.thegoods.mapping.member.MemberNotification;
 import com.umc.thegoods.mapping.member.MemberTerm;
+import com.umc.thegoods.mapping.post.PostLike;
 import lombok.*;
 
 import javax.persistence.*;
@@ -127,5 +134,42 @@ public class Member extends BaseDateTimeEntity {
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<TagSearch> tagSearchList = new ArrayList<>();
 
+    // Post 양방향 매핑
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    private List<Post> postList = new ArrayList<>();
 
+    // PostLike 양방향 매핑
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    private List<PostLike> postLikeList = new ArrayList<>();
+
+    // Follow 양방향 매핑(mappedBy = "member"로 변경 할 수도 있음)
+    @OneToMany(mappedBy = "following", cascade = CascadeType.ALL)
+    private List<Follow> followingList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "follower", cascade = CascadeType.ALL)
+    private List<Follow> followerList = new ArrayList<>();
+
+    // Notice 양방향 매핑
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    private List<Notice> noticeList = new ArrayList<>();
+
+    // Comment 양방향 매핑
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    private List<Comment> commentList = new ArrayList<>();
+
+    // CommentLike 양방향 매핑
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    private List<CommentLike> commentLikeList = new ArrayList<>();
+
+    // CommentMention 양방향 매핑
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    private List<CommentMention> commentMentionList = new ArrayList<>();
+
+    // Inquiry 양방향 매핑
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    private List<Inquiry> inquiryList = new ArrayList<>();
+
+    // Payment 양방향 매핑
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    private List<Payment> paymentList = new ArrayList<>();
 }
