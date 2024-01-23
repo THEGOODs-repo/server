@@ -10,11 +10,17 @@ import javax.persistence.*;
 @Entity
 @Table(name = "payment")
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)  // 생성 로직 규정
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Payment extends BaseDateTimeEntity {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "payment_id")
     private Long id;
+
+    /**
+     * TODO
+     * 후순위 개발 시
+     * -> Payment 엔티티 설정 필요
+     */
 }
