@@ -4,6 +4,7 @@ import com.umc.thegoods.domain.Payment;
 import com.umc.thegoods.domain.common.BaseDateTimeEntity;
 import com.umc.thegoods.domain.community.Comment;
 import com.umc.thegoods.domain.community.Inquiry;
+import com.umc.thegoods.domain.community.Notice;
 import com.umc.thegoods.domain.community.Post;
 import com.umc.thegoods.domain.enums.Gender;
 import com.umc.thegoods.domain.enums.MemberRole;
