@@ -1,5 +1,6 @@
 package com.umc.thegoods.mapping.comment;
 
+import com.umc.thegoods.domain.common.BaseDateTimeEntity;
 import com.umc.thegoods.domain.community.Comment;
 import com.umc.thegoods.domain.member.Member;
 import lombok.AccessLevel;
@@ -9,14 +10,14 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "comment_like")
+@Table(name = "comment_mention")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class CommentLike {
+public class CommentMention extends BaseDateTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "comment_like_id")
+    @Column(name = "comment_mention_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -26,4 +27,8 @@ public class CommentLike {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "comment_id")
     private Comment comment;
+
+    @Column(name = "mentioned_nickname", columnDefinition = "VARCHAR(15)", nullable = false)
+    private String mentionedNickname;
+
 }
