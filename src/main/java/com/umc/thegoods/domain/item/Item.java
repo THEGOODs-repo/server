@@ -1,6 +1,7 @@
 package com.umc.thegoods.domain.item;
 
 import com.umc.thegoods.domain.common.BaseDateTimeEntity;
+import com.umc.thegoods.domain.community.Inquiry;
 import com.umc.thegoods.domain.enums.ItemStatus;
 import com.umc.thegoods.domain.images.ItemImg;
 import com.umc.thegoods.domain.member.Member;
@@ -98,4 +99,7 @@ public class Item extends BaseDateTimeEntity {
 
     @OneToMany(mappedBy = "item", cascade = CascadeType.ALL)
     private List<Review> reviewList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL)
+    private List<Inquiry> inquiryList = new ArrayList<>();
 }
