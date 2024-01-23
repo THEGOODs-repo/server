@@ -16,6 +16,7 @@ public class MemberTerm extends BaseDateTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "member_term_id")
     private Long id;
 
     //알람 동의 여부

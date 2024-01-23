@@ -15,6 +15,7 @@ public class Survey extends BaseDateTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "survey_id")
     private Long id;
 
     @Column(nullable = false, columnDefinition = "VARCHAR(20)")

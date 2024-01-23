@@ -16,6 +16,7 @@ public class Account extends BaseDateTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "account_id")
     private Long id;
 
     @Column(columnDefinition = "VARCHAR(20)", nullable = false)

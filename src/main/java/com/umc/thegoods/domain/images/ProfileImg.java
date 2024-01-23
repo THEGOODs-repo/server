@@ -13,6 +13,7 @@ public class ProfileImg {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "profile_img_id")
     private Long id;
 
     @Column(columnDefinition = "TEXT", nullable = false)
