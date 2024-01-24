@@ -31,4 +31,9 @@ public class CommentMention extends BaseDateTimeEntity {
     @Column(name = "mentioned_nickname", columnDefinition = "VARCHAR(15)", nullable = false)
     private String mentionedNickname;
 
+    @Column(name = "content", columnDefinition = "TEXT", nullable = false)
+    private String content;
+
+    @Column(columnDefinition = "TEXT", nullable = false)
+    private String url;
 }
