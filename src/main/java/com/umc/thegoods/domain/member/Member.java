@@ -1,7 +1,9 @@
 package com.umc.thegoods.domain.member;
 
+import com.umc.thegoods.domain.Payment;
 import com.umc.thegoods.domain.common.BaseDateTimeEntity;
 import com.umc.thegoods.domain.community.Comment;
+import com.umc.thegoods.domain.community.Inquiry;
 import com.umc.thegoods.domain.community.Notice;
 import com.umc.thegoods.domain.community.Post;
 import com.umc.thegoods.domain.enums.Gender;
@@ -179,10 +181,10 @@ public class Member extends BaseDateTimeEntity {
     private List<CommentMention> commentMentionList = new ArrayList<>();
 
     // Inquiry 양방향 매핑
-    //@OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
-    //private List<Inquiry> inquiryList = new ArrayList<>();
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    private List<Inquiry> inquiryList = new ArrayList<>();
 
     // Payment 양방향 매핑
-    //@OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
-    //private List<Payment> paymentList = new ArrayList<>();
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    private List<Payment> paymentList = new ArrayList<>();
 }
