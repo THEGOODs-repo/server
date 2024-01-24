@@ -3,10 +3,7 @@ spring:
     prefix: classpath:/templates/
     suffix: .html
   datasource:
-    #   첫 생성 시
-    url: jdbc:h2:~/thegoods;
-    #   생성후 접속 시
-    #   url: jdbc:h2:tcp://localhost/~/thegoods;
+    url: jdbc:h2:tcp://localhost/~/thegoods
     username: sa
     password:
     driver-class-name: org.h2.Driver
