@@ -1,4 +1,7 @@
 spring:
+  devtools:
+    restart:
+      enabled: true
   thymeleaf:
     prefix: classpath:/templates/
     suffix: .html
