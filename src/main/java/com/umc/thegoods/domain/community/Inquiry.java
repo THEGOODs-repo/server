@@ -9,6 +9,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "inquiry")
@@ -29,8 +31,8 @@ public class Inquiry extends BaseDateTimeEntity {
     @JoinColumn(name = "item_id")
     private Item item;
 
-    //@OneToMany(mappedBy = "inquiry", cascade = CascadeType.ALL)
-    //private List<Inquiry> inquiryList = new ArrayList<>();
+    @OneToMany(mappedBy = "inquiry", cascade = CascadeType.ALL)
+    private List<InquiryReply> inquiryReplyList = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
     @Column(columnDefinition = "VARCHAR(10)", nullable = false)
