@@ -1,22 +1,25 @@
-#spring:
-#  thymeleaf:
-#    prefix: classpath:/templates/
-#    suffix: .html
-#  datasource:
-#    url: jdbc:h2:tcp://localhost/~/thegoods;
-#    username: sa
-#    password:
-#    driver-class-name: org.h2.Driver
-#
-#  jpa:
-#    hibernate:
-#      ddl-auto: create
-#    properties:
-#      hibernate:
-#        # show_sql: true
-#        format_sql: true
-#
-#logging:
-#  level:
-#    org.hibernate.SQL: debug
-#    org.hibernate.type: trace
+spring:
+  thymeleaf:
+    prefix: classpath:/templates/
+    suffix: .html
+  datasource:
+    #   첫 생성 시
+    url: jdbc:h2:~/thegoods;
+    #   생성후 접속 시
+    #   url: jdbc:h2:tcp://localhost/~/thegoods;
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        # show_sql: true
+        format_sql: true
+
+logging:
+  level:
+    org.hibernate.SQL: debug
+    org.hibernate.type: trace
