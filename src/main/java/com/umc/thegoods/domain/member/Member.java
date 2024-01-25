@@ -52,7 +52,7 @@ public class Member extends BaseDateTimeEntity {
     @Column(nullable = false, columnDefinition = "VARCHAR(30)")
     private String email;
 
-    @Column(columnDefinition = "VARCHAR(20)")
+    @Column(columnDefinition = "TEXT")
     private String password;
 
     @Temporal(TemporalType.DATE)
@@ -69,7 +69,7 @@ public class Member extends BaseDateTimeEntity {
     private SocialType socialType;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, columnDefinition = "VARCHAR(15) DEFAULT 'ACTIVE'")
+    @Column(columnDefinition = "VARCHAR(15) DEFAULT 'ACTIVE'")
     private MemberStatus memberStatus;
 
     @Column(columnDefinition = "TEXT")
