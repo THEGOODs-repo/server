@@ -1,7 +1,7 @@
-package com.umc.thegoods.domain.member;
+package com.umc.TheGoods.domain.member;
 
-import com.umc.thegoods.domain.common.BaseDateTimeEntity;
-import com.umc.thegoods.domain.types.AlarmType;
+import com.umc.TheGoods.domain.common.BaseDateTimeEntity;
+import com.umc.TheGoods.domain.types.AlarmType;
 import lombok.*;
 
 import javax.persistence.*;

@@ -1,4 +1,4 @@
-package com.umc.thegoods.config;
+package com.umc.TheGoods.config;
 
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
