@@ -1,9 +1,9 @@
-package com.umc.thegoods.domain.item;
+package com.umc.TheGoods.domain.item;
 
-import com.umc.thegoods.domain.common.BaseDateTimeEntity;
-import com.umc.thegoods.mapping.Tag.CategoryTag;
-import com.umc.thegoods.mapping.Tag.ItemTag;
-import com.umc.thegoods.mapping.ViewSearch.TagSearch;
+import com.umc.TheGoods.domain.common.BaseDateTimeEntity;
+import com.umc.TheGoods.domain.mapping.Tag.CategoryTag;
+import com.umc.TheGoods.domain.mapping.Tag.ItemTag;
+import com.umc.TheGoods.domain.mapping.ViewSearch.TagSearch;
 import lombok.*;
 
 import javax.persistence.*;

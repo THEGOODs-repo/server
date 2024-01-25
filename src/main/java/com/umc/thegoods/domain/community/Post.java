@@ -1,9 +1,9 @@
-package com.umc.thegoods.domain.community;
+package com.umc.TheGoods.domain.community;
 
-import com.umc.thegoods.domain.common.BaseDateTimeEntity;
-import com.umc.thegoods.domain.images.PostImg;
-import com.umc.thegoods.domain.member.Member;
-import com.umc.thegoods.mapping.post.PostLike;
+import com.umc.TheGoods.domain.common.BaseDateTimeEntity;
+import com.umc.TheGoods.domain.images.PostImg;
+import com.umc.TheGoods.domain.mapping.post.PostLike;
+import com.umc.TheGoods.domain.member.Member;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

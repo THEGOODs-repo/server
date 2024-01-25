@@ -1,8 +1,8 @@
-package com.umc.thegoods.mapping.member;
+package com.umc.TheGoods.domain.mapping.member;
 
-import com.umc.thegoods.domain.common.BaseDateTimeEntity;
-import com.umc.thegoods.domain.member.Member;
-import com.umc.thegoods.domain.member.Term;
+import com.umc.TheGoods.domain.common.BaseDateTimeEntity;
+import com.umc.TheGoods.domain.member.Member;
+import com.umc.TheGoods.domain.member.Term;
 import lombok.*;
 
 import javax.persistence.*;
