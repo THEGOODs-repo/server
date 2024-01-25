@@ -39,4 +39,10 @@ public class ItemOption extends BaseDateTimeEntity {
 
     @OneToMany(mappedBy = "itemOption", cascade = CascadeType.ALL)
     private List<Cart> cartList = new ArrayList<>();
+
+    // 판매수, 재고 관련 메소드
+    public ItemOption updateStock(Integer i) {
+        this.stock += i;
+        return this;
+    }
 }

@@ -36,10 +36,10 @@ public class Item extends BaseDateTimeEntity {
     @Column(columnDefinition = "VARCHAR(20)", nullable = false)
     private ItemStatus status;
 
-    @Column(nullable = false, length = 6)
+    @Column(length = 6)
     private Integer stock;
 
-    @Column(nullable = false)
+    //@Column(nullable = false)
     private Long price;
 
     @Column(nullable = false, length = 6)
@@ -102,4 +102,16 @@ public class Item extends BaseDateTimeEntity {
 
     @OneToMany(mappedBy = "item", cascade = CascadeType.ALL)
     private List<Inquiry> inquiryList = new ArrayList<>();
+
+
+    // 판매수, 재고 관련 메소드
+    public Item updateStock(Integer i) {
+        this.stock += i;
+        return this;
+    }
+
+    public Item updateSales(Integer i) {
+        this.salesCount += i;
+        return this;
+    }
 }
