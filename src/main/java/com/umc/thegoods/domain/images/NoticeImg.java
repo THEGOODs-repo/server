@@ -1,6 +1,6 @@
-package com.umc.TheGoods.domain.images;
+package com.umc.thegoods.domain.images;
 
-import com.umc.TheGoods.domain.community.Notice;
+import com.umc.thegoods.domain.community.Notice;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

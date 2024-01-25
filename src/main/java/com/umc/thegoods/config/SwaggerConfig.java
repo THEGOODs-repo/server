@@ -1,4 +1,4 @@
-package com.umc.TheGoods.config;
+package com.umc.thegoods.config;
 
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
@@ -13,10 +13,10 @@ import org.springframework.context.annotation.Configuration;
 public class SwaggerConfig {
 
     @Bean
-    public OpenAPI TheGoodsAPI() {
+    public OpenAPI thegoodsAPI() {
         Info info = new Info()
-                .title("TheGoods API")
-                .description("TheGoods API 명세서")
+                .title("thegoods API")
+                .description("thegoods API 명세서")
                 .version("1.0.0");
 
         String jwtSchemeName = "JWT TOKEN";

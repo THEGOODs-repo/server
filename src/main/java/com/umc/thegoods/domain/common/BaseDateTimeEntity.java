@@ -1,4 +1,4 @@
-package com.umc.TheGoods.domain.common;
+package com.umc.thegoods.domain.common;
 
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;

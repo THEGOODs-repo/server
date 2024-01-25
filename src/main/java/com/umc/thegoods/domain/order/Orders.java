@@ -1,8 +1,8 @@
-package com.umc.TheGoods.domain.order;
+package com.umc.thegoods.domain.order;
 
-import com.umc.TheGoods.domain.common.BaseDateTimeEntity;
-import com.umc.TheGoods.domain.member.Member;
-import com.umc.TheGoods.domain.types.PayType;
+import com.umc.thegoods.domain.common.BaseDateTimeEntity;
+import com.umc.thegoods.domain.member.Member;
+import com.umc.thegoods.domain.types.PayType;
 import lombok.*;
 
 import javax.persistence.*;

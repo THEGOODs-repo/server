@@ -1,10 +1,10 @@
-package com.umc.TheGoods;
+package com.umc.thegoods;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class TheGoodsApplicationTests {
+class thegoodsApplicationTests {
 
     @Test
     void contextLoads() {

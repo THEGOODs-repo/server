@@ -1,9 +1,9 @@
-package com.umc.TheGoods.apiPayload;
+package com.umc.thegoods.apiPayload;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.umc.TheGoods.apiPayload.code.BaseCode;
-import com.umc.TheGoods.apiPayload.code.status.SuccessStatus;
+import com.umc.thegoods.apiPayload.code.BaseCode;
+import com.umc.thegoods.apiPayload.code.status.SuccessStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

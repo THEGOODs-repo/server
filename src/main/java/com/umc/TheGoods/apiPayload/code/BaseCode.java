@@ -1,4 +1,4 @@
-package com.umc.TheGoods.apiPayload.code;
+package com.umc.thegoods.apiPayload.code;
 
 public interface BaseCode {
     public ReasonDTO getReason();

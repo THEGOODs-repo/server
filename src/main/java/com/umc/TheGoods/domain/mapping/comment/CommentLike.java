@@ -1,7 +1,7 @@
-package com.umc.TheGoods.domain.mapping.comment;
+package com.umc.thegoods.domain.mapping.comment;
 
-import com.umc.TheGoods.domain.community.Comment;
-import com.umc.TheGoods.domain.member.Member;
+import com.umc.thegoods.domain.community.Comment;
+import com.umc.thegoods.domain.member.Member;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

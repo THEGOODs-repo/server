@@ -1,8 +1,8 @@
-package com.umc.TheGoods.apiPayload.exception;
+package com.umc.thegoods.apiPayload.exception;
 
-import com.umc.TheGoods.apiPayload.ApiResponse;
-import com.umc.TheGoods.apiPayload.code.ErrorReasonDTO;
-import com.umc.TheGoods.apiPayload.code.status.ErrorStatus;
+import com.umc.thegoods.apiPayload.ApiResponse;
+import com.umc.thegoods.apiPayload.code.ErrorReasonDTO;
+import com.umc.thegoods.apiPayload.code.status.ErrorStatus;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;

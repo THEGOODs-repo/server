@@ -1,4 +1,4 @@
-package com.umc.TheGoods.domain.enums;
+package com.umc.thegoods.domain.enums;
 
 public enum OrderStatus {
     PAY_PREV,

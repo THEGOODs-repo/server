@@ -1,8 +1,8 @@
-package com.umc.TheGoods.domain.mypage;
+package com.umc.thegoods.domain.mypage;
 
 
-import com.umc.TheGoods.domain.common.BaseDateTimeEntity;
-import com.umc.TheGoods.domain.member.Member;
+import com.umc.thegoods.domain.common.BaseDateTimeEntity;
+import com.umc.thegoods.domain.member.Member;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 
