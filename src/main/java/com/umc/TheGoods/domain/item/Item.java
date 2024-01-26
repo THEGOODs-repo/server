@@ -50,7 +50,7 @@ public class Item extends BaseDateTimeEntity {
     private DeliveryType deliveryType;
 
     @Column(nullable = false, length = 2)
-    private Integer delivery_date;
+    private Integer deliveryDate;
 
     @Column(columnDefinition = "TEXT", nullable = false)
     private String description;

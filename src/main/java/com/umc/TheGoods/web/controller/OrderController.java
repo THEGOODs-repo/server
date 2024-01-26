@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
+
 @Slf4j
 @Tag(name = "Order", description = "주문 관련 API 입니다.")
 @RestController
@@ -33,12 +35,11 @@ public class OrderController {
     @ApiResponses(value = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
     })
-    public ApiResponse<OrderResponse.OrderAddResultDto> order(@RequestBody OrderRequest.OrderAddDto request) {
-        log.info("request 정보: ", request.toString());
+    public ApiResponse<OrderResponse.OrderAddResultDto> order(@RequestBody @Valid OrderRequest.OrderAddDto request) {
 
         Member tempMember = memberTempService.findMember(1L);
-
         Orders orders = orderCommandService.create(request, tempMember);
+
         return ApiResponse.onSuccess(OrderConverter.toOrderAddResultDto(orders));
     }
 

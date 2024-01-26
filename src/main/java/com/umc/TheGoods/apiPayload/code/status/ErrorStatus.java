@@ -17,11 +17,13 @@ public enum ErrorStatus implements BaseErrorCode {
     _FORBIDDEN(HttpStatus.FORBIDDEN, "COMMON403", "금지된 요청입니다."),
 
     // 상품 관련 에러
-    _ITEM_NOT_FOUND(HttpStatus.NOT_FOUND, "ITEM401", "상품 정보를 찾을 수 없습니다."),
-    _ITEMOPTION_NOT_FOUND(HttpStatus.NOT_FOUND, "ITEM402", "상품 옵션 정보를 찾을 수 없습니다."),
+    _ITEM_NOT_FOUND(HttpStatus.NOT_FOUND, "ITEM4001", "상품 정보를 찾을 수 없습니다."),
+    _ITEMOPTION_NOT_FOUND(HttpStatus.NOT_FOUND, "ITEM4002", "상품 옵션 정보를 찾을 수 없습니다."),
+    _ITEMOPTION_NOT_MATCH(HttpStatus.BAD_REQUEST, "ITEM4003", "해당 상품의 옵션이 아닙니다."),
 
     // 주문 관련 에러
-    _LACK_OF_STOCK(HttpStatus.BAD_REQUEST, "ORDER401", "재고가 부족합니다."),
+    _LACK_OF_STOCK(HttpStatus.BAD_REQUEST, "ORDER4001", "재고가 부족합니다."),
+    _NULL_ITEMOPTION_ERROR(HttpStatus.BAD_REQUEST, "ORDER4002", "주문할 상품 옵션을 선택해주세요."),
 
     // test
     TEMP_EXCEPTION(HttpStatus.BAD_REQUEST, "TEMP4001", "테스트");
