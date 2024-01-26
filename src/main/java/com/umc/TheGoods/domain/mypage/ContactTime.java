@@ -3,6 +3,7 @@ package com.umc.TheGoods.domain.mypage;
 import com.umc.TheGoods.domain.common.BaseDateTimeEntity;
 import com.umc.TheGoods.domain.member.Member;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 
@@ -22,8 +23,9 @@ public class ContactTime extends BaseDateTimeEntity {
 
     private Integer endTime;
 
-    @Column(columnDefinition = "VARCHAR(1) DEFAULT 'O'")
-    private String allTime;
+    @Column(columnDefinition = "BOOLEAN")
+    @ColumnDefault("false")
+    private Boolean allTime;
 
     @OneToOne
     @JoinColumn(name = "member_id")

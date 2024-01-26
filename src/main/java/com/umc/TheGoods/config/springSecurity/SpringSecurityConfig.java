@@ -1,7 +1,7 @@
 package com.umc.TheGoods.config.springSecurity;
 
 import com.umc.TheGoods.config.springSecurity.utils.JwtTokenFilter;
-import com.umc.TheGoods.service.Member.MemberCommandService;
+import com.umc.TheGoods.service.Member.MemberCommandServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -20,7 +20,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SpringSecurityConfig {
 
 
-    private final MemberCommandService memberCommandService;
+    private final MemberCommandServiceImpl memberCommandServiceImpl;
     @Value("${jwt.token.secret}")
     private String secretKey;
 
@@ -41,7 +41,7 @@ public class SpringSecurityConfig {
                 //세션으로 인증하는 방식은 사용자가 로그인하면 사용자의 세션을 부여해서 인증된 사용자 정보를 서버에서 기억하는 방식
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .addFilterBefore(new JwtTokenFilter(memberCommandService, secretKey), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new JwtTokenFilter(memberCommandServiceImpl, secretKey), UsernamePasswordAuthenticationFilter.class)
                 //UsernamePasswordAuthenticationFilter 앞에 JwtTokenFilter를 둔다. 그 이유는 이미 로그인을 했고 토큰을 발급 받아서 토큰 이용해서 인증하면 된다.
                 .build();
 

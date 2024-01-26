@@ -4,6 +4,7 @@ import com.umc.TheGoods.domain.common.BaseDateTimeEntity;
 import com.umc.TheGoods.domain.member.Member;
 import com.umc.TheGoods.domain.member.Term;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 
@@ -20,8 +21,9 @@ public class MemberTerm extends BaseDateTimeEntity {
     private Long id;
 
     //알람 동의 여부
-    @Column(nullable = false, columnDefinition = "VARCHAR(1) DEFAULT 'X'")
-    private String agree;
+    @Column(nullable = false, columnDefinition = "BOOLEAN")
+    @ColumnDefault("false")
+    private Boolean memberAgree;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
@@ -30,4 +32,11 @@ public class MemberTerm extends BaseDateTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "term_id")
     private Term term;
+
+    public void setMember(Member member) {
+        if (this.member != null)
+            member.getMemberTermList().remove(this);
+        this.member = member;
+        member.getMemberTermList().add(this);
+    }
 }

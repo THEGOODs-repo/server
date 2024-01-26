@@ -1,6 +1,6 @@
 package com.umc.TheGoods.config.springSecurity.utils;
 
-import com.umc.TheGoods.service.Member.MemberCommandService;
+import com.umc.TheGoods.service.Member.MemberCommandServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -22,7 +22,7 @@ import java.util.List;
 @Slf4j
 public class JwtTokenFilter extends OncePerRequestFilter {
 
-    private final MemberCommandService memberCommandService;
+    private final MemberCommandServiceImpl memberCommandServiceImpl;
     private final String secretKey;
 
     //Token이 유요한지와 Token이 있는지 없는지 체크하는 로직 구현해야함
