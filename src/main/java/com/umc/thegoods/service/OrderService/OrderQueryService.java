@@ -1,6 +1,6 @@
-package com.umc.thegoods.service.OrderService;
+package com.umc.TheGoods.service.OrderService;
 
-import com.umc.thegoods.web.dto.order.OrderRequest;
+import com.umc.TheGoods.web.dto.order.OrderRequest;
 
 import java.util.List;
 

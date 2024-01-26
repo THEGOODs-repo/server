@@ -1,6 +1,6 @@
-package com.umc.thegoods.service;
+package com.umc.TheGoods.service;
 
-import com.umc.thegoods.domain.member.Member;
+import com.umc.TheGoods.domain.member.Member;
 
 public interface MemberTempService {
 

@@ -1,4 +1,4 @@
-package com.umc.thegoods.domain.images;
+package com.umc.TheGoods.domain.images;
 
 import lombok.*;
 

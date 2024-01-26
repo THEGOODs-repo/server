@@ -1,6 +1,6 @@
-package com.umc.thegoods.repository.order;
+package com.umc.TheGoods.repository.order;
 
-import com.umc.thegoods.domain.order.OrderDetail;
+import com.umc.TheGoods.domain.order.OrderDetail;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface OrderDetailRepository extends JpaRepository<OrderDetail, Long> {

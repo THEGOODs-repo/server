@@ -1,10 +1,10 @@
-package com.umc.thegoods.converter.orders;
+package com.umc.TheGoods.converter.orders;
 
-import com.umc.thegoods.domain.order.OrderDetail;
-import com.umc.thegoods.domain.order.Orders;
-import com.umc.thegoods.domain.types.PayType;
-import com.umc.thegoods.web.dto.order.OrderRequest;
-import com.umc.thegoods.web.dto.order.OrderResponse;
+import com.umc.TheGoods.domain.order.OrderDetail;
+import com.umc.TheGoods.domain.order.Orders;
+import com.umc.TheGoods.domain.types.PayType;
+import com.umc.TheGoods.web.dto.order.OrderRequest;
+import com.umc.TheGoods.web.dto.order.OrderResponse;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;

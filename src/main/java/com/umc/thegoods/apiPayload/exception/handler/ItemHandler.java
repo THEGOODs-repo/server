@@ -1,7 +1,7 @@
-package com.umc.thegoods.apiPayload.exception.handler;
+package com.umc.TheGoods.apiPayload.exception.handler;
 
-import com.umc.thegoods.apiPayload.code.BaseErrorCode;
-import com.umc.thegoods.apiPayload.exception.GeneralException;
+import com.umc.TheGoods.apiPayload.code.BaseErrorCode;
+import com.umc.TheGoods.apiPayload.exception.GeneralException;
 
 public class ItemHandler extends GeneralException {
     public ItemHandler(BaseErrorCode code) {

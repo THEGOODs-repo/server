@@ -1,6 +1,6 @@
-package com.umc.thegoods.repository;
+package com.umc.TheGoods.repository;
 
-import com.umc.thegoods.domain.member.Member;
+import com.umc.TheGoods.domain.member.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface MemberRepository extends JpaRepository<Member, Long> {

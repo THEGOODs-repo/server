@@ -1,4 +1,4 @@
-package com.umc.thegoods.domain.types;
+package com.umc.TheGoods.domain.types;
 
 public enum NoticeType {
     /**

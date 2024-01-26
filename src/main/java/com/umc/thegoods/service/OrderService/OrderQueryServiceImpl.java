@@ -1,13 +1,13 @@
-package com.umc.thegoods.service.OrderService;
+package com.umc.TheGoods.service.OrderService;
 
-import com.umc.thegoods.apiPayload.code.status.ErrorStatus;
-import com.umc.thegoods.apiPayload.exception.handler.ItemHandler;
-import com.umc.thegoods.apiPayload.exception.handler.OrderHandler;
-import com.umc.thegoods.domain.item.Item;
-import com.umc.thegoods.domain.item.ItemOption;
-import com.umc.thegoods.repository.item.ItemOptionRepository;
-import com.umc.thegoods.repository.item.ItemRepository;
-import com.umc.thegoods.web.dto.order.OrderRequest;
+import com.umc.TheGoods.apiPayload.code.status.ErrorStatus;
+import com.umc.TheGoods.apiPayload.exception.handler.ItemHandler;
+import com.umc.TheGoods.apiPayload.exception.handler.OrderHandler;
+import com.umc.TheGoods.domain.item.Item;
+import com.umc.TheGoods.domain.item.ItemOption;
+import com.umc.TheGoods.repository.item.ItemOptionRepository;
+import com.umc.TheGoods.repository.item.ItemRepository;
+import com.umc.TheGoods.web.dto.order.OrderRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

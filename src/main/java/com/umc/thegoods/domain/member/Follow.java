@@ -1,6 +1,6 @@
-package com.umc.thegoods.domain.member;
+package com.umc.TheGoods.domain.member;
 
-import com.umc.thegoods.domain.common.BaseDateTimeEntity;
+import com.umc.TheGoods.domain.common.BaseDateTimeEntity;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

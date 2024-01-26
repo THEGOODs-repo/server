@@ -1,8 +1,8 @@
-package com.umc.thegoods.service.OrderService;
+package com.umc.TheGoods.service.OrderService;
 
-import com.umc.thegoods.domain.member.Member;
-import com.umc.thegoods.domain.order.Orders;
-import com.umc.thegoods.web.dto.order.OrderRequest;
+import com.umc.TheGoods.domain.member.Member;
+import com.umc.TheGoods.domain.order.Orders;
+import com.umc.TheGoods.web.dto.order.OrderRequest;
 
 public interface OrderCommandService {
 

@@ -1,4 +1,4 @@
-package com.umc.thegoods;
+package com.umc.TheGoods;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -6,10 +6,10 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 @SpringBootApplication
 @EnableJpaAuditing
-public class thegoodsApplication {
+public class ThegoodsApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(com.umc.thegoods.thegoodsApplication.class, args);
+        SpringApplication.run(ThegoodsApplication.class, args);
     }
 
 }

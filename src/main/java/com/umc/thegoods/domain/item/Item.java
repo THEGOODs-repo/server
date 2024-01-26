@@ -1,15 +1,15 @@
-package com.umc.thegoods.domain.item;
+package com.umc.TheGoods.domain.item;
 
-import com.umc.thegoods.domain.common.BaseDateTimeEntity;
-import com.umc.thegoods.domain.community.Inquiry;
-import com.umc.thegoods.domain.enums.ItemStatus;
-import com.umc.thegoods.domain.images.ItemImg;
-import com.umc.thegoods.domain.mapping.Dibs;
-import com.umc.thegoods.domain.mapping.Tag.ItemTag;
-import com.umc.thegoods.domain.mapping.ViewSearch.ItemView;
-import com.umc.thegoods.domain.member.Member;
-import com.umc.thegoods.domain.order.OrderDetail;
-import com.umc.thegoods.domain.types.DeliveryType;
+import com.umc.TheGoods.domain.common.BaseDateTimeEntity;
+import com.umc.TheGoods.domain.community.Inquiry;
+import com.umc.TheGoods.domain.enums.ItemStatus;
+import com.umc.TheGoods.domain.images.ItemImg;
+import com.umc.TheGoods.domain.mapping.Dibs;
+import com.umc.TheGoods.domain.mapping.Tag.ItemTag;
+import com.umc.TheGoods.domain.mapping.ViewSearch.ItemView;
+import com.umc.TheGoods.domain.member.Member;
+import com.umc.TheGoods.domain.order.OrderDetail;
+import com.umc.TheGoods.domain.types.DeliveryType;
 import lombok.*;
 
 import javax.persistence.*;

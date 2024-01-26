@@ -1,13 +1,13 @@
-package com.umc.thegoods.web.controller;
+package com.umc.TheGoods.web.controller;
 
-import com.umc.thegoods.apiPayload.ApiResponse;
-import com.umc.thegoods.converter.orders.OrderConverter;
-import com.umc.thegoods.domain.member.Member;
-import com.umc.thegoods.domain.order.Orders;
-import com.umc.thegoods.service.MemberTempService;
-import com.umc.thegoods.service.OrderService.OrderCommandService;
-import com.umc.thegoods.web.dto.order.OrderRequest;
-import com.umc.thegoods.web.dto.order.OrderResponse;
+import com.umc.TheGoods.apiPayload.ApiResponse;
+import com.umc.TheGoods.converter.orders.OrderConverter;
+import com.umc.TheGoods.domain.member.Member;
+import com.umc.TheGoods.domain.order.Orders;
+import com.umc.TheGoods.service.MemberTempService;
+import com.umc.TheGoods.service.OrderService.OrderCommandService;
+import com.umc.TheGoods.web.dto.order.OrderRequest;
+import com.umc.TheGoods.web.dto.order.OrderResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;

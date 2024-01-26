@@ -1,4 +1,4 @@
-package com.umc.thegoods.domain.enums;
+package com.umc.TheGoods.domain.enums;
 
 public enum InquiryStatus {
     ACTIVATE, INACTIVATE
