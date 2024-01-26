@@ -1,4 +1,4 @@
-package com.umc.thegoods.apiPayload.code;
+package com.umc.TheGoods.apiPayload.code;
 
 import lombok.Builder;
 import lombok.Getter;
