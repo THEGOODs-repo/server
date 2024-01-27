@@ -26,6 +26,7 @@ import com.umc.TheGoods.domain.types.SocialType;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Date;
@@ -36,7 +37,6 @@ import java.util.List;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-
 public class Member extends BaseDateTimeEntity {
 
     @Id
@@ -53,6 +53,7 @@ public class Member extends BaseDateTimeEntity {
 
     @Column(nullable = false, columnDefinition = "VARCHAR(30)")
     private String email;
+
 
     @Column(columnDefinition = "TEXT")
     private String password;
@@ -71,6 +72,7 @@ public class Member extends BaseDateTimeEntity {
     private SocialType socialType;
 
     @Enumerated(EnumType.STRING)
+
     @Column(columnDefinition = "VARCHAR(15)")
     @ColumnDefault("'ACTIVE'")
     private MemberStatus memberStatus;

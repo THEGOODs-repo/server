@@ -5,6 +5,7 @@ import com.umc.TheGoods.domain.mapping.member.MemberTerm;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +32,7 @@ public class Term extends BaseDateTimeEntity {
     @Column(columnDefinition = "BOOLEAN")
     @ColumnDefault("false")
     private Boolean essential;
+
 
 
     @OneToMany(mappedBy = "term", cascade = CascadeType.ALL)
