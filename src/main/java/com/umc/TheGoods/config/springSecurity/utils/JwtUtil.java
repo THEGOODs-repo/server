@@ -14,12 +14,16 @@ public class JwtUtil {
     private static SecretKey secretKey;
 
 
+    public static Long getMemberId(String token) {
+        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("memberId", Long.class);
+    }
+
     public static String getMembername(String token) {
         return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("memberName", String.class);
     }
 
     public static List<String> getRole(String token) {
-        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("role", List.class);
+        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("memberRole", List.class);
     }
 
     public static boolean isExpired(String token) {
@@ -38,7 +42,7 @@ public class JwtUtil {
                 .and()
                 .claim("memberId", memberId)
                 .claim("memberName", memberName)
-                .claim("roles", roles)
+                .claim("memberRole", roles)
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + expiredMs)) // token 유효기간 설정
                 .compact();

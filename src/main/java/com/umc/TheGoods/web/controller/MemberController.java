@@ -4,6 +4,7 @@ import com.umc.TheGoods.apiPayload.ApiResponse;
 import com.umc.TheGoods.converter.Member.MemberConverter;
 import com.umc.TheGoods.domain.member.Member;
 import com.umc.TheGoods.service.Member.MemberCommandServiceImpl;
+import com.umc.TheGoods.web.dto.Member.MemberDetail;
 import com.umc.TheGoods.web.dto.Member.MemberRequestDTO;
 import com.umc.TheGoods.web.dto.Member.MemberResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
@@ -11,6 +12,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -53,11 +55,14 @@ public class MemberController {
 
     @PostMapping("/jwt/test")
     @Operation(summary = "jwt test API", description = "테스트 용도 api")
-    public ResponseEntity<?> jwtTest() {
+    public ResponseEntity<?> jwtTest(Authentication authentication) {
+        //request값으로 Bearer {jwt} 값을 넘겨주면 jwt를 해석해서 Authentication에 정보가 담기고 담긴 정보를 가공해서 사용
+        //jwt 토큰은 회원가입하고 로그인하면 발급받을 수 있습니다.
+        MemberDetail memberDetail = (MemberDetail) authentication.getPrincipal();
 
-
-        //log.info(authentication.getAuthorities().toString());
-        return ResponseEntity.ok().body("jwt 테스트 성공");
+        return ResponseEntity.ok().body("memberId: " + memberDetail.getMemberId() +
+                " memberName: " + memberDetail.getMemberName() +
+                " memberRole: " + memberDetail.getMemberRole());
     }
 
 }
