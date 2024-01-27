@@ -32,6 +32,7 @@ public class Notification extends BaseDateTimeEntity {
     @JoinColumn(name = "member_id")
     private Member member;
 
+
     @Column(nullable = false, columnDefinition = "TEXT")
     private String url;
 
