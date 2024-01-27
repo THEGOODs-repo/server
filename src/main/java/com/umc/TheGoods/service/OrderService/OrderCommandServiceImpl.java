@@ -36,6 +36,7 @@ public class OrderCommandServiceImpl implements OrderCommandService {
         // Orders 엔티티 생성 및 연관관계 매핑
         Orders newOrders = OrderConverter.toOrders(request);
         newOrders.setMember(member);
+        Orders savedOrders = orderRepository.save(newOrders);
 
         // orderDetail 엔티티 생성 및 연관관계 매핑, 상품 재고 및 판매수 업데이트
         request.getOrderItemDtoList().forEach(orderItemDto -> {
@@ -58,7 +59,7 @@ public class OrderCommandServiceImpl implements OrderCommandService {
             OrderDetail orderDetail = OrderConverter.toOrderDetail(orderItemDto, price);
 
             // 양방향 연관관계 매핑
-            orderDetail.setOrders(newOrders);
+            orderDetail.setOrders(savedOrders);
             orderDetail.setItem(item);
             if (haveOption) { // 상품 옵션이 존재하는 경우
                 orderDetail.setItemOption(itemOption);
@@ -75,7 +76,7 @@ public class OrderCommandServiceImpl implements OrderCommandService {
             }
         });
 
-        return orderRepository.save(newOrders);
+        return savedOrders;
     }
 }
 
