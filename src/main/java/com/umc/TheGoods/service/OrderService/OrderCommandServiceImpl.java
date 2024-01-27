@@ -1,5 +1,7 @@
 package com.umc.TheGoods.service.OrderService;
 
+import com.umc.TheGoods.apiPayload.code.status.ErrorStatus;
+import com.umc.TheGoods.apiPayload.exception.handler.OrderHandler;
 import com.umc.TheGoods.converter.orders.OrderConverter;
 import com.umc.TheGoods.domain.item.Item;
 import com.umc.TheGoods.domain.item.ItemOption;
@@ -21,17 +23,29 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class OrderCommandServiceImpl implements OrderCommandService {
 
-    private final OrderQueryService orderQueryService;
-
     private final OrderRepository orderRepository;
     private final ItemRepository itemRepository;
     private final ItemOptionRepository itemOptionRepository;
 
     @Override
     public Orders create(OrderRequest.OrderAddDto request, Member member) {
-        // request의 OrderItemDtoList에 담긴 상품 정보 및 재고 검증
-        // 검증 실패 시 exception 발생
-        orderQueryService.isOrderAvailable(request.getOrderItemDtoList());
+        // item 및 itemOption의 재고와 주문 수량 비교
+        request.getOrderItemDtoList().forEach(orderItemDto -> {
+            Item item = itemRepository.findById(orderItemDto.getItemId()).get();
+
+            Integer stock;
+
+            if (item.getPrice() == null) { // 옵션이 있는 상품인 경우
+                ItemOption itemOption = itemOptionRepository.findById(orderItemDto.getItemOptionId()).get();
+                stock = itemOption.getStock();
+            } else { // 단일 상품인 경우
+                stock = item.getStock();
+            }
+
+            if (orderItemDto.getAmount() > stock) { // 재고보다 주문 수량이 많은 경우
+                throw new OrderHandler(ErrorStatus._LACK_OF_STOCK);
+            }
+        });
 
         // Orders 엔티티 생성 및 연관관계 매핑
         Orders newOrders = OrderConverter.toOrders(request);
@@ -50,7 +64,7 @@ public class OrderCommandServiceImpl implements OrderCommandService {
             boolean haveOption = (item.getPrice() == null);
 
             if (haveOption) { // 상품 옵션이 존재하는 경우
-                itemOption = itemOptionRepository.findById(orderItemDto.getItemOptionId().get()).get();
+                itemOption = itemOptionRepository.findById(orderItemDto.getItemOptionId()).get();
                 price = itemOption.getPrice();
             } else { // 단일 상품인 경우
                 price = item.getPrice();
