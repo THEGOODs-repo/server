@@ -36,8 +36,7 @@ public class Item extends BaseDateTimeEntity {
     @Column(columnDefinition = "VARCHAR(20)", nullable = false)
     private ItemStatus status;
 
-    @Column(nullable = false)
-    @Column(length = 6)
+    @Column(nullable = false, length = 6)
     private Integer stock;
 
     private Long price;

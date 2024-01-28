@@ -1,6 +1,7 @@
 package com.umc.TheGoods.config.springSecurity.utils;
 
 import com.umc.TheGoods.service.Member.MemberCommandServiceImpl;
+import com.umc.TheGoods.web.dto.Member.MemberDetail;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -55,12 +56,15 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
         //jwt 토큰에서 username 꺼내기
         String memberName = JwtUtil.getMembername(token);
+        Long memberId = JwtUtil.getMemberId(token);
+        List<String> memberRole = JwtUtil.getRole(token);
 
+        MemberDetail memberDetail = new MemberDetail(memberId, memberName, memberRole);
 
         //권한 부여
         //권한이 USER면 통과 가능
         UsernamePasswordAuthenticationToken authenticationToken =
-                new UsernamePasswordAuthenticationToken(memberName, null, List.of(new SimpleGrantedAuthority("ROLE_USER")));
+                new UsernamePasswordAuthenticationToken(memberDetail, null, List.of(new SimpleGrantedAuthority("ROLE_USER")));
 
         // Detail을 넘겨준다.
         authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
