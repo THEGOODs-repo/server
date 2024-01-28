@@ -54,4 +54,13 @@ public class Orders extends BaseDateTimeEntity {
 
     @OneToMany(mappedBy = "orders", cascade = CascadeType.ALL)
     private List<OrderDetail> orderDetailList = new ArrayList<>();
+
+    // 연관관계 메소드
+    public void setMember(Member member) {
+        if (this.member != null) {
+            this.member.getOrdersList().remove(this);
+        }
+        this.member = member;
+        member.getOrdersList().add(this);
+    }
 }
