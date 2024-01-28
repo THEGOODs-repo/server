@@ -8,6 +8,7 @@ import com.umc.TheGoods.domain.item.ItemOption;
 import com.umc.TheGoods.domain.member.Member;
 import com.umc.TheGoods.domain.order.OrderDetail;
 import com.umc.TheGoods.domain.order.Orders;
+import com.umc.TheGoods.repository.MemberRepository;
 import com.umc.TheGoods.repository.item.ItemOptionRepository;
 import com.umc.TheGoods.repository.item.ItemRepository;
 import com.umc.TheGoods.repository.order.OrderRepository;
@@ -23,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class OrderCommandServiceImpl implements OrderCommandService {
 
+    private final MemberRepository memberRepository;
     private final OrderRepository orderRepository;
     private final ItemRepository itemRepository;
     private final ItemOptionRepository itemOptionRepository;
@@ -43,7 +45,7 @@ public class OrderCommandServiceImpl implements OrderCommandService {
             }
 
             if (orderItemDto.getAmount() > stock) { // 재고보다 주문 수량이 많은 경우
-                throw new OrderHandler(ErrorStatus._LACK_OF_STOCK);
+                throw new OrderHandler(ErrorStatus.LACK_OF_STOCK);
             }
         });
 

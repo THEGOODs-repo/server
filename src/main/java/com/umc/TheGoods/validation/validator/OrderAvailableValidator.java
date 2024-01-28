@@ -33,7 +33,7 @@ public class OrderAvailableValidator implements ConstraintValidator<OrderAvailab
             Optional<Item> item = itemQueryService.findItemById(request.getItemId());
             if (item.isEmpty()) { // 상품이 존재하지 않는 경우
                 context.disableDefaultConstraintViolation();
-                context.buildConstraintViolationWithTemplate(ErrorStatus._ITEM_NOT_FOUND.getMessage()).addConstraintViolation();
+                context.buildConstraintViolationWithTemplate(ErrorStatus.ITEM_NOT_FOUND.getMessage()).addConstraintViolation();
                 return false;
             }
 
@@ -42,7 +42,7 @@ public class OrderAvailableValidator implements ConstraintValidator<OrderAvailab
                 Optional<ItemOption> itemOption = itemQueryService.findItemOptionById(request.getItemOptionId());
                 if (itemOption.isEmpty()) { // 상품 옵션이 존재하지 않는 경우
                     context.disableDefaultConstraintViolation();
-                    context.buildConstraintViolationWithTemplate(ErrorStatus._ITEMOPTION_NOT_FOUND.getMessage()).addConstraintViolation();
+                    context.buildConstraintViolationWithTemplate(ErrorStatus.ITEMOPTION_NOT_FOUND.getMessage()).addConstraintViolation();
                     return false;
                 }
 
@@ -51,14 +51,14 @@ public class OrderAvailableValidator implements ConstraintValidator<OrderAvailab
                 boolean isValid = itemOption.get().getItem().equals(item.get());
                 if (!isValid) { // itemOption이 해당 상품의 옵션이 아닌 경우
                     context.disableDefaultConstraintViolation();
-                    context.buildConstraintViolationWithTemplate(ErrorStatus._ITEMOPTION_NOT_MATCH.getMessage()).addConstraintViolation();
+                    context.buildConstraintViolationWithTemplate(ErrorStatus.ITEMOPTION_NOT_MATCH.getMessage()).addConstraintViolation();
                     return false;
                 }
             } else {  // request에 itemOptionId 값이 없는 경우
                 // item이 단일 상품인지 검증
                 if (item.get().getPrice() == null) { // item이 단일 상품이 아닌 경우
                     context.disableDefaultConstraintViolation();
-                    context.buildConstraintViolationWithTemplate(ErrorStatus._NULL_ITEMOPTION_ERROR.getMessage()).addConstraintViolation();
+                    context.buildConstraintViolationWithTemplate(ErrorStatus.NULL_ITEMOPTION_ERROR.getMessage()).addConstraintViolation();
                     return false;
                 }
             }

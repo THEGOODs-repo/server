@@ -1,5 +1,6 @@
 package com.umc.TheGoods.converter.orders;
 
+import com.umc.TheGoods.domain.enums.OrderStatus;
 import com.umc.TheGoods.domain.order.OrderDetail;
 import com.umc.TheGoods.domain.order.Orders;
 import com.umc.TheGoods.domain.types.PayType;
@@ -47,6 +48,7 @@ public class OrderConverter {
         return OrderDetail.builder()
                 .amount(orderItemDto.getAmount())
                 .orderPrice(price)
+                .status(OrderStatus.PAY_PREV)
                 .build();
     }
 
