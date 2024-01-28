@@ -28,7 +28,7 @@ public class OrderDetail extends BaseDateTimeEntity {
     private Long orderPrice;
 
     @Enumerated(EnumType.STRING)
-    @Column(columnDefinition = "VARCHAR(30) DEFAULT 'PAY_PREV'")
+    @Column(columnDefinition = "VARCHAR(30)", nullable = false)
     private OrderStatus status;
 
     @Column(length = 30)

@@ -26,4 +26,11 @@ public class MemberCategory extends BaseDateTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     private Category category;
+
+    public void setMember(Member member) {
+        if (this.member != null)
+            member.getMemberCategoryList().remove(this);
+        this.member = member;
+        member.getMemberCategoryList().add(this);
+    }
 }

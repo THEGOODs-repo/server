@@ -3,6 +3,8 @@ package com.umc.TheGoods.domain.mypage;
 import com.umc.TheGoods.domain.common.BaseDateTimeEntity;
 import com.umc.TheGoods.domain.member.Member;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
+
 
 import javax.persistence.*;
 
@@ -22,8 +24,11 @@ public class WithdrawReason extends BaseDateTimeEntity {
     @Column(name = "withdraw_reason_id")
     private Long id;
 
-    @Column(nullable = false, columnDefinition = "VARCHAR(1)")
-    private String caution; //주의 사항 체크
+
+    @Column(nullable = false, columnDefinition = "BOOLEAN")
+    @ColumnDefault("false")
+    private Boolean caution; //주의 사항 체크
+
 
 
     @Column(nullable = false)

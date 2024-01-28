@@ -39,7 +39,6 @@ public class Item extends BaseDateTimeEntity {
     @Column(length = 6)
     private Integer stock;
 
-    //@Column(nullable = false)
     private Long price;
 
     @Column(nullable = false, length = 6)

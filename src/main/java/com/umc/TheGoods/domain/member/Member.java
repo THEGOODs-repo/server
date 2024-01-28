@@ -24,6 +24,8 @@ import com.umc.TheGoods.domain.order.Cart;
 import com.umc.TheGoods.domain.order.Orders;
 import com.umc.TheGoods.domain.types.SocialType;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
+
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -52,7 +54,8 @@ public class Member extends BaseDateTimeEntity {
     @Column(nullable = false, columnDefinition = "VARCHAR(30)")
     private String email;
 
-    @Column(columnDefinition = "VARCHAR(20)")
+
+    @Column(columnDefinition = "TEXT")
     private String password;
 
     @Temporal(TemporalType.DATE)
@@ -69,7 +72,9 @@ public class Member extends BaseDateTimeEntity {
     private SocialType socialType;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, columnDefinition = "VARCHAR(15) DEFAULT 'ACTIVE'")
+
+    @Column(columnDefinition = "VARCHAR(15)")
+    @ColumnDefault("'ACTIVE'")
     private MemberStatus memberStatus;
 
     @Column(columnDefinition = "TEXT")
@@ -79,16 +84,19 @@ public class Member extends BaseDateTimeEntity {
     private String naverAuth;
 
     //메세지 관련 수신 동의
-    @Column(columnDefinition = "varchar(1) DEFAULT 'X'")
-    private String messageNotice;
+    @Column(columnDefinition = "BOOLEAN")
+    @ColumnDefault("false")
+    private Boolean messageNotice;
 
     //상품 관련 수신 동의
-    @Column(columnDefinition = "varchar(1) DEFAULT 'X'")
-    private String itemNotice;
+    @Column(columnDefinition = "BOOLEAN")
+    @ColumnDefault("false")
+    private Boolean itemNotice;
 
     //마케팅 수신 동의
-    @Column(columnDefinition = "varchar(1) DEFAULT 'X'")
-    private String marketingNotice;
+    @Column(columnDefinition = "BOOLEAN")
+    @ColumnDefault("false")
+    private Boolean marketingNotice;
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<MemberCategory> memberCategoryList = new ArrayList<>();
