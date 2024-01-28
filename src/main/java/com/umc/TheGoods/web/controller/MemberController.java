@@ -1,9 +1,11 @@
 package com.umc.TheGoods.web.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.umc.TheGoods.apiPayload.ApiResponse;
 import com.umc.TheGoods.converter.Member.MemberConverter;
 import com.umc.TheGoods.domain.member.Member;
-import com.umc.TheGoods.service.Member.MemberCommandServiceImpl;
+import com.umc.TheGoods.domain.member.PhoneAuth;
+import com.umc.TheGoods.service.Member.MemberCommandService;
 import com.umc.TheGoods.web.dto.Member.MemberDetail;
 import com.umc.TheGoods.web.dto.Member.MemberRequestDTO;
 import com.umc.TheGoods.web.dto.Member.MemberResponseDTO;
@@ -29,13 +31,16 @@ import javax.validation.Valid;
 @RequestMapping("/api/members")
 public class MemberController {
 
-    private final MemberCommandServiceImpl memberCommandServiceImpl;
+    private final MemberCommandService memberCommandService;
+
+    public static final String ACCOUNT_SID = "ACXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX";
+    public static final String AUTH_TOKEN = "your_auth_token";
 
 
     @PostMapping("/join")
-    @Operation(summary = "회원가입 API", description = "request 파라미터 : 닉네임, 비밀번호, 이메일, 생일(yyyymmdd), 성별(MALE, FEMALE, NO_SELECET), 폰번호(010xxxxxxxx),이용약관(Boolean 배열), 카테고리(Long 배열)")
+    @Operation(summary = "회원가입 API", description = "request 파라미터 : 닉네임, 비밀번호(String), 이메일, 생일(yyyymmdd), 성별(MALE, FEMALE, NO_SELECET), 폰번호(010xxxxxxxx),이용약관(Boolean 배열), 카테고리(Long 배열)")
     public ApiResponse<MemberResponseDTO.JoinResultDTO> join(@RequestBody @Valid MemberRequestDTO.JoinDTO request) {
-        Member member = memberCommandServiceImpl.join(request);
+        Member member = memberCommandService.join(request);
 
         return ApiResponse.onSuccess(MemberConverter.toJoinResultDTO(member));
     }
@@ -45,11 +50,11 @@ public class MemberController {
     //username
     //password
     @PostMapping("/login")
-    @Operation(summary = "로그인 API", description = "request 파라미터 : 이메일, 비밀번호")
+    @Operation(summary = "로그인 API", description = "request 파라미터 : 이메일, 비밀번호(String)")
     public ApiResponse<MemberResponseDTO.LoginResultDTO> login(@RequestBody MemberRequestDTO.LoginDTO request) {
 
 
-        return ApiResponse.onSuccess(MemberConverter.toLoginResultDTO(memberCommandServiceImpl.login(request)));
+        return ApiResponse.onSuccess(MemberConverter.toLoginResultDTO(memberCommandService.login(request)));
     }
 
 
@@ -65,4 +70,22 @@ public class MemberController {
                 " memberRole: " + memberDetail.getMemberRole());
     }
 
+
+    @PostMapping("/phone/auth")
+    @Operation(summary = "휴대폰 인증 번호 요청 API", description = "request: 휴대폰 번호, response : 인증번호")
+    public ApiResponse<MemberResponseDTO.PhoneAuthSendResultDTO> phoneAuthSend(@RequestBody MemberRequestDTO.PhoneAuthDTO request) throws JsonProcessingException {
+
+        PhoneAuth phoneAuth = memberCommandService.sendPhoneAuth(request.getPhone());
+
+        return ApiResponse.onSuccess(MemberConverter.toPhoneAuthSendResultDTO(phoneAuth));
+    }
+
+
+    @PostMapping("phone/auth/verify")
+    @Operation(summary = "휴대폰 인증 번호 확인 API", description = "request: 인증 코드, response : 인증완료 true")
+    public ApiResponse<MemberResponseDTO.PhoneAuthConfirmResultDTO> phoneAuth(@RequestBody MemberRequestDTO.PhoneAuthConfirmDTO request) {
+        Boolean check = memberCommandService.confirmPhoneAuth(request);
+
+        return ApiResponse.onSuccess(MemberConverter.toPhoneAuthConfirmResultDTO(check));
+    }
 }

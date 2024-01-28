@@ -28,4 +28,23 @@ public class MemberResponseDTO {
     public static class LoginResultDTO {
         String jwt;
     }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class PhoneAuthSendResultDTO {
+        String phone;
+        String authtoken;
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class PhoneAuthConfirmResultDTO {
+        Boolean check;
+    }
+
+
 }

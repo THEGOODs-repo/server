@@ -5,6 +5,7 @@ import com.umc.TheGoods.domain.item.Category;
 import com.umc.TheGoods.domain.mapping.member.MemberCategory;
 import com.umc.TheGoods.domain.mapping.member.MemberTerm;
 import com.umc.TheGoods.domain.member.Member;
+import com.umc.TheGoods.domain.member.PhoneAuth;
 import com.umc.TheGoods.domain.member.Term;
 import com.umc.TheGoods.web.dto.Member.MemberRequestDTO;
 import com.umc.TheGoods.web.dto.Member.MemberResponseDTO;
@@ -69,5 +70,27 @@ public class MemberConverter {
                         .memberAgree(entry.getValue())
                         .build())
                 .collect(Collectors.toList());
+    }
+
+    public static PhoneAuth toPhoneAuth(String phone, String code, Boolean expired) {
+
+        return PhoneAuth.builder()
+                .phone(phone)
+                .code(code)
+                .expired(expired)
+                .build();
+    }
+
+    public static MemberResponseDTO.PhoneAuthSendResultDTO toPhoneAuthSendResultDTO(PhoneAuth phoneAuth) {
+        return MemberResponseDTO.PhoneAuthSendResultDTO.builder()
+                .phone(phoneAuth.getPhone())
+                .authtoken(phoneAuth.getCode())
+                .build();
+    }
+
+    public static MemberResponseDTO.PhoneAuthConfirmResultDTO toPhoneAuthConfirmResultDTO(Boolean check) {
+        return MemberResponseDTO.PhoneAuthConfirmResultDTO.builder()
+                .check(check)
+                .build();
     }
 }

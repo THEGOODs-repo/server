@@ -35,4 +35,19 @@ public class MemberRequestDTO {
         private String email;
         private String password;
     }
+
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class PhoneAuthDTO {
+        private String phone;
+    }
+
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class PhoneAuthConfirmDTO {
+        private String phone;
+        private String code;
+    }
 }
