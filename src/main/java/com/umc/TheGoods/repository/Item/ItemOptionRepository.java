@@ -1,4 +1,4 @@
-package com.umc.TheGoods.repository.item;
+package com.umc.TheGoods.repository.Item;
 
 import com.umc.TheGoods.domain.item.ItemOption;
 import org.springframework.data.jpa.repository.JpaRepository;

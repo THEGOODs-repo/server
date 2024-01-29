@@ -1,7 +1,7 @@
 package com.umc.TheGoods.config.springSecurity;
 
 import com.umc.TheGoods.config.springSecurity.utils.JwtTokenFilter;
-import com.umc.TheGoods.service.Member.MemberCommandServiceImpl;
+import com.umc.TheGoods.service.MemberService.MemberCommandServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

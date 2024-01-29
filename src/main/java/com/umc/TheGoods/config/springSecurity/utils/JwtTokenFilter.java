@@ -1,6 +1,6 @@
 package com.umc.TheGoods.config.springSecurity.utils;
 
-import com.umc.TheGoods.service.Member.MemberCommandServiceImpl;
+import com.umc.TheGoods.service.MemberService.MemberCommandServiceImpl;
 import com.umc.TheGoods.web.dto.Member.MemberDetail;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

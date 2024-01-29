@@ -3,14 +3,14 @@ package com.umc.TheGoods.web.controller;
 import com.umc.TheGoods.apiPayload.ApiResponse;
 import com.umc.TheGoods.apiPayload.code.status.ErrorStatus;
 import com.umc.TheGoods.apiPayload.exception.handler.MemberHandler;
-import com.umc.TheGoods.converter.orders.OrderConverter;
+import com.umc.TheGoods.converter.Order.OrderConverter;
 import com.umc.TheGoods.domain.member.Member;
 import com.umc.TheGoods.domain.order.Orders;
-import com.umc.TheGoods.service.Member.MemberQueryService;
+import com.umc.TheGoods.service.MemberService.MemberQueryService;
 import com.umc.TheGoods.service.OrderService.OrderCommandService;
 import com.umc.TheGoods.web.dto.Member.MemberDetail;
-import com.umc.TheGoods.web.dto.order.OrderRequest;
-import com.umc.TheGoods.web.dto.order.OrderResponse;
+import com.umc.TheGoods.web.dto.Order.OrderRequestDTO;
+import com.umc.TheGoods.web.dto.Order.OrderResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -39,7 +39,7 @@ public class OrderController {
     @ApiResponses(value = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
     })
-    public ApiResponse<OrderResponse.OrderAddResultDto> order(@RequestBody @Valid OrderRequest.OrderAddDto request, Authentication authentication) {
+    public ApiResponse<OrderResponseDTO.OrderAddResultDto> order(@RequestBody @Valid OrderRequestDTO.OrderAddDto request, Authentication authentication) {
         // request에서 member id 추출해 Member 엔티티 찾기
         MemberDetail memberDetail = (MemberDetail) authentication.getPrincipal();
         Member member = memberQueryService.findMemberById(memberDetail.getMemberId()).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
