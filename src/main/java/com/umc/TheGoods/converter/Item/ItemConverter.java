@@ -4,10 +4,19 @@ import com.umc.TheGoods.domain.enums.ItemStatus;
 import com.umc.TheGoods.domain.item.Item;
 import com.umc.TheGoods.domain.types.DeliveryType;
 import com.umc.TheGoods.web.dto.ItemRequestDTO;
+import com.umc.TheGoods.web.dto.ItemResponseDTO;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 public class ItemConverter {
+
+    public static ItemResponseDTO.UploadItemResultDTO toUploadItemResultDTO(Item item){
+        return ItemResponseDTO.UploadItemResultDTO.builder()
+                .itemId(item.getId())
+                .createdAt(LocalDateTime.now())
+                .build();
+    }
 
     public static Item toItem(ItemRequestDTO.UploadItemDTO request){
 
@@ -54,7 +63,8 @@ public class ItemConverter {
                 .salesCount(0L)
                 .status(ItemStatus.ONSALE)
                 .price(request.getPrice())
-                .itemImgList(new ArrayList<>())
+                .stock(request.getStock())
+                .itemTagList(new ArrayList<>())
                 .itemImgList(new ArrayList<>())
                 .build();
     }
