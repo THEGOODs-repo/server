@@ -1,8 +1,9 @@
 package com.umc.TheGoods.service.OrderService;
 
 import com.umc.TheGoods.apiPayload.code.status.ErrorStatus;
+import com.umc.TheGoods.apiPayload.exception.handler.MemberHandler;
 import com.umc.TheGoods.apiPayload.exception.handler.OrderHandler;
-import com.umc.TheGoods.converter.orders.OrderConverter;
+import com.umc.TheGoods.converter.order.OrderConverter;
 import com.umc.TheGoods.domain.item.Item;
 import com.umc.TheGoods.domain.item.ItemOption;
 import com.umc.TheGoods.domain.member.Member;
@@ -30,7 +31,9 @@ public class OrderCommandServiceImpl implements OrderCommandService {
     private final ItemOptionRepository itemOptionRepository;
 
     @Override
-    public Orders create(OrderRequest.OrderAddDto request, Member member) {
+    public Orders create(OrderRequest.OrderAddDto request, Long memberId) {
+        Member member = memberRepository.findById(memberId).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
         // item 및 itemOption의 재고와 주문 수량 비교
         request.getOrderItemDtoList().forEach(orderItemDto -> {
             Item item = itemRepository.findById(orderItemDto.getItemId()).get();
@@ -72,7 +75,7 @@ public class OrderCommandServiceImpl implements OrderCommandService {
                 price = item.getPrice();
             }
             // 엔티티 생성
-            OrderDetail orderDetail = OrderConverter.toOrderDetail(orderItemDto, price);
+            OrderDetail orderDetail = OrderConverter.toOrderDetail(orderItemDto, price * orderItemDto.getAmount());
 
             // 양방향 연관관계 매핑
             orderDetail.setOrders(savedOrders);
