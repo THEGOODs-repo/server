@@ -6,6 +6,7 @@ import com.umc.TheGoods.domain.order.OrderDetail;
 import com.umc.TheGoods.domain.order.Orders;
 import com.umc.TheGoods.service.OrderService.OrderCommandService;
 import com.umc.TheGoods.service.OrderService.OrderQueryService;
+import com.umc.TheGoods.validation.annotation.CheckPage;
 import com.umc.TheGoods.web.dto.Member.MemberDetail;
 import com.umc.TheGoods.web.dto.order.OrderRequest;
 import com.umc.TheGoods.web.dto.order.OrderResponse;
@@ -18,12 +19,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.Authentication;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
 @Slf4j
 @Tag(name = "Order", description = "주문 관련 API")
+@Validated
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/order")
@@ -54,7 +57,10 @@ public class OrderController {
     @Parameters(value = {
             @Parameter(name = "page", description = "페이지 번호, 1 이상의 숫자를 입력해주세요.")
     })
-    public ApiResponse<OrderResponse.OrderPreViewListDTO> myOrderPreview(@RequestParam(name = "page") Integer page, Authentication authentication) {
+    public ApiResponse<OrderResponse.OrderPreViewListDTO> myOrderPreview(
+            @RequestParam(name = "page") @CheckPage Integer page,
+            Authentication authentication
+    ) {
         // request에서 member id 추출해 Member 엔티티 찾기
         MemberDetail memberDetail = (MemberDetail) authentication.getPrincipal();
         Page<OrderDetail> orderDetailList = orderQueryService.getOrderDetailList(memberDetail.getMemberId(), page - 1);
