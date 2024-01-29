@@ -2,6 +2,7 @@ package com.umc.TheGoods.web.controller;
 
 import com.umc.TheGoods.apiPayload.ApiResponse;
 import com.umc.TheGoods.converter.order.OrderConverter;
+import com.umc.TheGoods.domain.enums.OrderStatus;
 import com.umc.TheGoods.domain.order.OrderDetail;
 import com.umc.TheGoods.domain.order.Orders;
 import com.umc.TheGoods.service.OrderService.OrderCommandService;
@@ -55,15 +56,18 @@ public class OrderController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
     })
     @Parameters(value = {
-            @Parameter(name = "page", description = "페이지 번호, 1 이상의 숫자를 입력해주세요.")
+            @Parameter(name = "page", description = "페이지 번호, 1 이상의 숫자를 입력해주세요."),
+            @Parameter(name = "status", description = "주문 처리 상태 필터, 선택하지 않으면 전체 주문이 조회됩니다.")
+
     })
     public ApiResponse<OrderResponse.OrderPreViewListDTO> myOrderPreview(
             @RequestParam(name = "page") @CheckPage Integer page,
+            @RequestParam(name = "status", required = false) OrderStatus orderStatus,
             Authentication authentication
     ) {
         // request에서 member id 추출해 Member 엔티티 찾기
         MemberDetail memberDetail = (MemberDetail) authentication.getPrincipal();
-        Page<OrderDetail> orderDetailList = orderQueryService.getOrderDetailList(memberDetail.getMemberId(), page - 1);
+        Page<OrderDetail> orderDetailList = orderQueryService.getOrderDetailList(memberDetail.getMemberId(), orderStatus, page - 1);
 
         return ApiResponse.onSuccess(OrderConverter.toOrderPreViewListDTO(orderDetailList));
     }
