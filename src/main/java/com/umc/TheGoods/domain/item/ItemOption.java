@@ -39,4 +39,11 @@ public class ItemOption extends BaseDateTimeEntity {
 
     @OneToMany(mappedBy = "itemOption", cascade = CascadeType.ALL)
     private List<Cart> cartList = new ArrayList<>();
+
+    public void setItem(Item item){
+        if(this.item != null)
+            item.getItemOptionList().remove(this);
+        this.item = item;
+        item.getItemOptionList().add(this);
+    }
 }

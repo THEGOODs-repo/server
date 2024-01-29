@@ -26,4 +26,11 @@ public class ItemTag extends BaseDateTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "item_id", nullable = false)
     private Item item;
+
+    public void setItem(Item item){
+        if(this.item != null)
+            item.getItemTagList().remove(this);
+        this.item = item;
+        item.getItemTagList().add(this);
+    }
 }
