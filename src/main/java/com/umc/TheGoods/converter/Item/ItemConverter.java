@@ -1,4 +1,4 @@
-package com.umc.TheGoods.converter;
+package com.umc.TheGoods.converter.Item;
 
 import com.umc.TheGoods.domain.enums.ItemStatus;
 import com.umc.TheGoods.domain.item.Item;
