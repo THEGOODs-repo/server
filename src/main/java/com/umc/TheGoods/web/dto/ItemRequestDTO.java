@@ -1,10 +1,13 @@
 package com.umc.TheGoods.web.dto;
 
 import com.umc.TheGoods.domain.item.Category;
+import com.umc.TheGoods.domain.item.ItemOption;
 import lombok.Getter;
+import org.springframework.lang.Nullable;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Null;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -16,7 +19,9 @@ public class ItemRequestDTO {
         String name;
         @NotNull
         String status;
+        @Nullable
         Integer stock;
+        @Nullable
         Long price;
         @NotNull
         Integer deliveryFee;
@@ -28,7 +33,9 @@ public class ItemRequestDTO {
         String description;
         @NotNull
         Boolean isLimitless;
+        @Nullable
         LocalDate startDate;
+        @Nullable
         LocalDate endDate;
         @NotNull
         Long viewCount;
@@ -39,8 +46,28 @@ public class ItemRequestDTO {
         @NotNull
         Long category;
         @NotNull
-        List<Long> itemTag;
+        List<itemImgDTO> itemImgUrlList;
+        @Nullable
+        List<itemOptionDTO> itemOptionList;
         @NotNull
-        List<String> itemImgUrl;
+        List<Long> itemTag;
+    }
+
+    @Getter
+    public static class itemImgDTO{
+        @Nullable
+        Boolean isThumbnail;
+        @NotNull
+        String imgUrl;
+    }
+
+    @Getter
+    public static class itemOptionDTO{
+        @NotNull
+        String name;
+        @NotNull
+        Long price;
+        @NotNull
+        Integer stock;
     }
 }
