@@ -1,4 +1,4 @@
-package com.umc.TheGoods.web.dto.order;
+package com.umc.TheGoods.web.dto.Order;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
-public class OrderResponse {
+public class OrderResponseDTO {
 
     @Builder
     @Getter

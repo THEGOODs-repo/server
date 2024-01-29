@@ -2,17 +2,17 @@ package com.umc.TheGoods.service.OrderService;
 
 import com.umc.TheGoods.apiPayload.code.status.ErrorStatus;
 import com.umc.TheGoods.apiPayload.exception.handler.OrderHandler;
-import com.umc.TheGoods.converter.orders.OrderConverter;
+import com.umc.TheGoods.converter.Order.OrderConverter;
 import com.umc.TheGoods.domain.item.Item;
 import com.umc.TheGoods.domain.item.ItemOption;
 import com.umc.TheGoods.domain.member.Member;
 import com.umc.TheGoods.domain.order.OrderDetail;
 import com.umc.TheGoods.domain.order.Orders;
+import com.umc.TheGoods.repository.Item.ItemOptionRepository;
+import com.umc.TheGoods.repository.Item.ItemRepository;
 import com.umc.TheGoods.repository.MemberRepository;
-import com.umc.TheGoods.repository.item.ItemOptionRepository;
-import com.umc.TheGoods.repository.item.ItemRepository;
-import com.umc.TheGoods.repository.order.OrderRepository;
-import com.umc.TheGoods.web.dto.order.OrderRequest;
+import com.umc.TheGoods.repository.Order.OrderRepository;
+import com.umc.TheGoods.web.dto.Order.OrderRequestDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -30,7 +30,7 @@ public class OrderCommandServiceImpl implements OrderCommandService {
     private final ItemOptionRepository itemOptionRepository;
 
     @Override
-    public Orders create(OrderRequest.OrderAddDto request, Member member) {
+    public Orders create(OrderRequestDTO.OrderAddDto request, Member member) {
         // item 및 itemOption의 재고와 주문 수량 비교
         request.getOrderItemDtoList().forEach(orderItemDto -> {
             Item item = itemRepository.findById(orderItemDto.getItemId()).get();

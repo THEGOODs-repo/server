@@ -1,4 +1,4 @@
-package com.umc.TheGoods.repository.order;
+package com.umc.TheGoods.repository.Order;
 
 import com.umc.TheGoods.domain.order.Orders;
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -2,8 +2,8 @@ package com.umc.TheGoods.service.ItemService;
 
 import com.umc.TheGoods.domain.item.Item;
 import com.umc.TheGoods.domain.item.ItemOption;
-import com.umc.TheGoods.repository.item.ItemOptionRepository;
-import com.umc.TheGoods.repository.item.ItemRepository;
+import com.umc.TheGoods.repository.Item.ItemOptionRepository;
+import com.umc.TheGoods.repository.Item.ItemRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

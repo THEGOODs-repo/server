@@ -1,7 +1,7 @@
 package com.umc.TheGoods.validation.validator;
 
 import com.umc.TheGoods.apiPayload.code.status.ErrorStatus;
-import com.umc.TheGoods.service.Member.MemberCommandService;
+import com.umc.TheGoods.service.MemberService.MemberCommandService;
 import com.umc.TheGoods.validation.annotation.ExistCategory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

@@ -3,7 +3,7 @@ package com.umc.TheGoods.web.controller;
 import com.umc.TheGoods.apiPayload.ApiResponse;
 import com.umc.TheGoods.converter.Member.MemberConverter;
 import com.umc.TheGoods.domain.member.Member;
-import com.umc.TheGoods.service.Member.MemberCommandServiceImpl;
+import com.umc.TheGoods.service.MemberService.MemberCommandServiceImpl;
 import com.umc.TheGoods.web.dto.Member.MemberDetail;
 import com.umc.TheGoods.web.dto.Member.MemberRequestDTO;
 import com.umc.TheGoods.web.dto.Member.MemberResponseDTO;
