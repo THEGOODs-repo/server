@@ -2,15 +2,15 @@ package com.umc.TheGoods.service.OrderService;
 
 import com.umc.TheGoods.apiPayload.code.status.ErrorStatus;
 import com.umc.TheGoods.apiPayload.exception.handler.OrderHandler;
-import com.umc.TheGoods.converter.orders.OrderConverter;
+import com.umc.TheGoods.converter.order.OrderConverter;
 import com.umc.TheGoods.domain.item.Item;
 import com.umc.TheGoods.domain.item.ItemOption;
 import com.umc.TheGoods.domain.member.Member;
 import com.umc.TheGoods.domain.order.OrderDetail;
 import com.umc.TheGoods.domain.order.Orders;
-import com.umc.TheGoods.repository.MemberRepository;
 import com.umc.TheGoods.repository.item.ItemOptionRepository;
 import com.umc.TheGoods.repository.item.ItemRepository;
+import com.umc.TheGoods.repository.member.MemberRepository;
 import com.umc.TheGoods.repository.order.OrderRepository;
 import com.umc.TheGoods.web.dto.order.OrderRequest;
 import lombok.RequiredArgsConstructor;

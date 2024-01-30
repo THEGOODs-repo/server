@@ -1,4 +1,4 @@
-package com.umc.TheGoods.converter.Member;
+package com.umc.TheGoods.converter.member;
 
 import com.umc.TheGoods.domain.enums.MemberRole;
 import com.umc.TheGoods.domain.item.Category;
@@ -7,8 +7,8 @@ import com.umc.TheGoods.domain.mapping.member.MemberTerm;
 import com.umc.TheGoods.domain.member.Member;
 import com.umc.TheGoods.domain.member.PhoneAuth;
 import com.umc.TheGoods.domain.member.Term;
-import com.umc.TheGoods.web.dto.Member.MemberRequestDTO;
-import com.umc.TheGoods.web.dto.Member.MemberResponseDTO;
+import com.umc.TheGoods.web.dto.member.MemberRequestDTO;
+import com.umc.TheGoods.web.dto.member.MemberResponseDTO;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.time.LocalDateTime;

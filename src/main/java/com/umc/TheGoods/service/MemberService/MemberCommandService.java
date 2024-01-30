@@ -1,9 +1,9 @@
-package com.umc.TheGoods.service.Member;
+package com.umc.TheGoods.service.MemberService;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.umc.TheGoods.domain.member.Member;
 import com.umc.TheGoods.domain.member.PhoneAuth;
-import com.umc.TheGoods.web.dto.Member.MemberRequestDTO;
+import com.umc.TheGoods.web.dto.member.MemberRequestDTO;
 
 public interface MemberCommandService {
 

@@ -2,13 +2,13 @@ package com.umc.TheGoods.web.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.umc.TheGoods.apiPayload.ApiResponse;
-import com.umc.TheGoods.converter.Member.MemberConverter;
+import com.umc.TheGoods.converter.member.MemberConverter;
 import com.umc.TheGoods.domain.member.Member;
 import com.umc.TheGoods.domain.member.PhoneAuth;
-import com.umc.TheGoods.service.Member.MemberCommandService;
-import com.umc.TheGoods.web.dto.Member.MemberDetail;
-import com.umc.TheGoods.web.dto.Member.MemberRequestDTO;
-import com.umc.TheGoods.web.dto.Member.MemberResponseDTO;
+import com.umc.TheGoods.service.MemberService.MemberCommandService;
+import com.umc.TheGoods.web.dto.member.MemberDetail;
+import com.umc.TheGoods.web.dto.member.MemberRequestDTO;
+import com.umc.TheGoods.web.dto.member.MemberResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;

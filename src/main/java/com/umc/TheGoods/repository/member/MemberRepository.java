@@ -1,4 +1,4 @@
-package com.umc.TheGoods.repository;
+package com.umc.TheGoods.repository.member;
 
 import com.umc.TheGoods.domain.member.Member;
 import org.springframework.data.jpa.repository.JpaRepository;

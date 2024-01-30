@@ -1,4 +1,4 @@
-package com.umc.TheGoods.repository;
+package com.umc.TheGoods.repository.member;
 
 import com.umc.TheGoods.domain.member.PhoneAuth;
 import org.springframework.data.jpa.repository.JpaRepository;

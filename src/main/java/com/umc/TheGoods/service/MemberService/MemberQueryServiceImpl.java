@@ -1,7 +1,7 @@
-package com.umc.TheGoods.service.Member;
+package com.umc.TheGoods.service.MemberService;
 
 import com.umc.TheGoods.domain.member.Member;
-import com.umc.TheGoods.repository.MemberRepository;
+import com.umc.TheGoods.repository.member.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

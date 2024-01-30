@@ -1,4 +1,4 @@
-package com.umc.TheGoods.web.dto.Member;
+package com.umc.TheGoods.web.dto.member;
 
 import com.umc.TheGoods.domain.enums.Gender;
 import com.umc.TheGoods.validation.annotation.ExistCategory;

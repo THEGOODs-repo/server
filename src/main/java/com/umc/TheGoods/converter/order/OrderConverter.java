@@ -1,4 +1,4 @@
-package com.umc.TheGoods.converter.orders;
+package com.umc.TheGoods.converter.order;
 
 import com.umc.TheGoods.domain.enums.OrderStatus;
 import com.umc.TheGoods.domain.order.OrderDetail;
