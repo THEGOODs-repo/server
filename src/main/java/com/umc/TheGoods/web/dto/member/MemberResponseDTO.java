@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
-
 public class MemberResponseDTO {
 
     @Builder
@@ -29,6 +28,7 @@ public class MemberResponseDTO {
     public static class LoginResultDTO {
         String jwt;
     }
+
 
     @Builder
     @Getter
@@ -63,4 +63,5 @@ public class MemberResponseDTO {
     public static class NicknameDuplicateConfirmResultDTO {
         Boolean checkNickname;
     }
+
 }

@@ -41,6 +41,10 @@ public enum ErrorStatus implements BaseErrorCode {
 
     //Term
     TERM_NOT_FOUND(HttpStatus.NOT_FOUND, "TERM4001", "해당 약관이 존재하지 않습니다.");
+
+    //tag error
+    TAG_NOT_FOUND(HttpStatus.BAD_REQUEST, "TAG4001", "존재하지 않는 태그입니다.");
+
     private final HttpStatus httpStatus;
     private final String code;
     private final String message;

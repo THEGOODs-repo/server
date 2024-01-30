@@ -46,6 +46,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     private final TermRepository termRepository;
     private final PhoneAuthRepository phoneAuthRepository;
 
+
     @Value("${jwt.token.secret}")
     private String key; // 토큰 만들어내는 key값
     private int expiredMs = 1000 * 60 * 60 * 24 * 5;// 토큰 만료 시간 1일
@@ -62,9 +63,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
 
         // userNAme 중복 체크
         memberRepository.findByNickname(request.getNickname())
-                .ifPresent(user -> {
-                    throw new MemberHandler(ErrorStatus.MEMBER_NICKNAME_DUPLICATED);
-                });
+                .ifPresent(user -> {throw new MemberHandler(ErrorStatus.MEMBER_NICKNAME_DUPLICATED);});
 
         //저장
         Member member = MemberConverter.toMember(request, encoder);
@@ -85,6 +84,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
         HashMap<Term, Boolean> termMap = new HashMap<>();
         for (int i = 0; i < request.getMemberTerm().size(); i++) {
             termMap.put(termRepository.findById(i + 1L).orElseThrow(() -> new MemberHandler(ErrorStatus.TERM_NOT_FOUND)), request.getMemberTerm().get(i));
+
         }
 
         List<MemberTerm> memberTermList = MemberConverter.toMemberTermList(termMap);

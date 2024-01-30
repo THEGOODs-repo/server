@@ -35,6 +35,7 @@ public class MemberRequestDTO {
         private String password;
     }
 
+
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
@@ -64,4 +65,5 @@ public class MemberRequestDTO {
     public static class NicknameDuplicateConfirmDTO {
         private String nickname;
     }
+
 }

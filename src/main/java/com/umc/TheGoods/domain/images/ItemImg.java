@@ -27,4 +27,11 @@ public class ItemImg extends BaseDateTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "item_id", nullable = false)
     private Item item;
+
+    public void setItem(Item item){
+        if(this.item != null)
+            item.getItemImgList().remove(this);
+        this.item = item;
+        item.getItemImgList().add(this);
+    }
 }

@@ -102,7 +102,6 @@ public class Item extends BaseDateTimeEntity {
     @OneToMany(mappedBy = "item", cascade = CascadeType.ALL)
     private List<Inquiry> inquiryList = new ArrayList<>();
 
-
     // 판매수, 재고 관련 메소드
     public Item updateStock(Integer i) {
         this.stock += i;
@@ -112,5 +111,33 @@ public class Item extends BaseDateTimeEntity {
     public Item updateSales(Integer i) {
         this.salesCount += i;
         return this;
+    }
+
+    public void setCategory(Category category){
+        if(this.category != null)
+            category.getItemList().remove(this);
+        this.category = category;
+        category.getItemList().add(this);
+    }
+
+    public void setMember(Member member){
+        if(this.member != null)
+            member.getItemList().remove(this);
+        this.member = member;
+        member.getItemList().add(this);
+    }
+
+    public List<ItemOption> getItemOptionList() {
+        if (this.itemOptionList == null) {
+            this.itemOptionList = new ArrayList<>();
+        }
+        return this.itemOptionList;
+    }
+
+    public List<ItemImg> getItemImgList() {
+        if (this.itemImgList == null) {
+            this.itemImgList = new ArrayList<>();
+        }
+        return this.itemImgList;
     }
 }

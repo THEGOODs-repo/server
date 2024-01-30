@@ -5,7 +5,7 @@ import com.umc.TheGoods.domain.item.Item;
 import com.umc.TheGoods.domain.item.ItemOption;
 import com.umc.TheGoods.service.ItemService.ItemQueryService;
 import com.umc.TheGoods.validation.annotation.OrderAvailable;
-import com.umc.TheGoods.web.dto.order.OrderRequest;
+import com.umc.TheGoods.web.dto.order.OrderRequestDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -26,8 +26,8 @@ public class OrderAvailableValidator implements ConstraintValidator<OrderAvailab
 
     @Override
     public boolean isValid(Object value, ConstraintValidatorContext context) {
-        if (value instanceof OrderRequest.OrderItemDto) {
-            OrderRequest.OrderItemDto request = (OrderRequest.OrderItemDto) value;
+        if (value instanceof OrderRequestDTO.OrderItemDto) {
+            OrderRequestDTO.OrderItemDto request = (OrderRequestDTO.OrderItemDto) value;
 
             // item 존재 여부 검증
             Optional<Item> item = itemQueryService.findItemById(request.getItemId());
