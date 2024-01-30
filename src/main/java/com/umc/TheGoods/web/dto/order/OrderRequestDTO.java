@@ -1,5 +1,6 @@
 package com.umc.TheGoods.web.dto.order;
 
+import com.umc.TheGoods.validation.annotation.OrderAvailable;
 import lombok.Getter;
 
 import javax.validation.Valid;
@@ -46,7 +47,7 @@ public class OrderRequestDTO {
     }
 
     @Getter
-    //@OrderAvailable
+    @OrderAvailable
     public static class OrderItemDto {
         @NotNull
         Long itemId;
