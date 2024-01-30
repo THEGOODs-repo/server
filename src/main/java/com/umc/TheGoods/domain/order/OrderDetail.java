@@ -32,4 +32,20 @@ public class OrderDetail extends BaseDateTimeEntity {
     @JoinColumn(name = "item_option_id")
     private ItemOption itemOption;
 
+    public void setOrderItem(OrderItem orderItem) {
+        if (this.orderItem != null) {
+            this.orderItem.getOrderDetailList().remove(this);
+        }
+        this.orderItem = orderItem;
+        orderItem.getOrderDetailList().add(this);
+    }
+
+    public void setItemOption(ItemOption itemOption) {
+        if (this.itemOption != null) {
+            this.itemOption.getOrderDetailList().remove(this);
+        }
+        this.itemOption = itemOption;
+        itemOption.getOrderDetailList().add(this);
+    }
+
 }
