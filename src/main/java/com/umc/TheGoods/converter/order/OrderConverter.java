@@ -19,7 +19,9 @@ public class OrderConverter {
                 .build();
     }
 
+
     public static Orders toOrders(OrderRequestDTO.OrderAddDto request) {
+
         PayType payType = null;
         switch (request.getPayType()) {
             case "CARD":
@@ -44,7 +46,9 @@ public class OrderConverter {
                 .build();
     }
 
+
     public static OrderDetail toOrderDetail(OrderRequestDTO.OrderItemDto orderItemDto, Long price) {
+
         return OrderDetail.builder()
                 .amount(orderItemDto.getAmount())
                 .orderPrice(price)
