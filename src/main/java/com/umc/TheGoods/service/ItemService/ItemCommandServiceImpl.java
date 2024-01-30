@@ -18,7 +18,7 @@ import com.umc.TheGoods.repository.Item.ItemImgRepository;
 import com.umc.TheGoods.repository.Item.ItemOptionRepository;
 import com.umc.TheGoods.repository.Item.ItemRepository;
 import com.umc.TheGoods.service.CategoryService.CategoryQueryService;
-import com.umc.TheGoods.web.dto.ItemRequestDTO;
+import com.umc.TheGoods.web.dto.Item.ItemRequestDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
