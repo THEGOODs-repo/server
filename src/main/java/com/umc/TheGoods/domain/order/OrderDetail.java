@@ -43,7 +43,7 @@ public class OrderDetail extends BaseDateTimeEntity {
     private Item item;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "item_option_id", nullable = false)
+    @JoinColumn(name = "item_option_id")
     private ItemOption itemOption;
 
     @OneToOne(mappedBy = "orderDetail", cascade = CascadeType.ALL)
@@ -51,4 +51,29 @@ public class OrderDetail extends BaseDateTimeEntity {
 
     @OneToOne(mappedBy = "orderDetail", cascade = CascadeType.ALL)
     private Review review;
+
+    // 연관관계 메소드
+    public void setOrders(Orders orders) {
+        if (this.orders != null) {
+            this.orders.getOrderDetailList().remove(this);
+        }
+        this.orders = orders;
+        orders.getOrderDetailList().add(this);
+    }
+
+    public void setItem(Item item) {
+        if (this.item != null) {
+            this.item.getOrderDetailList().remove(this);
+        }
+        this.item = item;
+        item.getOrderDetailList().add(this);
+    }
+
+    public void setItemOption(ItemOption itemOption) {
+        if (this.itemOption != null) {
+            this.itemOption.getOrderDetailList().remove(this);
+        }
+        this.itemOption = itemOption;
+        itemOption.getOrderDetailList().add(this);
+    }
 }
