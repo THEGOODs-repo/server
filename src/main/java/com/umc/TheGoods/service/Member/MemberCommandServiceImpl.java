@@ -28,10 +28,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.umc.TheGoods.config.springSecurity.utils.JwtUtil.createJwt;
@@ -66,7 +63,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
         // userNAme 중복 체크
         memberRepository.findByNickname(request.getNickname())
                 .ifPresent(user -> {
-                    throw new MemberHandler(ErrorStatus.MEMBER_NICNAME_DUPLICATED);
+                    throw new MemberHandler(ErrorStatus.MEMBER_NICKNAME_DUPLICATED);
                 });
 
         //저장
@@ -171,15 +168,28 @@ public class MemberCommandServiceImpl implements MemberCommandService {
 
     @Override
     public Boolean confirmPhoneAuth(MemberRequestDTO.PhoneAuthConfirmDTO request) {
-        Boolean check = false;
+        Boolean checkPhone = false;
         PhoneAuth phoneAuth = phoneAuthRepository.findByPhone(request.getPhone())
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_PHONE_AUTH_ERROR));
 
         if (phoneAuth.getCode().equals(request.getCode())) {
-            check = true;
+            checkPhone = true;
         }
 
-        return check;
+        return checkPhone;
+    }
+
+    @Override
+    public Boolean confirmEmailDuplicate(MemberRequestDTO.EmailDuplicateConfirmDTO request) {
+
+        Optional<Member> member = memberRepository.findByEmail(request.getEmail());
+        log.info(member.orElseThrow().getEmail());
+        Boolean checkEmail = false;
+
+        if (!member.get().getEmail().isEmpty()) {
+            checkEmail = true;
+        }
+        return checkEmail;
     }
 
     /**

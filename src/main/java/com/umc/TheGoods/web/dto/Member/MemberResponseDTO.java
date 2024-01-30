@@ -43,8 +43,15 @@ public class MemberResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class PhoneAuthConfirmResultDTO {
-        Boolean check;
+        Boolean checkPhone;
     }
 
 
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class EmailDuplicateConfirmResultDTO {
+        Boolean checkEmail;
+    }
 }

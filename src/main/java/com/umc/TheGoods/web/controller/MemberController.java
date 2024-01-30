@@ -84,8 +84,16 @@ public class MemberController {
     @PostMapping("phone/auth/verify")
     @Operation(summary = "휴대폰 인증 번호 확인 API", description = "request: 인증 코드, response : 인증완료 true")
     public ApiResponse<MemberResponseDTO.PhoneAuthConfirmResultDTO> phoneAuth(@RequestBody MemberRequestDTO.PhoneAuthConfirmDTO request) {
-        Boolean check = memberCommandService.confirmPhoneAuth(request);
+        Boolean checkPhone = memberCommandService.confirmPhoneAuth(request);
 
-        return ApiResponse.onSuccess(MemberConverter.toPhoneAuthConfirmResultDTO(check));
+        return ApiResponse.onSuccess(MemberConverter.toPhoneAuthConfirmResultDTO(checkPhone));
+    }
+
+    @PostMapping("email/duplicate")
+    @Operation(summary = "이메일 중복 체크 API", description = "request : 이메일, response : 중복이면 true, 중복이 아니면 false")
+    public ApiResponse<MemberResponseDTO.EmailDuplicateConfirmResultDTO> emailDuplicate(@RequestBody MemberRequestDTO.EmailDuplicateConfirmDTO request) {
+        Boolean checkEmail = memberCommandService.confirmEmailDuplicate(request);
+
+        return ApiResponse.onSuccess(MemberConverter.toEmailDuplicateConfirmResultDTO(checkEmail));
     }
 }

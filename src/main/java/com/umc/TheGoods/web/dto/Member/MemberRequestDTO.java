@@ -50,4 +50,12 @@ public class MemberRequestDTO {
         private String phone;
         private String code;
     }
+
+
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class EmailDuplicateConfirmDTO {
+        private String email;
+    }
 }

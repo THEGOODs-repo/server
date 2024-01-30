@@ -17,5 +17,7 @@ public interface MemberCommandService {
 
     Boolean confirmPhoneAuth(MemberRequestDTO.PhoneAuthConfirmDTO request);
 
+    Boolean confirmEmailDuplicate(MemberRequestDTO.EmailDuplicateConfirmDTO request);
+
 
 }

@@ -88,9 +88,15 @@ public class MemberConverter {
                 .build();
     }
 
-    public static MemberResponseDTO.PhoneAuthConfirmResultDTO toPhoneAuthConfirmResultDTO(Boolean check) {
+    public static MemberResponseDTO.PhoneAuthConfirmResultDTO toPhoneAuthConfirmResultDTO(Boolean checkPhone) {
         return MemberResponseDTO.PhoneAuthConfirmResultDTO.builder()
-                .check(check)
+                .checkPhone(checkPhone)
+                .build();
+    }
+
+    public static MemberResponseDTO.EmailDuplicateConfirmResultDTO toEmailDuplicateConfirmResultDTO(Boolean checkEmail) {
+        return MemberResponseDTO.EmailDuplicateConfirmResultDTO.builder()
+                .checkEmail(checkEmail)
                 .build();
     }
 }
