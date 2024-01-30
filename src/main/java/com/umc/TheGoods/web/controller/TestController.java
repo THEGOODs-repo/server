@@ -38,7 +38,11 @@ public class TestController {
     @Operation(summary = "테스트용 데이터 생성 API", description = "회원, 상품, 상품 옵션 dummy data를 생성해 db에 저장합니다. category, term, tag 데이터는 db에 수동으로 입력해야 합니다. (id가 1인 category, term, tag 데이터가 필요합니다.) \n\n " +
             "category 생성 sql: INSERT INTO category(name,created_at,updated_at) VALUES ('아이돌',now(),now());\n\n" +
             "tag 생성 sql: INSERT INTO tag(name,created_at,updated_at) VALUES ('포카',now(),now());\n\n" +
-            "term 생성 sql: INSERT INTO term(title,created_at,updated_at) VALUES ('정보 이용 동의',now(),now());")
+            "term 생성 sql: INSERT INTO term(title,created_at,updated_at) VALUES ('정보 이용 동의',now(),now());\n\n" +
+            "생성된 회원 계정은 아래와 같습니다.\n\n" +
+            "1. 구매자 계정 - email: testbuyer@gmail.com, password: 12345678\n\n" +
+            "2. 판매자 계정 - email: testseller@gmail.com, password: 12345678\n\n" +
+            "3. 비로그인 주문용 계정 - email: nologinuser@gmail.com, password:12345678")
     public String setTestData() {
 
         // 회원 가입
@@ -50,9 +54,12 @@ public class TestController {
 
         MemberRequestDTO.JoinDTO joinBuyerDTO = new MemberRequestDTO.JoinDTO("test_buyer", "12345678", "testbuyer@gmail.com", date, "01012345678", Gender.MALE, termAgreeList, memberCategoryList);
         MemberRequestDTO.JoinDTO joinSellerDTO = new MemberRequestDTO.JoinDTO("test_seller", "12345678", "testseller@gmail.com", date, "01012341234", Gender.MALE, termAgreeList, memberCategoryList);
+        MemberRequestDTO.JoinDTO noLoginUserDTO = new MemberRequestDTO.JoinDTO("no_login_user", "12345678", "nologinuser@gmail.com", date, "01087654321", Gender.MALE, termAgreeList, memberCategoryList);
+
 
         memberCommandService.join(joinBuyerDTO);
         memberCommandService.join(joinSellerDTO);
+        memberCommandService.join(noLoginUserDTO);
 
         // item 및 itemOption 등록
         Member member = memberQueryService.findMemberById(2L).get();
