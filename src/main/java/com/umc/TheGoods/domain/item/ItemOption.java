@@ -45,4 +45,11 @@ public class ItemOption extends BaseDateTimeEntity {
         this.stock += i;
         return this;
     }
+
+    public void setItem(Item item){
+        if(this.item != null)
+            item.getItemOptionList().remove(this);
+        this.item = item;
+        item.getItemOptionList().add(this);
+    }
 }

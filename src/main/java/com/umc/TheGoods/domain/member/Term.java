@@ -33,8 +33,6 @@ public class Term extends BaseDateTimeEntity {
     @ColumnDefault("false")
     private Boolean essential;
 
-
-
     @OneToMany(mappedBy = "term", cascade = CascadeType.ALL)
     private List<MemberTerm> memberTermList = new ArrayList<>();
 }
