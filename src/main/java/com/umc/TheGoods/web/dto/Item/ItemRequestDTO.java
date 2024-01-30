@@ -1,7 +1,9 @@
-package com.umc.TheGoods.web.dto;
+package com.umc.TheGoods.web.dto.Item;
 
 import com.umc.TheGoods.domain.item.Category;
 import com.umc.TheGoods.domain.item.ItemOption;
+import com.umc.TheGoods.validation.annotation.ExistCategory;
+import com.umc.TheGoods.validation.annotation.ExistTag;
 import lombok.Getter;
 import org.springframework.lang.Nullable;
 
@@ -50,6 +52,7 @@ public class ItemRequestDTO {
         @Nullable
         List<itemOptionDTO> itemOptionList;
         @NotNull
+        @ExistTag
         List<Long> itemTag;
     }
 

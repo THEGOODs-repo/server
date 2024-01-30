@@ -1,4 +1,4 @@
-package com.umc.TheGoods.web.dto;
+package com.umc.TheGoods.web.dto.Item;
 
 import lombok.*;
 
