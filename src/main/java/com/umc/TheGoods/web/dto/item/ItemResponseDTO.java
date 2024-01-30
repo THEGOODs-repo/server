@@ -1,6 +1,9 @@
-package com.umc.TheGoods.web.dto.Item;
+package com.umc.TheGoods.web.dto.item;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
@@ -10,7 +13,7 @@ public class ItemResponseDTO {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class UploadItemResultDTO{
+    public static class UploadItemResultDTO {
         Long itemId;
         LocalDateTime createdAt;
     }

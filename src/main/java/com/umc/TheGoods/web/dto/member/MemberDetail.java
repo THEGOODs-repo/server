@@ -1,4 +1,4 @@
-package com.umc.TheGoods.web.dto.Member;
+package com.umc.TheGoods.web.dto.member;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

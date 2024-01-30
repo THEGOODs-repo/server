@@ -1,4 +1,4 @@
-package com.umc.TheGoods.web.dto.Order;
+package com.umc.TheGoods.web.dto.order;
 
 import com.umc.TheGoods.validation.annotation.OrderAvailable;
 import lombok.Getter;
