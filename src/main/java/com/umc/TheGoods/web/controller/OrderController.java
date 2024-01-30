@@ -40,9 +40,16 @@ public class OrderController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
     })
     public ApiResponse<OrderResponseDTO.OrderAddResultDto> order(@RequestBody @Valid OrderRequestDTO.OrderAddDto request, Authentication authentication) {
-        // request에서 member id 추출해 Member 엔티티 찾기
-        MemberDetail memberDetail = (MemberDetail) authentication.getPrincipal();
-        Member member = memberQueryService.findMemberById(memberDetail.getMemberId()).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        Member member = null;
+
+        // 비로그인 요청인 경우 비회원 계정 불러오기
+        if (authentication == null) {
+            member = memberQueryService.findMemberByNickname("no_login_user").get();
+        } else {
+            // request에서 member id 추출해 Member 엔티티 찾기
+            MemberDetail memberDetail = (MemberDetail) authentication.getPrincipal();
+            member = memberQueryService.findMemberById(memberDetail.getMemberId()).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        }
 
         Orders orders = orderCommandService.create(request, member);
 
