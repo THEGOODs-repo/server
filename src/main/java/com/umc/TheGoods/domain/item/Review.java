@@ -6,6 +6,7 @@ import com.umc.TheGoods.domain.images.ReviewImg;
 import com.umc.TheGoods.domain.member.Member;
 import com.umc.TheGoods.domain.order.OrderItem;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 
@@ -29,6 +30,7 @@ public class Review extends BaseDateTimeEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(columnDefinition = "VARCHAR(10)", nullable = false)
+    @ColumnDefault("'SHOW'")
     private ReviewStatus status;
 
     @ManyToOne(fetch = FetchType.LAZY)

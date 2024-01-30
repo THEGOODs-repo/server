@@ -45,6 +45,7 @@ public class MemberConverter {
                 .memberRole(MemberRole.BUYER)
                 .memberCategoryList(new ArrayList<>())
                 .memberTermList(new ArrayList<>())
+                .itemList(new ArrayList<>())
                 .build();
 
     }

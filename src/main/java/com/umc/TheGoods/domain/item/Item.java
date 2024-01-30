@@ -11,6 +11,7 @@ import com.umc.TheGoods.domain.member.Member;
 import com.umc.TheGoods.domain.order.OrderItem;
 import com.umc.TheGoods.domain.types.DeliveryType;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -34,6 +35,7 @@ public class Item extends BaseDateTimeEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(columnDefinition = "VARCHAR(20)", nullable = false)
+    @ColumnDefault("'ONSALE'")
     private ItemStatus status;
 
     @Column(length = 6)
