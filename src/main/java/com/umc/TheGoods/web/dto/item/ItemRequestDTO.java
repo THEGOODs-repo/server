@@ -1,22 +1,18 @@
-package com.umc.TheGoods.web.dto.Item;
+package com.umc.TheGoods.web.dto.item;
 
-import com.umc.TheGoods.domain.item.Category;
-import com.umc.TheGoods.domain.item.ItemOption;
-import com.umc.TheGoods.validation.annotation.ExistCategory;
 import com.umc.TheGoods.validation.annotation.ExistTag;
 import lombok.Getter;
 import org.springframework.lang.Nullable;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Null;
 import java.time.LocalDate;
 import java.util.List;
 
 public class ItemRequestDTO {
 
     @Getter
-    public static class UploadItemDTO{
+    public static class UploadItemDTO {
         @NotBlank
         String name;
         @NotNull
@@ -57,7 +53,7 @@ public class ItemRequestDTO {
     }
 
     @Getter
-    public static class itemImgDTO{
+    public static class itemImgDTO {
         @Nullable
         Boolean isThumbnail;
         @NotNull
@@ -65,7 +61,7 @@ public class ItemRequestDTO {
     }
 
     @Getter
-    public static class itemOptionDTO{
+    public static class itemOptionDTO {
         @NotNull
         String name;
         @NotNull

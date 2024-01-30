@@ -4,21 +4,24 @@ package com.umc.TheGoods.web.controller;
 import com.umc.TheGoods.apiPayload.ApiResponse;
 import com.umc.TheGoods.apiPayload.code.status.ErrorStatus;
 import com.umc.TheGoods.apiPayload.exception.handler.MemberHandler;
-import com.umc.TheGoods.converter.Item.ItemConverter;
+import com.umc.TheGoods.converter.item.ItemConverter;
 import com.umc.TheGoods.domain.item.Item;
 import com.umc.TheGoods.domain.member.Member;
 import com.umc.TheGoods.service.ItemService.ItemCommandService;
 import com.umc.TheGoods.service.MemberService.MemberQueryService;
-import com.umc.TheGoods.web.dto.Item.ItemRequestDTO;
-import com.umc.TheGoods.web.dto.Item.ItemResponseDTO;
-import com.umc.TheGoods.web.dto.Member.MemberDetail;
+import com.umc.TheGoods.web.dto.item.ItemRequestDTO;
+import com.umc.TheGoods.web.dto.item.ItemResponseDTO;
+import com.umc.TheGoods.web.dto.member.MemberDetail;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.Authentication;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 
@@ -39,12 +42,12 @@ public class ItemRestController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공")
     })
     public ApiResponse<ItemResponseDTO.UploadItemResultDTO> upload(@RequestBody @Valid ItemRequestDTO.UploadItemDTO request,
-                                                                   Authentication authentication){
+                                                                   Authentication authentication) {
 
         MemberDetail memberDetail = (MemberDetail) authentication.getPrincipal();
         Member member = memberQueryService.findMemberById(memberDetail.getMemberId()).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
-        Item item = itemCommandService.uploadItem(member,request);
+        Item item = itemCommandService.uploadItem(member, request);
         return ApiResponse.onSuccess(ItemConverter.toUploadItemResultDTO(item));
     }
 }

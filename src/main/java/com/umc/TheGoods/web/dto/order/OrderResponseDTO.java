@@ -1,4 +1,4 @@
-package com.umc.TheGoods.web.dto.Order;
+package com.umc.TheGoods.web.dto.order;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -1,28 +1,28 @@
-package com.umc.TheGoods.converter.Item;
+package com.umc.TheGoods.converter.item;
 
 import com.umc.TheGoods.domain.enums.ItemStatus;
 import com.umc.TheGoods.domain.item.Item;
 import com.umc.TheGoods.domain.types.DeliveryType;
-import com.umc.TheGoods.web.dto.Item.ItemRequestDTO;
-import com.umc.TheGoods.web.dto.Item.ItemResponseDTO;
+import com.umc.TheGoods.web.dto.item.ItemRequestDTO;
+import com.umc.TheGoods.web.dto.item.ItemResponseDTO;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 public class ItemConverter {
 
-    public static ItemResponseDTO.UploadItemResultDTO toUploadItemResultDTO(Item item){
+    public static ItemResponseDTO.UploadItemResultDTO toUploadItemResultDTO(Item item) {
         return ItemResponseDTO.UploadItemResultDTO.builder()
                 .itemId(item.getId())
                 .createdAt(LocalDateTime.now())
                 .build();
     }
 
-    public static Item toItem(ItemRequestDTO.UploadItemDTO request){
+    public static Item toItem(ItemRequestDTO.UploadItemDTO request) {
 
         DeliveryType deliveryType = null;
 
-        switch (request.getDeliveryType()){
+        switch (request.getDeliveryType()) {
             case 1:
                 deliveryType = DeliveryType.PO;
                 break;

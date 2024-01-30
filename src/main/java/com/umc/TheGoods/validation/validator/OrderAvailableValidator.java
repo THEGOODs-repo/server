@@ -5,7 +5,7 @@ import com.umc.TheGoods.domain.item.Item;
 import com.umc.TheGoods.domain.item.ItemOption;
 import com.umc.TheGoods.service.ItemService.ItemQueryService;
 import com.umc.TheGoods.validation.annotation.OrderAvailable;
-import com.umc.TheGoods.web.dto.Order.OrderRequestDTO;
+import com.umc.TheGoods.web.dto.order.OrderRequestDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
