@@ -8,7 +8,7 @@ import com.umc.TheGoods.domain.mapping.Dibs;
 import com.umc.TheGoods.domain.mapping.Tag.ItemTag;
 import com.umc.TheGoods.domain.mapping.ViewSearch.ItemView;
 import com.umc.TheGoods.domain.member.Member;
-import com.umc.TheGoods.domain.order.OrderDetail;
+import com.umc.TheGoods.domain.order.OrderItem;
 import com.umc.TheGoods.domain.types.DeliveryType;
 import lombok.*;
 
@@ -85,7 +85,7 @@ public class Item extends BaseDateTimeEntity {
     private List<ItemOption> itemOptionList = new ArrayList<>();
 
     @OneToMany(mappedBy = "item", cascade = CascadeType.ALL)
-    private List<OrderDetail> orderDetailList = new ArrayList<>();
+    private List<OrderItem> orderItemList = new ArrayList<>();
 
     @OneToMany(mappedBy = "item", cascade = CascadeType.ALL)
     private List<ItemTag> itemTagList = new ArrayList<>();
@@ -113,15 +113,15 @@ public class Item extends BaseDateTimeEntity {
         return this;
     }
 
-    public void setCategory(Category category){
-        if(this.category != null)
+    public void setCategory(Category category) {
+        if (this.category != null)
             category.getItemList().remove(this);
         this.category = category;
         category.getItemList().add(this);
     }
 
-    public void setMember(Member member){
-        if(this.member != null)
+    public void setMember(Member member) {
+        if (this.member != null)
             member.getItemList().remove(this);
         this.member = member;
         member.getItemList().add(this);

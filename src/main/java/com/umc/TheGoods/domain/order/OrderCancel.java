@@ -25,6 +25,6 @@ public class OrderCancel extends BaseDateTimeEntity {
     private String reasonDetail;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "order_detail_id", nullable = false)
-    private OrderDetail orderDetail;
+    @JoinColumn(name = "order_item_id", nullable = false)
+    private OrderItem orderItem;
 }
