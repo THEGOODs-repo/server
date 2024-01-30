@@ -33,4 +33,11 @@ public class ItemTag extends BaseDateTimeEntity {
         this.item = item;
         item.getItemTagList().add(this);
     }
+
+    public void setTag(Tag tag){
+        if(this.tag != null)
+            tag.getItemTagList().remove(this);
+        this.tag = tag;
+        tag.getItemTagList().add(this);
+    }
 }

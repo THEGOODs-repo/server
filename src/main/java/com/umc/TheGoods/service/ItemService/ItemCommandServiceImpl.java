@@ -57,6 +57,10 @@ public class ItemCommandServiceImpl implements ItemCommandService{
 
         itemTagList.forEach(itemTag -> {itemTag.setItem(newItem);});
 
+        for(Tag tag : tagList){
+            itemTagList.forEach(itemTag -> itemTag.setTag(tag));
+        }
+
         List<ItemImg> itemImgList = request.getItemImgUrlList().stream().map(
                 itemImgDTO -> ItemImageConverter.toItemImg(itemImgDTO)).collect(Collectors.toList()
         );
