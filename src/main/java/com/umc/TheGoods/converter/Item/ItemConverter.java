@@ -3,8 +3,8 @@ package com.umc.TheGoods.converter.Item;
 import com.umc.TheGoods.domain.enums.ItemStatus;
 import com.umc.TheGoods.domain.item.Item;
 import com.umc.TheGoods.domain.types.DeliveryType;
-import com.umc.TheGoods.web.dto.ItemRequestDTO;
-import com.umc.TheGoods.web.dto.ItemResponseDTO;
+import com.umc.TheGoods.web.dto.Item.ItemRequestDTO;
+import com.umc.TheGoods.web.dto.Item.ItemResponseDTO;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -54,7 +54,7 @@ public class ItemConverter {
                 .deliveryType(deliveryType)
                 .description(request.getDescription())
                 .deliveryFee(request.getDeliveryFee())
-                .delivery_date(request.getDeliveryDate())
+                .deliveryDate(request.getDeliveryDate())
                 .isLimitless(request.getIsLimitless())
                 .startDate(request.getStartDate())
                 .endDate(request.getEndDate())

@@ -1,7 +1,7 @@
 package com.umc.TheGoods.converter.Item;
 
 import com.umc.TheGoods.domain.item.ItemOption;
-import com.umc.TheGoods.web.dto.ItemRequestDTO;
+import com.umc.TheGoods.web.dto.Item.ItemRequestDTO;
 
 public class ItemOptionConverter {
 
