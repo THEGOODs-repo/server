@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 import java.util.Date;
 import java.util.List;
 
-
 public class MemberRequestDTO {
 
     @Getter
@@ -57,5 +56,12 @@ public class MemberRequestDTO {
     @AllArgsConstructor
     public static class EmailDuplicateConfirmDTO {
         private String email;
+    }
+
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class NicknameDuplicateConfirmDTO {
+        private String nickname;
     }
 }

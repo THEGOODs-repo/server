@@ -19,5 +19,7 @@ public interface MemberCommandService {
 
     Boolean confirmEmailDuplicate(MemberRequestDTO.EmailDuplicateConfirmDTO request);
 
+    Boolean confirmNicknameDuplicate(MemberRequestDTO.NicknameDuplicateConfirmDTO request);
+
 
 }

@@ -183,13 +183,24 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     public Boolean confirmEmailDuplicate(MemberRequestDTO.EmailDuplicateConfirmDTO request) {
 
         Optional<Member> member = memberRepository.findByEmail(request.getEmail());
-        log.info(member.orElseThrow().getEmail());
         Boolean checkEmail = false;
 
-        if (!member.get().getEmail().isEmpty()) {
+        if (!member.isPresent()) {
             checkEmail = true;
         }
         return checkEmail;
+    }
+
+    @Override
+    public Boolean confirmNicknameDuplicate(MemberRequestDTO.NicknameDuplicateConfirmDTO request) {
+        Optional<Member> member = memberRepository.findByNickname(request.getNickname());
+
+        Boolean checkNickname = false;
+
+        if (!member.isPresent()) {
+            checkNickname = true;
+        }
+        return checkNickname;
     }
 
     /**

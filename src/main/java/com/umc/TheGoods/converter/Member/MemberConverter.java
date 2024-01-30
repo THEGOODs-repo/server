@@ -99,4 +99,10 @@ public class MemberConverter {
                 .checkEmail(checkEmail)
                 .build();
     }
+
+    public static MemberResponseDTO.NicknameDuplicateConfirmResultDTO toNicknameDuplicateConfirmResultDTO(Boolean checkNickname) {
+        return MemberResponseDTO.NicknameDuplicateConfirmResultDTO.builder()
+                .checkNickname(checkNickname)
+                .build();
+    }
 }

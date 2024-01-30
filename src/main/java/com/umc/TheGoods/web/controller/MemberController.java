@@ -90,10 +90,18 @@ public class MemberController {
     }
 
     @PostMapping("email/duplicate")
-    @Operation(summary = "이메일 중복 체크 API", description = "request : 이메일, response : 중복이면 true, 중복이 아니면 false")
+    @Operation(summary = "이메일 중복 체크 API", description = "request : 이메일, response : 중복이면 false, 중복이 아니면 true")
     public ApiResponse<MemberResponseDTO.EmailDuplicateConfirmResultDTO> emailDuplicate(@RequestBody MemberRequestDTO.EmailDuplicateConfirmDTO request) {
         Boolean checkEmail = memberCommandService.confirmEmailDuplicate(request);
 
         return ApiResponse.onSuccess(MemberConverter.toEmailDuplicateConfirmResultDTO(checkEmail));
+    }
+
+    @PostMapping("nickname/duplicate")
+    @Operation(summary = "닉네임 중복 체크 API", description = "request : 닉네임, response: 중복이면 false, 중복 아니면 true")
+    public ApiResponse<MemberResponseDTO.NicknameDuplicateConfirmResultDTO> nicknameDuplicate(@RequestBody MemberRequestDTO.NicknameDuplicateConfirmDTO request) {
+        Boolean checkNickname = memberCommandService.confirmNicknameDuplicate(request);
+
+        return ApiResponse.onSuccess(MemberConverter.toNicknameDuplicateConfirmResultDTO(checkNickname));
     }
 }
