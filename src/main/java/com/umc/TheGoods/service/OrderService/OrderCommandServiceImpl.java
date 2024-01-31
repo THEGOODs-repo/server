@@ -86,7 +86,7 @@ public class OrderCommandServiceImpl implements OrderCommandService {
 
                     // item의 판매량, 재고 업데이트
                     item.updateSales(orderDetail.getAmount());
-                    item.updateSales(-orderDetail.getAmount());
+                    item.updateStock(-orderDetail.getAmount());
 
                     // OrderItem 주문 상품 합산 금액 업데이트
                     orderItem.updateTotalPrice(orderDetail.getOrderPrice());
