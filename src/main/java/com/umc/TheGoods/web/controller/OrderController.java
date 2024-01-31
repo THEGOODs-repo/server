@@ -13,6 +13,7 @@ import com.umc.TheGoods.service.MemberService.MemberQueryService;
 import com.umc.TheGoods.service.OrderService.OrderCommandService;
 import com.umc.TheGoods.service.OrderService.OrderQueryService;
 import com.umc.TheGoods.validation.annotation.CheckPage;
+import com.umc.TheGoods.validation.annotation.ExistOrderItem;
 import com.umc.TheGoods.web.dto.member.MemberDetail;
 import com.umc.TheGoods.web.dto.order.OrderRequestDTO;
 import com.umc.TheGoods.web.dto.order.OrderResponseDTO;
@@ -91,6 +92,7 @@ public class OrderController {
         return ApiResponse.onSuccess(OrderConverter.toOrderPreViewListDTO(orderItemList));
     }
 
+
     @GetMapping("/{orderItemId}")
     @Operation(summary = "주문 상세 내역 조회 API", description = "주문 상세 내역을 조회하는 API 입니다. (구매자)\n\n" +
             "orderItemId(상품 주문 내역 id)을 보내주세요.")
@@ -99,7 +101,7 @@ public class OrderController {
     })
     @Parameter(name = "orderItemId", description = "주문 상품 내역 id, path variable 입니다.")
     public ApiResponse<OrderResponseDTO.OrderItemViewDTO> orderItemView(
-            @PathVariable(name = "orderItemId") Long orderItemId,
+            @PathVariable(name = "orderItemId") @ExistOrderItem Long orderItemId,
             Authentication authentication
     ) {
         Member member = null;

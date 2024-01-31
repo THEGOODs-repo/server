@@ -5,9 +5,7 @@ import com.umc.TheGoods.apiPayload.exception.handler.OrderHandler;
 import com.umc.TheGoods.domain.enums.OrderStatus;
 import com.umc.TheGoods.domain.member.Member;
 import com.umc.TheGoods.domain.order.OrderItem;
-import com.umc.TheGoods.repository.order.OrderDetailRepository;
 import com.umc.TheGoods.repository.order.OrderItemRepository;
-import com.umc.TheGoods.repository.order.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -22,8 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class OrderQueryServiceImpl implements OrderQueryService {
     private final OrderItemRepository orderItemRepository;
-    private final OrderDetailRepository orderDetailRepository;
-    private final OrderRepository orderRepository;
 
     Integer pageSize = 10;
 
@@ -55,5 +51,11 @@ public class OrderQueryServiceImpl implements OrderQueryService {
 
         return orderItem;
     }
+
+    @Override
+    public boolean isExistOrderItem(Long id) {
+        return orderItemRepository.existsById(id);
+    }
+
 
 }
