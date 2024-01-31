@@ -23,5 +23,7 @@ public interface MemberCommandService {
 
     Boolean confirmNicknameDuplicate(MemberRequestDTO.NicknameDuplicateConfirmDTO request);
 
+    String confirmPhoneAuthFindEmail(MemberRequestDTO.PhoneAuthConfirmFindEmailDTO request);
+
 
 }

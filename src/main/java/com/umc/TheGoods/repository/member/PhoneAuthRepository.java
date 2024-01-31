@@ -7,4 +7,6 @@ import java.util.Optional;
 
 public interface PhoneAuthRepository extends JpaRepository<PhoneAuth, Long> {
     Optional<PhoneAuth> findByPhone(String phone);
+
+    
 }

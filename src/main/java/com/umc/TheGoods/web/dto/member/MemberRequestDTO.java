@@ -66,4 +66,12 @@ public class MemberRequestDTO {
         private String nickname;
     }
 
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class PhoneAuthConfirmFindEmailDTO {
+        private String phone;
+        private String code;
+    }
+
 }

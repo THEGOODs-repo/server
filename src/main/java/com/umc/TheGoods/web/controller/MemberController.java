@@ -104,4 +104,12 @@ public class MemberController {
 
         return ApiResponse.onSuccess(MemberConverter.toNicknameDuplicateConfirmResultDTO(checkNickname));
     }
+
+    @PostMapping("phone/auth/verify/find/email")
+    @Operation(summary = "이메일 찾기에서 사용되는 번호 확인 api", description = "request: 인증 코드, response: 인증 완료 되면 email")
+    public ApiResponse<MemberResponseDTO.PhoneAuthConfirmFindEmailResultDTO> phoneAuthFindEmail(@RequestBody MemberRequestDTO.PhoneAuthConfirmFindEmailDTO request) {
+        String email = memberCommandService.confirmPhoneAuthFindEmail(request);
+        
+        return ApiResponse.onSuccess(MemberConverter.toPhoneAuthConfirmFindEmailDTO(email));
+    }
 }

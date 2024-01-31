@@ -28,6 +28,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -63,7 +64,9 @@ public class MemberCommandServiceImpl implements MemberCommandService {
 
         // userNAme 중복 체크
         memberRepository.findByNickname(request.getNickname())
-                .ifPresent(user -> {throw new MemberHandler(ErrorStatus.MEMBER_NICKNAME_DUPLICATED);});
+                .ifPresent(user -> {
+                    throw new MemberHandler(ErrorStatus.MEMBER_NICKNAME_DUPLICATED);
+                });
 
         //저장
         Member member = MemberConverter.toMember(request, encoder);
@@ -125,6 +128,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
      * 폰 인증번호 전송 api
      */
     @Override
+    @Transactional
     public PhoneAuth sendPhoneAuth(String phone) {
 
         String code = Integer.toString((int) (Math.random() * 8999) + 1000);
@@ -162,18 +166,35 @@ public class MemberCommandServiceImpl implements MemberCommandService {
         );
 
         PhoneAuth phoneAuth = MemberConverter.toPhoneAuth(phone, code, expired);
+        Optional<PhoneAuth> delete = phoneAuthRepository.findByPhone(phone);
+
+        if (delete.isPresent()) {
+
+            PhoneAuth deletePhoneAuth = delete.orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_PHONE_AUTH_ERROR));
+            phoneAuthRepository.delete(deletePhoneAuth);
+        }
+
         phoneAuthRepository.save(phoneAuth);
         return phoneAuth;
     }
 
     @Override
+    @Transactional
     public Boolean confirmPhoneAuth(MemberRequestDTO.PhoneAuthConfirmDTO request) {
         Boolean checkPhone = false;
         PhoneAuth phoneAuth = phoneAuthRepository.findByPhone(request.getPhone())
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_PHONE_AUTH_ERROR));
-
-        if (phoneAuth.getCode().equals(request.getCode())) {
+        LocalDateTime current = LocalDateTime.now();
+        //인증 코드 같은지 확인, 이미 사용된 인증인지 체크, 만료시간 지났는지 체크
+        if (phoneAuth.getCode().equals(request.getCode()) && !phoneAuth.getExpired() && phoneAuth.getExpireDate().isAfter(current)) {
             checkPhone = true;
+
+            //phoneAuth expired true로 update 코드
+            phoneAuth.setExpired(true);
+            phoneAuthRepository.save(phoneAuth);
+
+        } else {
+            throw new MemberHandler(ErrorStatus.MEMBER_PHONE_AUTH_ERROR);
         }
 
         return checkPhone;
@@ -202,6 +223,35 @@ public class MemberCommandServiceImpl implements MemberCommandService {
         }
         return checkNickname;
     }
+
+    @Override
+    @Transactional
+    public String confirmPhoneAuthFindEmail(MemberRequestDTO.PhoneAuthConfirmFindEmailDTO request) {
+
+        PhoneAuth phoneAuth = phoneAuthRepository.findByPhone(request.getPhone())
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_PHONE_AUTH_ERROR));
+        String email = "";
+        LocalDateTime current = LocalDateTime.now();
+        //코드, 만료 됐는지, 만료 시간 체크
+        if (phoneAuth.getCode().equals(request.getCode()) && !phoneAuth.getExpired() && phoneAuth.getExpireDate().isAfter(current)) {
+            Optional<Member> member = memberRepository.findByPhone(request.getPhone());
+            log.info(member.get().getEmail());
+            if (member.isPresent()) {
+                email = member.get().getEmail();
+                //사용한 인증 만료로 변
+                phoneAuth.setExpired(true);
+                phoneAuthRepository.save(phoneAuth);
+
+            } else {
+                throw new MemberHandler(ErrorStatus.MEMBER_PHONE_AUTH_ERROR);
+            }
+        } else {
+            throw new MemberHandler(ErrorStatus.MEMBER_PHONE_AUTH_ERROR);
+        }
+        return email;
+
+    }
+
 
     /**
      * 카테고리 validator

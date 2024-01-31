@@ -78,6 +78,7 @@ public class MemberConverter {
         return PhoneAuth.builder()
                 .phone(phone)
                 .code(code)
+                .expireDate(LocalDateTime.now().plusMinutes(5))
                 .expired(expired)
                 .build();
     }
@@ -104,6 +105,13 @@ public class MemberConverter {
     public static MemberResponseDTO.NicknameDuplicateConfirmResultDTO toNicknameDuplicateConfirmResultDTO(Boolean checkNickname) {
         return MemberResponseDTO.NicknameDuplicateConfirmResultDTO.builder()
                 .checkNickname(checkNickname)
+                .build();
+    }
+
+
+    public static MemberResponseDTO.PhoneAuthConfirmFindEmailResultDTO toPhoneAuthConfirmFindEmailDTO(String email) {
+        return MemberResponseDTO.PhoneAuthConfirmFindEmailResultDTO.builder()
+                .email(email)
                 .build();
     }
 }

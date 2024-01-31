@@ -64,4 +64,12 @@ public class MemberResponseDTO {
         Boolean checkNickname;
     }
 
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class PhoneAuthConfirmFindEmailResultDTO {
+        String email;
+    }
+
 }
