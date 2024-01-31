@@ -92,6 +92,7 @@ public class OrderCommandServiceImpl implements OrderCommandService {
                     orderItem.updateTotalPrice(orderDetail.getOrderPrice());
                 }
             });
+            orderItem.updateTotalPrice(Long.valueOf(item.getDeliveryFee()));
         });
 
         return orders;
