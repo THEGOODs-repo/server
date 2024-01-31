@@ -67,7 +67,7 @@ public class OrderController {
     }
 
     @GetMapping
-    @Operation(summary = "나의 주문 목록 조회 API", description = "나의 주문 목록을 조회하는 API 입니다. (구매자)\n\n" +
+    @Operation(summary = "나의 주문 목록 조회 API", description = "나의 주문 목록을 조회하는 API 입니다. (구매자 회원용)\n\n" +
             "페이지 번호 (1 이상)과 주문 상태 필터 값을 보내주세요. 전체 주문 조회 시 주문 상태 필터 값은 보내지 않아야 합니다.")
     @ApiResponses(value = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
@@ -102,9 +102,16 @@ public class OrderController {
             @PathVariable(name = "orderItemId") Long orderItemId,
             Authentication authentication
     ) {
-        // request에서 member id 추출해 Member 엔티티 찾기
-        MemberDetail memberDetail = (MemberDetail) authentication.getPrincipal();
-        Member member = memberQueryService.findMemberById(memberDetail.getMemberId()).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        Member member = null;
+
+        // 비로그인 요청인 경우 비회원 계정 불러오기
+        if (authentication == null) {
+            member = memberQueryService.findMemberByNickname("no_login_user").orElseThrow(() -> new OrderHandler(ErrorStatus.NO_LOGIN_ORDER_NOT_AVAILABLE));
+        } else {
+            // request에서 member id 추출해 Member 엔티티 찾기
+            MemberDetail memberDetail = (MemberDetail) authentication.getPrincipal();
+            member = memberQueryService.findMemberById(memberDetail.getMemberId()).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        }
 
         OrderItem orderItem = orderQueryService.getOrderItem(member, orderItemId);
 
