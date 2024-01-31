@@ -16,7 +16,7 @@ public class OrderResponseDTO {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class OrderAddResultDto {
+    public static class OrderAddResultDTO {
         Long orderId;
         LocalDateTime createdAt;
     }
@@ -25,8 +25,8 @@ public class OrderResponseDTO {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class OrderPreViewListDTO {
-        List<OrderPreViewDTO> orderPreViewDTOList;
+    public static class orderItemPreViewListDTO {
+        List<OrderItemPreViewDTO> orderItemPreViewDTOList;
         Integer listSize;
         Integer totalPage;
         Long totalElements;
@@ -38,15 +38,14 @@ public class OrderResponseDTO {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class OrderPreViewDTO {
-        Long orderDetailId;
+    public static class OrderItemPreViewDTO {
+        Long orderItemId;
         LocalDateTime orderDateTime;
         String imgUrl;
         OrderStatus orderStatus;
         String itemName;
         @JsonInclude(JsonInclude.Include.NON_NULL)
-        String optionName;
-        Integer amount;
+        String optionString;
         Long price;
     }
 

@@ -7,7 +7,7 @@ import com.umc.TheGoods.apiPayload.exception.handler.OrderHandler;
 import com.umc.TheGoods.converter.order.OrderConverter;
 import com.umc.TheGoods.domain.enums.OrderStatus;
 import com.umc.TheGoods.domain.member.Member;
-import com.umc.TheGoods.domain.order.OrderDetail;
+import com.umc.TheGoods.domain.order.OrderItem;
 import com.umc.TheGoods.domain.order.Orders;
 import com.umc.TheGoods.service.MemberService.MemberQueryService;
 import com.umc.TheGoods.service.OrderService.OrderCommandService;
@@ -49,7 +49,7 @@ public class OrderController {
     @ApiResponses(value = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
     })
-    public ApiResponse<OrderResponseDTO.OrderAddResultDto> order(@RequestBody @Valid OrderRequestDTO.OrderAddDto request, Authentication authentication) {
+    public ApiResponse<OrderResponseDTO.OrderAddResultDTO> order(@RequestBody @Valid OrderRequestDTO.OrderAddDTO request, Authentication authentication) {
         Member member = null;
 
         // 비로그인 요청인 경우 비회원 계정 불러오기
@@ -67,7 +67,8 @@ public class OrderController {
     }
 
     @GetMapping
-    @Operation(summary = "나의 주문 목록 조회 API", description = "나의 주문 목록을 조회하는 API 입니다. (구매자)")
+    @Operation(summary = "나의 주문 목록 조회 API", description = "나의 주문 목록을 조회하는 API 입니다. (구매자)\n\n" +
+            "페이지 번호 (1 이상)과 주문 상태 필터 값을 보내주세요. 전체 주문 조회 시 주문 상태 필터 값은 보내지 않아야 합니다.")
     @ApiResponses(value = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
     })
@@ -76,16 +77,18 @@ public class OrderController {
             @Parameter(name = "status", description = "주문 처리 상태 필터, 선택하지 않으면 전체 주문이 조회됩니다.")
 
     })
-    public ApiResponse<OrderResponseDTO.OrderPreViewListDTO> myOrderPreview(
+    public ApiResponse<OrderResponseDTO.orderItemPreViewListDTO> myOrderPreview(
             @RequestParam(name = "page") @CheckPage Integer page,
             @RequestParam(name = "status", required = false) OrderStatus orderStatus,
             Authentication authentication
     ) {
         // request에서 member id 추출해 Member 엔티티 찾기
         MemberDetail memberDetail = (MemberDetail) authentication.getPrincipal();
-        Page<OrderDetail> orderDetailList = orderQueryService.getOrderDetailList(memberDetail.getMemberId(), orderStatus, page - 1);
+        Member member = memberQueryService.findMemberById(memberDetail.getMemberId()).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
-        return ApiResponse.onSuccess(OrderConverter.toOrderPreViewListDTO(orderDetailList));
+        Page<OrderItem> orderItemList = orderQueryService.getOrderItemList(member, orderStatus, page - 1);
+
+        return ApiResponse.onSuccess(OrderConverter.toOrderPreViewListDTO(orderItemList));
     }
 
 }

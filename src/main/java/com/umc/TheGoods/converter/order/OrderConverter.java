@@ -9,7 +9,6 @@ import com.umc.TheGoods.web.dto.order.OrderRequestDTO;
 import com.umc.TheGoods.web.dto.order.OrderResponseDTO;
 import org.springframework.data.domain.Page;
 
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,14 +17,14 @@ import java.util.stream.Collectors;
 
 public class OrderConverter {
 
-    public static OrderResponseDTO.OrderAddResultDto toOrderAddResultDto(Orders order) {
-        return OrderResponseDTO.OrderAddResultDto.builder()
+    public static OrderResponseDTO.OrderAddResultDTO toOrderAddResultDto(Orders order) {
+        return OrderResponseDTO.OrderAddResultDTO.builder()
                 .orderId(order.getId())
                 .createdAt(LocalDateTime.now())
                 .build();
     }
 
-    public static Orders toOrders(OrderRequestDTO.OrderAddDto request) {
+    public static Orders toOrders(OrderRequestDTO.OrderAddDTO request) {
         PayType payType = null;
         switch (request.getPayType()) {
             case "CARD":
@@ -44,7 +43,7 @@ public class OrderConverter {
                 .build();
     }
 
-    public static OrderItem toOrderItem(OrderRequestDTO.OrderAddDto request, Integer deliveryFee) {
+    public static OrderItem toOrderItem(OrderRequestDTO.OrderAddDTO request, Integer deliveryFee) {
         return OrderItem.builder()
                 .totalPrice(0L)
                 .deliveryFee(deliveryFee)
@@ -68,37 +67,42 @@ public class OrderConverter {
                 .build();
     }
 
-    public static OrderResponseDTO.OrderPreViewDTO toOrderPreViewDTO(OrderDetail orderDetail) {
+    public static OrderResponseDTO.OrderItemPreViewDTO toOrderItemPreViewDTO(OrderItem orderItem) {
+
+        Boolean hasOption = orderItem.getItem().getPrice() == null;
+
+        Integer orderDetailCount = orderItem.getOrderDetailList().size();
+
         String itemOptionName;
-        if (orderDetail.getItemOption() != null) {
-            itemOptionName = orderDetail.getItemOption().getName();
+        if (hasOption) { // 해당 주문 상품에 옵션이 있는 경우
+            itemOptionName = orderItem.getOrderDetailList().get(0).getItemOption().getName(); // 대표 옵션 명 설정
+            itemOptionName += orderDetailCount > 1 ? " 외 " + orderDetailCount.toString() + "건" : " 1건"; // optionString 설정
         } else {
             itemOptionName = null;
         }
 
-        return OrderResponseDTO.OrderPreViewDTO.builder()
-                .orderDetailId((orderDetail.getId()))
-                .orderStatus(orderDetail.getStatus())
-                .orderDateTime(orderDetail.getCreatedAt())
-                .itemName(orderDetail.getItem().getName())
-                .optionName(itemOptionName)
+        return OrderResponseDTO.OrderItemPreViewDTO.builder()
+                .orderItemId((orderItem.getId()))
+                .orderStatus(orderItem.getStatus())
+                .orderDateTime(orderItem.getCreatedAt())
+                .itemName(orderItem.getItem().getName())
+                .optionString(itemOptionName)
                 .imgUrl("img url") // 추후 썸네일 이미지 가져오는 메소드 통해 값 입력 필요
-                .amount(orderDetail.getAmount())
-                .price(orderDetail.getOrderPrice())
+                .price(orderItem.getTotalPrice())
                 .build();
     }
 
-    public static OrderResponseDTO.OrderPreViewListDTO toOrderPreViewListDTO(Page<OrderDetail> orderDetailList) {
-        List<OrderResponseDTO.OrderPreViewDTO> orderPreViewDTOList = orderDetailList.stream()
-                .map(OrderConverter::toOrderPreViewDTO).collect(Collectors.toList());
+    public static OrderResponseDTO.orderItemPreViewListDTO toOrderPreViewListDTO(Page<OrderItem> orderItemList) {
+        List<OrderResponseDTO.OrderItemPreViewDTO> orderItemPreViewDTOList = orderItemList.stream()
+                .map(OrderConverter::toOrderItemPreViewDTO).collect(Collectors.toList());
 
-        return OrderResponseDTO.OrderPreViewListDTO.builder()
-                .isLast(orderDetailList.isLast())
-                .isFirst(orderDetailList.isFirst())
-                .totalPage(orderDetailList.getTotalPages())
-                .totalElements(orderDetailList.getTotalElements())
-                .listSize(orderPreViewDTOList.size())
-                .orderPreViewDTOList(orderPreViewDTOList)
+        return OrderResponseDTO.orderItemPreViewListDTO.builder()
+                .isLast(orderItemList.isLast())
+                .isFirst(orderItemList.isFirst())
+                .totalPage(orderItemList.getTotalPages())
+                .totalElements(orderItemList.getTotalElements())
+                .listSize(orderItemPreViewDTOList.size())
+                .orderItemPreViewDTOList(orderItemPreViewDTOList)
                 .build();
     }
 }

@@ -26,8 +26,8 @@ public class OrderAvailableValidator implements ConstraintValidator<OrderAvailab
 
     @Override
     public boolean isValid(Object value, ConstraintValidatorContext context) {
-        if (value instanceof OrderRequestDTO.OrderItemDto) {
-            OrderRequestDTO.OrderItemDto orderItemDto = (OrderRequestDTO.OrderItemDto) value;
+        if (value instanceof OrderRequestDTO.OrderItemDTO) {
+            OrderRequestDTO.OrderItemDTO orderItemDto = (OrderRequestDTO.OrderItemDTO) value;
 
             // item 존재 여부 검증
             Optional<Item> item = itemQueryService.findItemById(orderItemDto.getItemId());

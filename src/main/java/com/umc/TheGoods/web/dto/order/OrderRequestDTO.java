@@ -9,7 +9,7 @@ import java.util.List;
 
 public class OrderRequestDTO {
     @Getter
-    public static class OrderAddDto {
+    public static class OrderAddDTO {
 
         @NotBlank
         String name;
@@ -43,12 +43,12 @@ public class OrderRequestDTO {
 
         @NotEmpty
         @Valid
-        List<OrderItemDto> orderItemDtoList;
+        List<OrderItemDTO> orderItemDTOList;
     }
 
     @Getter
     @OrderAvailable
-    public static class OrderItemDto {
+    public static class OrderItemDTO {
         @NotNull
         Long itemId;
 
