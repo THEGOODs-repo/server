@@ -7,7 +7,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.*;
 import java.util.List;
 
-public class OrderRequest {
+public class OrderRequestDTO {
     @Getter
     public static class OrderAddDto {
 

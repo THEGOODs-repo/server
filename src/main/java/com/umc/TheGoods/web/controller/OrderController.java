@@ -8,9 +8,9 @@ import com.umc.TheGoods.domain.order.Orders;
 import com.umc.TheGoods.service.OrderService.OrderCommandService;
 import com.umc.TheGoods.service.OrderService.OrderQueryService;
 import com.umc.TheGoods.validation.annotation.CheckPage;
-import com.umc.TheGoods.web.dto.Member.MemberDetail;
-import com.umc.TheGoods.web.dto.order.OrderRequest;
-import com.umc.TheGoods.web.dto.order.OrderResponse;
+import com.umc.TheGoods.web.dto.member.MemberDetail;
+import com.umc.TheGoods.web.dto.order.OrderRequestDTO;
+import com.umc.TheGoods.web.dto.order.OrderResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
@@ -41,7 +41,7 @@ public class OrderController {
     @ApiResponses(value = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
     })
-    public ApiResponse<OrderResponse.OrderAddResultDto> createOrder(@RequestBody @Valid OrderRequest.OrderAddDto request, Authentication authentication) {
+    public ApiResponse<OrderResponseDTO.OrderAddResultDto> createOrder(@RequestBody @Valid OrderRequestDTO.OrderAddDto request, Authentication authentication) {
         // request에서 member 정보 추출
         MemberDetail memberDetail = (MemberDetail) authentication.getPrincipal();
 
@@ -60,7 +60,7 @@ public class OrderController {
             @Parameter(name = "status", description = "주문 처리 상태 필터, 선택하지 않으면 전체 주문이 조회됩니다.")
 
     })
-    public ApiResponse<OrderResponse.OrderPreViewListDTO> myOrderPreview(
+    public ApiResponse<OrderResponseDTO.OrderPreViewListDTO> myOrderPreview(
             @RequestParam(name = "page") @CheckPage Integer page,
             @RequestParam(name = "status", required = false) OrderStatus orderStatus,
             Authentication authentication

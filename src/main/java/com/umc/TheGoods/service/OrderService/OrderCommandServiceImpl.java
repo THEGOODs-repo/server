@@ -13,7 +13,7 @@ import com.umc.TheGoods.repository.MemberRepository;
 import com.umc.TheGoods.repository.item.ItemOptionRepository;
 import com.umc.TheGoods.repository.item.ItemRepository;
 import com.umc.TheGoods.repository.order.OrderRepository;
-import com.umc.TheGoods.web.dto.order.OrderRequest;
+import com.umc.TheGoods.web.dto.order.OrderRequestDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -31,7 +31,7 @@ public class OrderCommandServiceImpl implements OrderCommandService {
     private final ItemOptionRepository itemOptionRepository;
 
     @Override
-    public Orders create(OrderRequest.OrderAddDto request, Long memberId) {
+    public Orders create(OrderRequestDTO.OrderAddDto request, Long memberId) {
         Member member = memberRepository.findById(memberId).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
         // item 및 itemOption의 재고와 주문 수량 비교

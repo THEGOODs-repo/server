@@ -1,4 +1,4 @@
-package com.umc.TheGoods.service.Member;
+package com.umc.TheGoods.service.MemberService;
 
 public interface MemberCommandService {
 

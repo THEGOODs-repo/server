@@ -1,8 +1,8 @@
-package com.umc.TheGoods.service.Member;
+package com.umc.TheGoods.service.MemberService;
 
 import com.umc.TheGoods.apiPayload.code.status.ErrorStatus;
 import com.umc.TheGoods.apiPayload.exception.handler.MemberHandler;
-import com.umc.TheGoods.converter.Member.MemberConverter;
+import com.umc.TheGoods.converter.member.MemberConverter;
 import com.umc.TheGoods.domain.item.Category;
 import com.umc.TheGoods.domain.mapping.member.MemberCategory;
 import com.umc.TheGoods.domain.mapping.member.MemberTerm;
@@ -11,7 +11,7 @@ import com.umc.TheGoods.domain.member.Term;
 import com.umc.TheGoods.repository.CategoryRepository;
 import com.umc.TheGoods.repository.MemberRepository;
 import com.umc.TheGoods.repository.TermRepository;
-import com.umc.TheGoods.web.dto.Member.MemberRequestDTO;
+import com.umc.TheGoods.web.dto.member.MemberRequestDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;

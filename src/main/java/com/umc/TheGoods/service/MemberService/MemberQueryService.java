@@ -1,4 +1,4 @@
-package com.umc.TheGoods.service.Member;
+package com.umc.TheGoods.service.MemberService;
 
 import com.umc.TheGoods.domain.member.Member;
 

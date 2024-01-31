@@ -4,8 +4,8 @@ import com.umc.TheGoods.domain.enums.OrderStatus;
 import com.umc.TheGoods.domain.order.OrderDetail;
 import com.umc.TheGoods.domain.order.Orders;
 import com.umc.TheGoods.domain.types.PayType;
-import com.umc.TheGoods.web.dto.order.OrderRequest;
-import com.umc.TheGoods.web.dto.order.OrderResponse;
+import com.umc.TheGoods.web.dto.order.OrderRequestDTO;
+import com.umc.TheGoods.web.dto.order.OrderResponseDTO;
 import org.springframework.data.domain.Page;
 
 import java.time.LocalDateTime;
@@ -15,14 +15,14 @@ import java.util.stream.Collectors;
 
 public class OrderConverter {
 
-    public static OrderResponse.OrderAddResultDto toOrderAddResultDto(Orders order) {
-        return OrderResponse.OrderAddResultDto.builder()
+    public static OrderResponseDTO.OrderAddResultDto toOrderAddResultDto(Orders order) {
+        return OrderResponseDTO.OrderAddResultDto.builder()
                 .orderId(order.getId())
                 .createdAt(LocalDateTime.now())
                 .build();
     }
 
-    public static Orders toOrders(OrderRequest.OrderAddDto request) {
+    public static Orders toOrders(OrderRequestDTO.OrderAddDto request) {
         PayType payType = null;
         switch (request.getPayType()) {
             case "CARD":
@@ -47,7 +47,7 @@ public class OrderConverter {
                 .build();
     }
 
-    public static OrderDetail toOrderDetail(OrderRequest.OrderItemDto orderItemDto, Long price) {
+    public static OrderDetail toOrderDetail(OrderRequestDTO.OrderItemDto orderItemDto, Long price) {
         return OrderDetail.builder()
                 .amount(orderItemDto.getAmount())
                 .orderPrice(price)
@@ -55,7 +55,7 @@ public class OrderConverter {
                 .build();
     }
 
-    public static OrderResponse.OrderPreViewDTO toOrderPreViewDTO(OrderDetail orderDetail) {
+    public static OrderResponseDTO.OrderPreViewDTO toOrderPreViewDTO(OrderDetail orderDetail) {
         String itemOptionName;
         if (orderDetail.getItemOption() != null) {
             itemOptionName = orderDetail.getItemOption().getName();
@@ -63,7 +63,7 @@ public class OrderConverter {
             itemOptionName = null;
         }
 
-        return OrderResponse.OrderPreViewDTO.builder()
+        return OrderResponseDTO.OrderPreViewDTO.builder()
                 .orderDetailId((orderDetail.getId()))
                 .orderStatus(orderDetail.getStatus())
                 .orderDateTime(orderDetail.getCreatedAt())
@@ -75,11 +75,11 @@ public class OrderConverter {
                 .build();
     }
 
-    public static OrderResponse.OrderPreViewListDTO toOrderPreViewListDTO(Page<OrderDetail> orderDetailList) {
-        List<OrderResponse.OrderPreViewDTO> orderPreViewDTOList = orderDetailList.stream()
+    public static OrderResponseDTO.OrderPreViewListDTO toOrderPreViewListDTO(Page<OrderDetail> orderDetailList) {
+        List<OrderResponseDTO.OrderPreViewDTO> orderPreViewDTOList = orderDetailList.stream()
                 .map(OrderConverter::toOrderPreViewDTO).collect(Collectors.toList());
 
-        return OrderResponse.OrderPreViewListDTO.builder()
+        return OrderResponseDTO.OrderPreViewListDTO.builder()
                 .isLast(orderDetailList.isLast())
                 .isFirst(orderDetailList.isFirst())
                 .totalPage(orderDetailList.getTotalPages())
