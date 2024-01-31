@@ -24,6 +24,7 @@ public enum ErrorStatus implements BaseErrorCode {
     // 주문 관련 에러
     LACK_OF_STOCK(HttpStatus.BAD_REQUEST, "ORDER4001", "재고가 부족합니다."),
     NULL_ITEMOPTION_ERROR(HttpStatus.BAD_REQUEST, "ORDER4002", "주문할 상품 옵션을 선택해주세요."),
+    NO_LOGIN_ORDER_NOT_AVAILABLE(HttpStatus.INTERNAL_SERVER_ERROR, "ORDER4003", "비회원 주문 불가, 관리자에게 문의 바랍니다."),
 
     // test
     TEMP_EXCEPTION(HttpStatus.BAD_REQUEST, "TEMP4001", "테스트"),
@@ -40,7 +41,7 @@ public enum ErrorStatus implements BaseErrorCode {
     CATEGORY_NOT_FOUND(HttpStatus.NOT_FOUND, "CATEGORY4001", "해당 카테고리가 존재하지 않습니다"),
 
     //Term
-    TERM_NOT_FOUND(HttpStatus.NOT_FOUND, "TERM4001", "해당 약관이 존재하지 않습니다.");
+    TERM_NOT_FOUND(HttpStatus.NOT_FOUND, "TERM4001", "해당 약관이 존재하지 않습니다."),
 
     //tag error
     TAG_NOT_FOUND(HttpStatus.BAD_REQUEST, "TAG4001", "존재하지 않는 태그입니다.");

@@ -1,6 +1,7 @@
 package com.umc.TheGoods.web.dto.item;
 
 import com.umc.TheGoods.validation.annotation.ExistTag;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.lang.Nullable;
 
@@ -12,6 +13,7 @@ import java.util.List;
 public class ItemRequestDTO {
 
     @Getter
+    @AllArgsConstructor
     public static class UploadItemDTO {
         @NotBlank
         String name;
@@ -53,6 +55,7 @@ public class ItemRequestDTO {
     }
 
     @Getter
+    @AllArgsConstructor
     public static class itemImgDTO {
         @Nullable
         Boolean isThumbnail;
@@ -61,6 +64,7 @@ public class ItemRequestDTO {
     }
 
     @Getter
+    @AllArgsConstructor
     public static class itemOptionDTO {
         @NotNull
         String name;

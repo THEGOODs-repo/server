@@ -18,4 +18,10 @@ public class MemberQueryServiceImpl implements MemberQueryService {
     public Optional<Member> findMemberById(Long id) {
         return memberRepository.findById(id);
     }
+
+    @Override
+    public Optional<Member> findMemberByNickname(String name) {
+        return memberRepository.findByNickname(name);
+    }
+
 }
