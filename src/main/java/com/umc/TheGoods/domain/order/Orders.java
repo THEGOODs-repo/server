@@ -27,33 +27,16 @@ public class Orders extends BaseDateTimeEntity {
     @Column(nullable = false, length = 20)
     private String phone;
 
-    @Column(nullable = false, length = 10)
-    private String zipcode;
-
-    @Column(nullable = false, length = 300)
-    private String address;
-
-    private String addressDetail;
-
     @Enumerated(EnumType.STRING)
     @Column(columnDefinition = "VARCHAR(20)", nullable = false)
     private PayType payType;
-
-    @Column(nullable = false, length = 30)
-    private String refundBank;
-
-    @Column(nullable = false, length = 30)
-    private String refundAccount;
-
-    @Column(nullable = false, length = 20)
-    private String refundOwner;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
 
     @OneToMany(mappedBy = "orders", cascade = CascadeType.ALL)
-    private List<OrderDetail> orderDetailList = new ArrayList<>();
+    private List<OrderItem> orderItemList = new ArrayList<>();
 
     // 연관관계 메소드
     public void setMember(Member member) {

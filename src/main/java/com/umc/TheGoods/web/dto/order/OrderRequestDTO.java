@@ -25,6 +25,8 @@ public class OrderRequestDTO {
 
         String addressDetail;
 
+        String deliveryMemo;
+
         @NotBlank
         String payType;
 
@@ -37,6 +39,8 @@ public class OrderRequestDTO {
         @NotBlank
         String refundOwner;
 
+        String depositor;
+
         @NotEmpty
         @Valid
         List<OrderItemDto> orderItemDtoList;
@@ -45,10 +49,15 @@ public class OrderRequestDTO {
     @Getter
     @OrderAvailable
     public static class OrderItemDto {
-
         @NotNull
         Long itemId;
 
+        @NotEmpty
+        List<OrderDetailDTO> orderDetailDTOList;
+    }
+
+    @Getter
+    public static class OrderDetailDTO {
         Long itemOptionId;
 
         @Min(1)

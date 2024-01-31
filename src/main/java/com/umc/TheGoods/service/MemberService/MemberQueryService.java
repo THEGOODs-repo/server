@@ -6,4 +6,6 @@ import java.util.Optional;
 
 public interface MemberQueryService {
     Optional<Member> findMemberById(Long id);
+
+    Optional<Member> findMemberByNickname(String name);
 }

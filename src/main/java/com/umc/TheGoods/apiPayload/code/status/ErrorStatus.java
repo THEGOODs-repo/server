@@ -24,18 +24,27 @@ public enum ErrorStatus implements BaseErrorCode {
     // 주문 관련 에러
     LACK_OF_STOCK(HttpStatus.BAD_REQUEST, "ORDER4001", "재고가 부족합니다."),
     NULL_ITEMOPTION_ERROR(HttpStatus.BAD_REQUEST, "ORDER4002", "주문할 상품 옵션을 선택해주세요."),
+    NO_LOGIN_ORDER_NOT_AVAILABLE(HttpStatus.INTERNAL_SERVER_ERROR, "ORDER4003", "비회원 주문 불가, 관리자에게 문의 바랍니다."),
 
     // test
     TEMP_EXCEPTION(HttpStatus.BAD_REQUEST, "TEMP4001", "테스트"),
 
     // Member
-    MEMBER_NICNAME_DUPLICATED(HttpStatus.BAD_REQUEST, "MEMBER4001", "중복된 닉네임 입니다."),
+    MEMBER_NICKNAME_DUPLICATED(HttpStatus.BAD_REQUEST, "MEMBER4001", "중복된 닉네임 입니다."),
     MEMBER_PASSWORD_ERROR(HttpStatus.BAD_REQUEST, "MEMBER4002", "비밀번호가 잘못되었습니다."),
     MEMBER_EMAIL_NOT_FOUND(HttpStatus.BAD_REQUEST, "MEMBER4003", "이메일이 존재하지 않습니다."),
     MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "MEMBER4004", "해당 회원을 찾을 수 없습니다."),
+    MEMBER_PHONE_AUTH_ERROR(HttpStatus.BAD_REQUEST, "MEMBER4005", "유효하지 않는 번호입니다."),
+
 
     //Category
-    CATEGORY_NOT_FOUND(HttpStatus.BAD_REQUEST, "CATEGORY4001", "해당 카테고리가 존재하지 않습니다"),
+    CATEGORY_NOT_FOUND(HttpStatus.NOT_FOUND, "CATEGORY4001", "해당 카테고리가 존재하지 않습니다"),
+
+    //Term
+    TERM_NOT_FOUND(HttpStatus.NOT_FOUND, "TERM4001", "해당 약관이 존재하지 않습니다.");
+
+    //tag error
+    TAG_NOT_FOUND(HttpStatus.BAD_REQUEST, "TAG4001", "존재하지 않는 태그입니다.");
 
     // 페이징 관련 에러
     PAGE_NEGATIVE_INPUT(HttpStatus.BAD_REQUEST, "PAGE4001", "페이지 번호는 1이상의 숫자여야 합니다."),
@@ -44,7 +53,6 @@ public enum ErrorStatus implements BaseErrorCode {
     private final HttpStatus httpStatus;
     private final String code;
     private final String message;
-
 
     @Override
     public ErrorReasonDTO getReason() {

@@ -8,9 +8,10 @@ import com.umc.TheGoods.domain.mapping.Dibs;
 import com.umc.TheGoods.domain.mapping.Tag.ItemTag;
 import com.umc.TheGoods.domain.mapping.ViewSearch.ItemView;
 import com.umc.TheGoods.domain.member.Member;
-import com.umc.TheGoods.domain.order.OrderDetail;
+import com.umc.TheGoods.domain.order.OrderItem;
 import com.umc.TheGoods.domain.types.DeliveryType;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -34,6 +35,7 @@ public class Item extends BaseDateTimeEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(columnDefinition = "VARCHAR(20)", nullable = false)
+    @ColumnDefault("'ONSALE'")
     private ItemStatus status;
 
     @Column(length = 6)
@@ -85,7 +87,7 @@ public class Item extends BaseDateTimeEntity {
     private List<ItemOption> itemOptionList = new ArrayList<>();
 
     @OneToMany(mappedBy = "item", cascade = CascadeType.ALL)
-    private List<OrderDetail> orderDetailList = new ArrayList<>();
+    private List<OrderItem> orderItemList = new ArrayList<>();
 
     @OneToMany(mappedBy = "item", cascade = CascadeType.ALL)
     private List<ItemTag> itemTagList = new ArrayList<>();
@@ -102,7 +104,6 @@ public class Item extends BaseDateTimeEntity {
     @OneToMany(mappedBy = "item", cascade = CascadeType.ALL)
     private List<Inquiry> inquiryList = new ArrayList<>();
 
-
     // 판매수, 재고 관련 메소드
     public Item updateStock(Integer i) {
         this.stock += i;
@@ -112,5 +113,33 @@ public class Item extends BaseDateTimeEntity {
     public Item updateSales(Integer i) {
         this.salesCount += i;
         return this;
+    }
+
+    public void setCategory(Category category) {
+        if (this.category != null)
+            category.getItemList().remove(this);
+        this.category = category;
+        category.getItemList().add(this);
+    }
+
+    public void setMember(Member member) {
+        if (this.member != null)
+            member.getItemList().remove(this);
+        this.member = member;
+        member.getItemList().add(this);
+    }
+
+    public List<ItemOption> getItemOptionList() {
+        if (this.itemOptionList == null) {
+            this.itemOptionList = new ArrayList<>();
+        }
+        return this.itemOptionList;
+    }
+
+    public List<ItemImg> getItemImgList() {
+        if (this.itemImgList == null) {
+            this.itemImgList = new ArrayList<>();
+        }
+        return this.itemImgList;
     }
 }

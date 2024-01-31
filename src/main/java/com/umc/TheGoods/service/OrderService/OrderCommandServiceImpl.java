@@ -1,17 +1,17 @@
 package com.umc.TheGoods.service.OrderService;
 
 import com.umc.TheGoods.apiPayload.code.status.ErrorStatus;
-import com.umc.TheGoods.apiPayload.exception.handler.MemberHandler;
 import com.umc.TheGoods.apiPayload.exception.handler.OrderHandler;
 import com.umc.TheGoods.converter.order.OrderConverter;
 import com.umc.TheGoods.domain.item.Item;
 import com.umc.TheGoods.domain.item.ItemOption;
 import com.umc.TheGoods.domain.member.Member;
 import com.umc.TheGoods.domain.order.OrderDetail;
+import com.umc.TheGoods.domain.order.OrderItem;
 import com.umc.TheGoods.domain.order.Orders;
-import com.umc.TheGoods.repository.MemberRepository;
 import com.umc.TheGoods.repository.item.ItemOptionRepository;
 import com.umc.TheGoods.repository.item.ItemRepository;
+import com.umc.TheGoods.repository.order.OrderItemRepository;
 import com.umc.TheGoods.repository.order.OrderRepository;
 import com.umc.TheGoods.web.dto.order.OrderRequestDTO;
 import lombok.RequiredArgsConstructor;
@@ -25,77 +25,77 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class OrderCommandServiceImpl implements OrderCommandService {
 
-    private final MemberRepository memberRepository;
     private final OrderRepository orderRepository;
+    private final OrderItemRepository orderItemRepository;
     private final ItemRepository itemRepository;
     private final ItemOptionRepository itemOptionRepository;
 
     @Override
-    public Orders create(OrderRequestDTO.OrderAddDto request, Long memberId) {
-        Member member = memberRepository.findById(memberId).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
-
+    public Orders create(OrderRequestDTO.OrderAddDto request, Member member) {
         // item 및 itemOption의 재고와 주문 수량 비교
         request.getOrderItemDtoList().forEach(orderItemDto -> {
             Item item = itemRepository.findById(orderItemDto.getItemId()).get();
 
-            Integer stock;
-
-            if (item.getPrice() == null) { // 옵션이 있는 상품인 경우
-                ItemOption itemOption = itemOptionRepository.findById(orderItemDto.getItemOptionId()).get();
-                stock = itemOption.getStock();
-            } else { // 단일 상품인 경우
-                stock = item.getStock();
-            }
-
-            if (orderItemDto.getAmount() > stock) { // 재고보다 주문 수량이 많은 경우
-                throw new OrderHandler(ErrorStatus.LACK_OF_STOCK);
-            }
+            orderItemDto.getOrderDetailDTOList().forEach(orderDetailDTO -> {
+                if (orderDetailDTO.getItemOptionId() != null) { // 옵션이 있는 상품인 경우
+                    ItemOption itemOption = itemOptionRepository.findById(orderDetailDTO.getItemOptionId()).get();
+                    if (orderDetailDTO.getAmount() > itemOption.getStock()) { // 재고보다 주문 수량이 많은 경우
+                        throw new OrderHandler(ErrorStatus.LACK_OF_STOCK);
+                    }
+                } else { // 단일 상품인 경우
+                    if (orderDetailDTO.getAmount() > item.getStock()) {
+                        throw new OrderHandler(ErrorStatus.LACK_OF_STOCK);
+                    }
+                }
+            });
         });
 
         // Orders 엔티티 생성 및 연관관계 매핑
         Orders newOrders = OrderConverter.toOrders(request);
         newOrders.setMember(member);
-        Orders savedOrders = orderRepository.save(newOrders);
+        Orders orders = orderRepository.save(newOrders);
 
-        // orderDetail 엔티티 생성 및 연관관계 매핑, 상품 재고 및 판매수 업데이트
+        // OrderItem, OrderDetail 엔티티 생성, 연관관계 매핑, 판매 재고 업데이트
         request.getOrderItemDtoList().forEach(orderItemDto -> {
-
-            Long price;
-            ItemOption itemOption = null;
-
             Item item = itemRepository.findById(orderItemDto.getItemId()).get();
 
-            // 해당 상품의 옵션 유무 판별
-            boolean haveOption = (item.getPrice() == null);
+            // OrderItem 엔티티 생성 및 연관관계 매핑
+            OrderItem newOrderItem = OrderConverter.toOrderItem(request, item.getDeliveryFee());
+            newOrderItem.setItem(item);
+            newOrderItem.setOrders(orders);
+            OrderItem orderItem = orderItemRepository.save(newOrderItem);
 
-            if (haveOption) { // 상품 옵션이 존재하는 경우
-                itemOption = itemOptionRepository.findById(orderItemDto.getItemOptionId()).get();
-                price = itemOption.getPrice();
-            } else { // 단일 상품인 경우
-                price = item.getPrice();
-            }
-            // 엔티티 생성
-            OrderDetail orderDetail = OrderConverter.toOrderDetail(orderItemDto, price * orderItemDto.getAmount());
+            orderItemDto.getOrderDetailDTOList().forEach(orderDetailDTO -> {
+                if (orderDetailDTO.getItemOptionId() != null) { // 옵션이 있는 상품인 경우
+                    ItemOption itemOption = itemOptionRepository.findById(orderDetailDTO.getItemOptionId()).get();
 
-            // 양방향 연관관계 매핑
-            orderDetail.setOrders(savedOrders);
-            orderDetail.setItem(item);
-            if (haveOption) { // 상품 옵션이 존재하는 경우
-                orderDetail.setItemOption(itemOption);
-            }
+                    // OrderDetail 엔티티 생성
+                    OrderDetail orderDetail = OrderConverter.toOrderDetail(orderDetailDTO, itemOption.getPrice());
+                    orderDetail.setOrderItem(orderItem);
+                    orderDetail.setItemOption(itemOption);
 
-            // Item, ItemOption 엔티티의 재고 및 판매수 업데이트
-            Integer amount = orderItemDto.getAmount();
-            item.updateSales(amount);
+                    // item, itemOption의 판매량, 재고 업데이트
+                    item.updateSales(orderDetail.getAmount());
+                    itemOption.updateStock(-orderDetail.getAmount());
 
-            if (haveOption) {
-                itemOption.updateStock(-amount);
-            } else {
-                item.updateStock(-amount);
-            }
+                    // OrderItem 주문 상품 합산 금액 업데이트
+                    orderItem.updateTotalPrice(orderDetail.getOrderPrice());
+                } else {
+                    OrderDetail orderDetail = OrderConverter.toOrderDetail(orderDetailDTO, item.getPrice());
+                    orderDetail.setOrderItem(orderItem);
+
+                    // item의 판매량, 재고 업데이트
+                    item.updateSales(orderDetail.getAmount());
+                    item.updateSales(-orderDetail.getAmount());
+
+                    // OrderItem 주문 상품 합산 금액 업데이트
+                    orderItem.updateTotalPrice(orderDetail.getOrderPrice());
+                }
+            });
+            orderItem.updateTotalPrice(Long.valueOf(item.getDeliveryFee()));
         });
 
-        return savedOrders;
+        return orders;
     }
 }
 

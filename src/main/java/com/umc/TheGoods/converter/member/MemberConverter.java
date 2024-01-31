@@ -5,6 +5,7 @@ import com.umc.TheGoods.domain.item.Category;
 import com.umc.TheGoods.domain.mapping.member.MemberCategory;
 import com.umc.TheGoods.domain.mapping.member.MemberTerm;
 import com.umc.TheGoods.domain.member.Member;
+import com.umc.TheGoods.domain.member.PhoneAuth;
 import com.umc.TheGoods.domain.member.Term;
 import com.umc.TheGoods.web.dto.member.MemberRequestDTO;
 import com.umc.TheGoods.web.dto.member.MemberResponseDTO;
@@ -45,6 +46,7 @@ public class MemberConverter {
                 .memberRole(MemberRole.BUYER)
                 .memberCategoryList(new ArrayList<>())
                 .memberTermList(new ArrayList<>())
+                .itemList(new ArrayList<>())
                 .build();
 
     }
@@ -69,5 +71,39 @@ public class MemberConverter {
                         .memberAgree(entry.getValue())
                         .build())
                 .collect(Collectors.toList());
+    }
+
+    public static PhoneAuth toPhoneAuth(String phone, String code, Boolean expired) {
+
+        return PhoneAuth.builder()
+                .phone(phone)
+                .code(code)
+                .expired(expired)
+                .build();
+    }
+
+    public static MemberResponseDTO.PhoneAuthSendResultDTO toPhoneAuthSendResultDTO(PhoneAuth phoneAuth) {
+        return MemberResponseDTO.PhoneAuthSendResultDTO.builder()
+                .phone(phoneAuth.getPhone())
+                .authtoken(phoneAuth.getCode())
+                .build();
+    }
+
+    public static MemberResponseDTO.PhoneAuthConfirmResultDTO toPhoneAuthConfirmResultDTO(Boolean checkPhone) {
+        return MemberResponseDTO.PhoneAuthConfirmResultDTO.builder()
+                .checkPhone(checkPhone)
+                .build();
+    }
+
+    public static MemberResponseDTO.EmailDuplicateConfirmResultDTO toEmailDuplicateConfirmResultDTO(Boolean checkEmail) {
+        return MemberResponseDTO.EmailDuplicateConfirmResultDTO.builder()
+                .checkEmail(checkEmail)
+                .build();
+    }
+
+    public static MemberResponseDTO.NicknameDuplicateConfirmResultDTO toNicknameDuplicateConfirmResultDTO(Boolean checkNickname) {
+        return MemberResponseDTO.NicknameDuplicateConfirmResultDTO.builder()
+                .checkNickname(checkNickname)
+                .build();
     }
 }
