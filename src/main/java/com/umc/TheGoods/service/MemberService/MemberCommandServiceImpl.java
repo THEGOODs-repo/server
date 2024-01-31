@@ -1,5 +1,7 @@
 package com.umc.TheGoods.service.MemberService;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.umc.TheGoods.apiPayload.code.status.ErrorStatus;
 import com.umc.TheGoods.apiPayload.exception.handler.MemberHandler;
 import com.umc.TheGoods.converter.member.MemberConverter;
@@ -7,21 +9,26 @@ import com.umc.TheGoods.domain.item.Category;
 import com.umc.TheGoods.domain.mapping.member.MemberCategory;
 import com.umc.TheGoods.domain.mapping.member.MemberTerm;
 import com.umc.TheGoods.domain.member.Member;
+import com.umc.TheGoods.domain.member.PhoneAuth;
 import com.umc.TheGoods.domain.member.Term;
-import com.umc.TheGoods.repository.CategoryRepository;
-import com.umc.TheGoods.repository.MemberRepository;
-import com.umc.TheGoods.repository.TermRepository;
+import com.umc.TheGoods.repository.member.CategoryRepository;
+import com.umc.TheGoods.repository.member.MemberRepository;
+import com.umc.TheGoods.repository.member.PhoneAuthRepository;
+import com.umc.TheGoods.repository.member.TermRepository;
 import com.umc.TheGoods.web.dto.member.MemberRequestDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.umc.TheGoods.config.springSecurity.utils.JwtUtil.createJwt;
@@ -37,6 +44,8 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     private final CategoryRepository categoryRepository;
     private final BCryptPasswordEncoder encoder; // 비밀번호 암호화
     private final TermRepository termRepository;
+    private final PhoneAuthRepository phoneAuthRepository;
+
 
     @Value("${jwt.token.secret}")
     private String key; // 토큰 만들어내는 key값
@@ -49,13 +58,12 @@ public class MemberCommandServiceImpl implements MemberCommandService {
      * @return
      */
     @Transactional
+    @Override
     public Member join(MemberRequestDTO.JoinDTO request) {
 
         // userNAme 중복 체크
         memberRepository.findByNickname(request.getNickname())
-                .ifPresent(user -> {
-                    throw new MemberHandler(ErrorStatus.MEMBER_NICNAME_DUPLICATED);
-                });
+                .ifPresent(user -> {throw new MemberHandler(ErrorStatus.MEMBER_NICKNAME_DUPLICATED);});
 
         //저장
         Member member = MemberConverter.toMember(request, encoder);
@@ -75,7 +83,8 @@ public class MemberCommandServiceImpl implements MemberCommandService {
         // 약관동의 저장 로직
         HashMap<Term, Boolean> termMap = new HashMap<>();
         for (int i = 0; i < request.getMemberTerm().size(); i++) {
-            termMap.put(termRepository.findById(i + 1L).orElseThrow(() -> new MemberHandler(ErrorStatus.CATEGORY_NOT_FOUND)), request.getMemberTerm().get(i));
+            termMap.put(termRepository.findById(i + 1L).orElseThrow(() -> new MemberHandler(ErrorStatus.TERM_NOT_FOUND)), request.getMemberTerm().get(i));
+
         }
 
         List<MemberTerm> memberTermList = MemberConverter.toMemberTermList(termMap);
@@ -91,6 +100,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
      *
      * @return
      */
+    @Override
     public String login(MemberRequestDTO.LoginDTO request) {
 
         //email 없음
@@ -109,6 +119,88 @@ public class MemberCommandServiceImpl implements MemberCommandService {
 
         return createJwt(selectedMember.getId(), selectedMember.getNickname(), expiredMs, key, roles);
 
+    }
+
+    /**
+     * 폰 인증번호 전송 api
+     */
+    @Override
+    public PhoneAuth sendPhoneAuth(String phone) {
+
+        String code = Integer.toString((int) (Math.random() * 8999) + 1000);
+
+        Boolean expired = false;
+
+        RestTemplate rt = new RestTemplate();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-type", "application/json");
+
+        //HttpBody 객체 생성
+        Map<String, Object> params = new HashMap<>();
+        params.put("code", code);
+        params.put("target", phone);
+        params.put("password", "junjunjun");
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String jsonBody;
+        try {
+            jsonBody = objectMapper.writeValueAsString(params);
+        } catch (JsonProcessingException e) {
+
+            throw new RuntimeException("Json 에러", e);
+        }
+        HttpEntity<String> phoneAuthRequest = new HttpEntity<>(jsonBody, headers);
+
+
+        //Http 요청해서 응답 받음
+        ResponseEntity<Void> response = rt.exchange(
+                "http://116.39.207.35:8000/smsroute",
+                HttpMethod.POST,
+                phoneAuthRequest,
+                Void.class
+        );
+
+        PhoneAuth phoneAuth = MemberConverter.toPhoneAuth(phone, code, expired);
+        phoneAuthRepository.save(phoneAuth);
+        return phoneAuth;
+    }
+
+    @Override
+    public Boolean confirmPhoneAuth(MemberRequestDTO.PhoneAuthConfirmDTO request) {
+        Boolean checkPhone = false;
+        PhoneAuth phoneAuth = phoneAuthRepository.findByPhone(request.getPhone())
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_PHONE_AUTH_ERROR));
+
+        if (phoneAuth.getCode().equals(request.getCode())) {
+            checkPhone = true;
+        }
+
+        return checkPhone;
+    }
+
+    @Override
+    public Boolean confirmEmailDuplicate(MemberRequestDTO.EmailDuplicateConfirmDTO request) {
+
+        Optional<Member> member = memberRepository.findByEmail(request.getEmail());
+        Boolean checkEmail = false;
+
+        if (!member.isPresent()) {
+            checkEmail = true;
+        }
+        return checkEmail;
+    }
+
+    @Override
+    public Boolean confirmNicknameDuplicate(MemberRequestDTO.NicknameDuplicateConfirmDTO request) {
+        Optional<Member> member = memberRepository.findByNickname(request.getNickname());
+
+        Boolean checkNickname = false;
+
+        if (!member.isPresent()) {
+            checkNickname = true;
+        }
+        return checkNickname;
     }
 
     /**

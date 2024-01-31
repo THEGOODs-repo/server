@@ -55,20 +55,12 @@ public class OrderConverter {
                 .orderDetailList(new ArrayList<>())
                 .build();
     }
-    
+
     public static OrderDetail toOrderDetail(OrderRequestDTO.OrderDetailDTO orderDetailDTO, Long price) {
         return OrderDetail.builder()
                 .amount(orderDetailDTO.getAmount())
                 .orderPrice(orderDetailDTO.getAmount() * price)
                 .build();
     }
-
-//    public static OrderDetail toOrderDetail(OrderRequestDTO.OrderItemDto orderItemDto, Long price) {
-//        return OrderDetail.builder()
-//                .amount(orderItemDto.getAmount())
-//                .orderPrice(price)
-//                .status(OrderStatus.PAY_PREV)
-//                .build();
-//    }
 
 }

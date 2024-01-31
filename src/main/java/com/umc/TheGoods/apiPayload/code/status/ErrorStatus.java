@@ -30,13 +30,18 @@ public enum ErrorStatus implements BaseErrorCode {
     TEMP_EXCEPTION(HttpStatus.BAD_REQUEST, "TEMP4001", "테스트"),
 
     // Member
-    MEMBER_NICNAME_DUPLICATED(HttpStatus.BAD_REQUEST, "MEMBER4001", "중복된 닉네임 입니다."),
+    MEMBER_NICKNAME_DUPLICATED(HttpStatus.BAD_REQUEST, "MEMBER4001", "중복된 닉네임 입니다."),
     MEMBER_PASSWORD_ERROR(HttpStatus.BAD_REQUEST, "MEMBER4002", "비밀번호가 잘못되었습니다."),
     MEMBER_EMAIL_NOT_FOUND(HttpStatus.BAD_REQUEST, "MEMBER4003", "이메일이 존재하지 않습니다."),
     MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "MEMBER4004", "해당 회원을 찾을 수 없습니다."),
+    MEMBER_PHONE_AUTH_ERROR(HttpStatus.BAD_REQUEST, "MEMBER4005", "유효하지 않는 번호입니다."),
+
 
     //Category
-    CATEGORY_NOT_FOUND(HttpStatus.BAD_REQUEST, "CATEGORY4001", "해당 카테고리가 존재하지 않습니다"),
+    CATEGORY_NOT_FOUND(HttpStatus.NOT_FOUND, "CATEGORY4001", "해당 카테고리가 존재하지 않습니다"),
+
+    //Term
+    TERM_NOT_FOUND(HttpStatus.NOT_FOUND, "TERM4001", "해당 약관이 존재하지 않습니다.");
 
     //tag error
     TAG_NOT_FOUND(HttpStatus.BAD_REQUEST, "TAG4001", "존재하지 않는 태그입니다.");
