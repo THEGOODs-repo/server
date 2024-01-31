@@ -7,4 +7,6 @@ import org.springframework.data.domain.Page;
 
 public interface OrderQueryService {
     Page<OrderItem> getOrderItemList(Member member, OrderStatus orderStatus, Integer page);
+
+    OrderItem getOrderItem(Member member, Long orderItemId);
 }

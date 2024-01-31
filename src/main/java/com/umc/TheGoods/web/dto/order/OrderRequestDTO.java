@@ -17,6 +17,12 @@ public class OrderRequestDTO {
         @NotBlank
         String phone;
 
+        @NotBlank
+        String receiverName;
+
+        @NotBlank
+        String receiverPhone;
+
         @Size(min = 5, max = 6)
         String zipcode;
 

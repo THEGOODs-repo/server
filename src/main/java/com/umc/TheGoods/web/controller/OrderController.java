@@ -91,4 +91,25 @@ public class OrderController {
         return ApiResponse.onSuccess(OrderConverter.toOrderPreViewListDTO(orderItemList));
     }
 
+    @GetMapping("/{orderItemId}")
+    @Operation(summary = "주문 상세 내역 조회 API", description = "주문 상세 내역을 조회하는 API 입니다. (구매자)\n\n" +
+            "orderItemId(상품 주문 내역 id)을 보내주세요.")
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
+    })
+    @Parameter(name = "orderItemId", description = "주문 상품 내역 id, path variable 입니다.")
+    public ApiResponse<OrderResponseDTO.OrderItemViewDTO> orderItemView(
+            @PathVariable(name = "orderItemId") Long orderItemId,
+            Authentication authentication
+    ) {
+        // request에서 member id 추출해 Member 엔티티 찾기
+        MemberDetail memberDetail = (MemberDetail) authentication.getPrincipal();
+        Member member = memberQueryService.findMemberById(memberDetail.getMemberId()).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        OrderItem orderItem = orderQueryService.getOrderItem(member, orderItemId);
+
+        return ApiResponse.onSuccess(OrderConverter.toOrderItemViewDTO(orderItem));
+
+    }
+
 }

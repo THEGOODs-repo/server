@@ -8,9 +8,12 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface OrderItemRepository extends JpaRepository<OrderItem, Long> {
     Page<OrderItem> findAllByStatusAndOrdersIn(OrderStatus orderStatus, List<Orders> ordersList, PageRequest pageRequest);
 
     Page<OrderItem> findAllByOrdersIn(List<Orders> ordersList, PageRequest pageRequest);
+
+    Optional<OrderItem> findById(Long orderItemId);
 }

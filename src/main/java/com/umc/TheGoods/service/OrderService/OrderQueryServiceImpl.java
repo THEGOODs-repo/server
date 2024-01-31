@@ -1,5 +1,7 @@
 package com.umc.TheGoods.service.OrderService;
 
+import com.umc.TheGoods.apiPayload.code.status.ErrorStatus;
+import com.umc.TheGoods.apiPayload.exception.handler.OrderHandler;
 import com.umc.TheGoods.domain.enums.OrderStatus;
 import com.umc.TheGoods.domain.member.Member;
 import com.umc.TheGoods.domain.order.OrderItem;
@@ -38,4 +40,17 @@ public class OrderQueryServiceImpl implements OrderQueryService {
 
         return orderItemList;
     }
+
+    @Override
+    public OrderItem getOrderItem(Member member, Long orderItemId) {
+
+        OrderItem orderItem = orderItemRepository.findById(orderItemId).orElseThrow(() -> new OrderHandler(ErrorStatus.ORDER_ITEM_NOT_FOUND));
+
+        if (!orderItem.getOrders().getMember().equals(member)) {
+            throw new OrderHandler(ErrorStatus.NOT_ORDER_OWNER);
+        }
+
+        return orderItem;
+    }
+
 }
