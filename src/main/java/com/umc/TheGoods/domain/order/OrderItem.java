@@ -122,4 +122,13 @@ public class OrderItem extends BaseDateTimeEntity {
 
         return this;
     }
+
+    // 환불 계좌 정보 업데이트 메소드
+    public OrderItem updateRefundInfo(OrderRequestDTO.OrderItemRefundInfoUpdateDTO request) {
+        this.refundOwner = request.getRefundOwner();
+        this.refundBank = request.getRefundBank();
+        this.refundAccount = request.getRefundAccount();
+
+        return this;
+    }
 }

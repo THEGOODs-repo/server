@@ -99,4 +99,14 @@ public class OrderRequestDTO {
         String deliveryMemo;
     }
 
+    @Getter
+    public static class OrderItemRefundInfoUpdateDTO {
+        @NotBlank
+        String refundOwner;
+        @NotBlank
+        String refundBank;
+        @NotBlank
+        String refundAccount;
+    }
+
 }

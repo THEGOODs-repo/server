@@ -10,4 +10,6 @@ public interface OrderCommandService {
     Orders create(OrderRequestDTO.OrderAddDTO request, Member member);
 
     OrderItem updateOrderItemAddress(OrderRequestDTO.OrderItemAddressUpdateDTO request, Long orderItemId, Member member);
+
+    OrderItem updateOrderItemRefundInfo(OrderRequestDTO.OrderItemRefundInfoUpdateDTO request, Long orderItemId, Member member);
 }
