@@ -3,8 +3,8 @@ package com.umc.TheGoods.web.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.umc.TheGoods.apiPayload.ApiResponse;
 import com.umc.TheGoods.converter.member.MemberConverter;
+import com.umc.TheGoods.domain.member.Auth;
 import com.umc.TheGoods.domain.member.Member;
-import com.umc.TheGoods.domain.member.PhoneAuth;
 import com.umc.TheGoods.service.MemberService.MemberCommandService;
 import com.umc.TheGoods.web.dto.member.MemberDetail;
 import com.umc.TheGoods.web.dto.member.MemberRequestDTO;
@@ -75,14 +75,14 @@ public class MemberController {
     @Operation(summary = "휴대폰 인증 번호 요청 API", description = "request: 휴대폰 번호, response : 인증번호")
     public ApiResponse<MemberResponseDTO.PhoneAuthSendResultDTO> phoneAuthSend(@RequestBody MemberRequestDTO.PhoneAuthDTO request) throws JsonProcessingException {
 
-        PhoneAuth phoneAuth = memberCommandService.sendPhoneAuth(request.getPhone());
+        Auth auth = memberCommandService.sendPhoneAuth(request.getPhone());
 
-        return ApiResponse.onSuccess(MemberConverter.toPhoneAuthSendResultDTO(phoneAuth));
+        return ApiResponse.onSuccess(MemberConverter.toPhoneAuthSendResultDTO(auth));
     }
 
 
     @PostMapping("phone/auth/verify")
-    @Operation(summary = "휴대폰 인증 번호 확인 API", description = "request: 인증 코드, response : 인증완료 true")
+    @Operation(summary = "회원가입시 휴대폰 인증 번호 확인 API", description = "request: 인증 코드, response : 인증완료 true")
     public ApiResponse<MemberResponseDTO.PhoneAuthConfirmResultDTO> phoneAuth(@RequestBody MemberRequestDTO.PhoneAuthConfirmDTO request) {
         Boolean checkPhone = memberCommandService.confirmPhoneAuth(request);
 
@@ -109,7 +109,26 @@ public class MemberController {
     @Operation(summary = "이메일 찾기에서 사용되는 번호 확인 api", description = "request: 인증 코드, response: 인증 완료 되면 email")
     public ApiResponse<MemberResponseDTO.PhoneAuthConfirmFindEmailResultDTO> phoneAuthFindEmail(@RequestBody MemberRequestDTO.PhoneAuthConfirmFindEmailDTO request) {
         String email = memberCommandService.confirmPhoneAuthFindEmail(request);
-        
+
         return ApiResponse.onSuccess(MemberConverter.toPhoneAuthConfirmFindEmailDTO(email));
     }
+
+    @PostMapping("email/auth")
+    @Operation(summary = "비밀번호 찾기에서 사용되는 email 인증 요청 api", description = "request: 이메일 입력하면 해당 이메일로 인증번호 전송")
+    public ApiResponse<MemberResponseDTO.EmailAuthSendResultDTO> emailAuthSend(@RequestBody MemberRequestDTO.EmailAuthDTO request) {
+
+        Auth auth = memberCommandService.sendEmailAuth(request.getEmail());
+        return ApiResponse.onSuccess(MemberConverter.toEmailAuthSendResultDTO(auth));
+    }
+
+    @PostMapping("email/auth/verify")
+    @Operation(summary = "비밀번호 찾기에서 사용되는 email 인증 코드 검증 api", description = "request: 이메일, 코드 response: 인증완료 true")
+    public ApiResponse<MemberResponseDTO.EmailAuthConfirmResultDTO> emailAuth(@RequestBody MemberRequestDTO.EmailAuthConfirmDTO request) {
+        Boolean checkEmail = memberCommandService.confirmEmailAuth(request);
+
+        return ApiResponse.onSuccess(MemberConverter.toEmailAuthConfirmResultDTO(checkEmail));
+    }
+
 }
+
+

@@ -4,8 +4,8 @@ import com.umc.TheGoods.domain.enums.MemberRole;
 import com.umc.TheGoods.domain.item.Category;
 import com.umc.TheGoods.domain.mapping.member.MemberCategory;
 import com.umc.TheGoods.domain.mapping.member.MemberTerm;
+import com.umc.TheGoods.domain.member.Auth;
 import com.umc.TheGoods.domain.member.Member;
-import com.umc.TheGoods.domain.member.PhoneAuth;
 import com.umc.TheGoods.domain.member.Term;
 import com.umc.TheGoods.web.dto.member.MemberRequestDTO;
 import com.umc.TheGoods.web.dto.member.MemberResponseDTO;
@@ -73,9 +73,9 @@ public class MemberConverter {
                 .collect(Collectors.toList());
     }
 
-    public static PhoneAuth toPhoneAuth(String phone, String code, Boolean expired) {
+    public static Auth toPhoneAuth(String phone, String code, Boolean expired) {
 
-        return PhoneAuth.builder()
+        return Auth.builder()
                 .phone(phone)
                 .code(code)
                 .expireDate(LocalDateTime.now().plusMinutes(5))
@@ -83,10 +83,10 @@ public class MemberConverter {
                 .build();
     }
 
-    public static MemberResponseDTO.PhoneAuthSendResultDTO toPhoneAuthSendResultDTO(PhoneAuth phoneAuth) {
+    public static MemberResponseDTO.PhoneAuthSendResultDTO toPhoneAuthSendResultDTO(Auth auth) {
         return MemberResponseDTO.PhoneAuthSendResultDTO.builder()
-                .phone(phoneAuth.getPhone())
-                .authtoken(phoneAuth.getCode())
+                .phone(auth.getPhone())
+                .authCode(auth.getCode())
                 .build();
     }
 
@@ -112,6 +112,29 @@ public class MemberConverter {
     public static MemberResponseDTO.PhoneAuthConfirmFindEmailResultDTO toPhoneAuthConfirmFindEmailDTO(String email) {
         return MemberResponseDTO.PhoneAuthConfirmFindEmailResultDTO.builder()
                 .email(email)
+                .build();
+    }
+
+    public static MemberResponseDTO.EmailAuthSendResultDTO toEmailAuthSendResultDTO(Auth auth) {
+        return MemberResponseDTO.EmailAuthSendResultDTO.builder()
+                .email(auth.getEmail())
+                .authCode(auth.getCode())
+                .build();
+    }
+
+    public static Auth toEmailAuth(String email, String code, Boolean expired) {
+
+        return Auth.builder()
+                .email(email)
+                .code(code)
+                .expireDate(LocalDateTime.now().plusMinutes(5))
+                .expired(expired)
+                .build();
+    }
+
+    public static MemberResponseDTO.EmailAuthConfirmResultDTO toEmailAuthConfirmResultDTO(Boolean checkEmail) {
+        return MemberResponseDTO.EmailAuthConfirmResultDTO.builder()
+                .checkEmail(checkEmail)
                 .build();
     }
 }

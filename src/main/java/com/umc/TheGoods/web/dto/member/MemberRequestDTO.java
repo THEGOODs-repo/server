@@ -74,4 +74,18 @@ public class MemberRequestDTO {
         private String code;
     }
 
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class EmailAuthDTO {
+        private String email;
+    }
+
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class EmailAuthConfirmDTO {
+        private String email;
+        private String code;
+    }
 }

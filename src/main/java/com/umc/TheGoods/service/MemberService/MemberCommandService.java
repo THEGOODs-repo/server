@@ -2,8 +2,8 @@ package com.umc.TheGoods.service.MemberService;
 
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.umc.TheGoods.domain.member.Auth;
 import com.umc.TheGoods.domain.member.Member;
-import com.umc.TheGoods.domain.member.PhoneAuth;
 import com.umc.TheGoods.web.dto.member.MemberRequestDTO;
 
 
@@ -15,7 +15,7 @@ public interface MemberCommandService {
 
     String login(MemberRequestDTO.LoginDTO request);
 
-    PhoneAuth sendPhoneAuth(String phone) throws JsonProcessingException;
+    Auth sendPhoneAuth(String phone) throws JsonProcessingException;
 
     Boolean confirmPhoneAuth(MemberRequestDTO.PhoneAuthConfirmDTO request);
 
@@ -24,6 +24,10 @@ public interface MemberCommandService {
     Boolean confirmNicknameDuplicate(MemberRequestDTO.NicknameDuplicateConfirmDTO request);
 
     String confirmPhoneAuthFindEmail(MemberRequestDTO.PhoneAuthConfirmFindEmailDTO request);
+
+    Auth sendEmailAuth(String email);
+
+    Boolean confirmEmailAuth(MemberRequestDTO.EmailAuthConfirmDTO request);
 
 
 }
