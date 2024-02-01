@@ -1,5 +1,6 @@
 package com.umc.TheGoods.web.dto.order;
 
+import com.umc.TheGoods.validation.annotation.ExistOrders;
 import com.umc.TheGoods.validation.annotation.OrderAvailable;
 import lombok.Getter;
 
@@ -69,5 +70,18 @@ public class OrderRequestDTO {
         @Min(1)
         @Max(100000)
         Integer amount;
+    }
+
+    @Getter
+    public static class noLoginOrderViewDTO {
+        @NotNull
+        @ExistOrders
+        Long ordersId;
+        @NotBlank
+        String name;
+        @NotBlank
+        String phone;
+        @Min(1)
+        Integer page;
     }
 }

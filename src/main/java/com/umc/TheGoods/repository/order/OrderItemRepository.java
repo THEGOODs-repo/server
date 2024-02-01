@@ -15,5 +15,7 @@ public interface OrderItemRepository extends JpaRepository<OrderItem, Long> {
 
     Page<OrderItem> findAllByOrdersIn(List<Orders> ordersList, PageRequest pageRequest);
 
+    Page<OrderItem> findAllByOrders(Orders orders, PageRequest pageRequest);
+
     Optional<OrderItem> findById(Long orderItemId);
 }

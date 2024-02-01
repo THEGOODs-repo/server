@@ -5,7 +5,10 @@ import com.umc.TheGoods.apiPayload.exception.handler.OrderHandler;
 import com.umc.TheGoods.domain.enums.OrderStatus;
 import com.umc.TheGoods.domain.member.Member;
 import com.umc.TheGoods.domain.order.OrderItem;
+import com.umc.TheGoods.domain.order.Orders;
 import com.umc.TheGoods.repository.order.OrderItemRepository;
+import com.umc.TheGoods.repository.order.OrderRepository;
+import com.umc.TheGoods.web.dto.order.OrderRequestDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -19,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class OrderQueryServiceImpl implements OrderQueryService {
+    private final OrderRepository orderRepository;
     private final OrderItemRepository orderItemRepository;
 
     Integer pageSize = 10;
@@ -38,6 +42,22 @@ public class OrderQueryServiceImpl implements OrderQueryService {
     }
 
     @Override
+    public Page<OrderItem> getNoLoginOrderItemList(OrderRequestDTO.noLoginOrderViewDTO request) {
+        // 비회원 주문 조회 검증: 주문 번호, 주문자명, 연락처가 일치하는지
+        Orders orders = orderRepository.findById(request.getOrdersId()).get();
+        if (!orders.getName().equals(request.getName()) || !orders.getPhone().equals(request.getPhone())) {
+            throw new OrderHandler(ErrorStatus.NO_LOGIN_ORDER_NOT_FOUND);
+        }
+
+        Page<OrderItem> orderItemList = orderItemRepository.findAllByOrders(orders, PageRequest.of(request.getPage() - 1, pageSize, Sort.by(Sort.Direction.DESC, "createdAt")));
+
+        log.info("== orderItemList ==");
+        orderItemList.forEach(orderItem -> log.info("orderItem: {}", orderItem.getId()));
+
+        return orderItemList;
+    }
+
+    @Override
     public OrderItem getOrderItem(Member member, Long orderItemId) {
 
         OrderItem orderItem = orderItemRepository.findById(orderItemId).orElseThrow(() -> new OrderHandler(ErrorStatus.ORDER_ITEM_NOT_FOUND));
@@ -50,6 +70,11 @@ public class OrderQueryServiceImpl implements OrderQueryService {
         }
 
         return orderItem;
+    }
+
+    @Override
+    public boolean isExistOrders(Long id) {
+        return orderRepository.existsById(id);
     }
 
     @Override

@@ -13,7 +13,6 @@ import com.umc.TheGoods.service.MemberService.MemberQueryService;
 import com.umc.TheGoods.service.OrderService.OrderCommandService;
 import com.umc.TheGoods.service.OrderService.OrderQueryService;
 import com.umc.TheGoods.validation.annotation.CheckPage;
-import com.umc.TheGoods.validation.annotation.ExistOrderItem;
 import com.umc.TheGoods.web.dto.member.MemberDetail;
 import com.umc.TheGoods.web.dto.order.OrderRequestDTO;
 import com.umc.TheGoods.web.dto.order.OrderResponseDTO;
@@ -69,7 +68,7 @@ public class OrderController {
 
     @GetMapping
     @Operation(summary = "나의 주문 목록 조회 API", description = "나의 주문 목록을 조회하는 API 입니다. (구매자 회원용)\n\n" +
-            "페이지 번호 (1 이상)과 주문 상태 필터 값을 보내주세요. 전체 주문 조회 시 주문 상태 필터 값은 보내지 않아야 합니다.")
+            "페이지 번호 (1 이상)과 주문 상태 필터 값을 보내주세요. 주문 상태 필터 값을 보내지 않을 경우, 전체 주문을 조회합니다.")
     @ApiResponses(value = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
     })
@@ -92,16 +91,29 @@ public class OrderController {
         return ApiResponse.onSuccess(OrderConverter.toOrderPreViewListDTO(orderItemList));
     }
 
+    @PostMapping("/api/nologin/order")
+    @Operation(summary = "비회원 주문 조회 API", description = "비회원의 특정 주문 내역을 조회하는 API 입니다.\n\n" +
+            "page에는 1이상의 페이지 번호 값을 입력해주세요.")
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
+    })
+    public ApiResponse<OrderResponseDTO.orderItemPreViewListDTO> noLoginOrderPreview(@RequestBody @Valid OrderRequestDTO.noLoginOrderViewDTO request) {
+
+        Page<OrderItem> orderItemList = orderQueryService.getNoLoginOrderItemList(request);
+
+        return ApiResponse.onSuccess(OrderConverter.toOrderPreViewListDTO(orderItemList));
+    }
+
 
     @GetMapping("/{orderItemId}")
-    @Operation(summary = "주문 상세 내역 조회 API", description = "주문 상세 내역을 조회하는 API 입니다. (구매자)\n\n" +
+    @Operation(summary = "주문 상세 내역 조회 API", description = "주문 상세 내역을 조회하는 API 입니다. (비회원, 구매자 공통)\n\n" +
             "orderItemId(상품 주문 내역 id)을 보내주세요.")
     @ApiResponses(value = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
     })
     @Parameter(name = "orderItemId", description = "주문 상품 내역 id, path variable 입니다.")
     public ApiResponse<OrderResponseDTO.OrderItemViewDTO> orderItemView(
-            @PathVariable(name = "orderItemId") @ExistOrderItem Long orderItemId,
+            @PathVariable(name = "orderItemId") Long orderItemId,
             Authentication authentication
     ) {
         Member member = null;
