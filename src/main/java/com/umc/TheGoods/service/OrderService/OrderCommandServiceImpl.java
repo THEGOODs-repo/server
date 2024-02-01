@@ -31,9 +31,9 @@ public class OrderCommandServiceImpl implements OrderCommandService {
     private final ItemOptionRepository itemOptionRepository;
 
     @Override
-    public Orders create(OrderRequestDTO.OrderAddDto request, Member member) {
+    public Orders create(OrderRequestDTO.OrderAddDTO request, Member member) {
         // item 및 itemOption의 재고와 주문 수량 비교
-        request.getOrderItemDtoList().forEach(orderItemDto -> {
+        request.getOrderItemDTOList().forEach(orderItemDto -> {
             Item item = itemRepository.findById(orderItemDto.getItemId()).get();
 
             orderItemDto.getOrderDetailDTOList().forEach(orderDetailDTO -> {
@@ -56,7 +56,7 @@ public class OrderCommandServiceImpl implements OrderCommandService {
         Orders orders = orderRepository.save(newOrders);
 
         // OrderItem, OrderDetail 엔티티 생성, 연관관계 매핑, 판매 재고 업데이트
-        request.getOrderItemDtoList().forEach(orderItemDto -> {
+        request.getOrderItemDTOList().forEach(orderItemDto -> {
             Item item = itemRepository.findById(orderItemDto.getItemId()).get();
 
             // OrderItem 엔티티 생성 및 연관관계 매핑
