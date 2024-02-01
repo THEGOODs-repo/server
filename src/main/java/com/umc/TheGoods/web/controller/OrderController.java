@@ -133,7 +133,7 @@ public class OrderController {
 
     }
 
-    @PostMapping("/{orderItemId}/info/address")
+    @PutMapping("/{orderItemId}/info/address")
     @Operation(summary = "주문 배송지 정보 수정 API", description = "상품 주문 내역의 배송지 정보를 변경하는 API 입니다.\n\n" +
             "orderItemId(상품 주문 내역 id)와 배송지 정보를 보내주세요.")
     @ApiResponses(value = {
