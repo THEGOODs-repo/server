@@ -84,4 +84,19 @@ public class OrderRequestDTO {
         @Min(1)
         Integer page;
     }
+
+    @Getter
+    public static class OrderItemAddressUpdateDTO {
+        @NotBlank
+        String receiverName;
+        @NotBlank
+        String receiverPhone;
+        @Size(min = 5, max = 6)
+        String zipcode;
+        @NotBlank
+        String address;
+        String addressDetail;
+        String deliveryMemo;
+    }
+
 }

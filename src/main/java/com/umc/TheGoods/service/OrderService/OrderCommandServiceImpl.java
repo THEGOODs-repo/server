@@ -3,6 +3,7 @@ package com.umc.TheGoods.service.OrderService;
 import com.umc.TheGoods.apiPayload.code.status.ErrorStatus;
 import com.umc.TheGoods.apiPayload.exception.handler.OrderHandler;
 import com.umc.TheGoods.converter.order.OrderConverter;
+import com.umc.TheGoods.domain.enums.OrderStatus;
 import com.umc.TheGoods.domain.item.Item;
 import com.umc.TheGoods.domain.item.ItemOption;
 import com.umc.TheGoods.domain.member.Member;
@@ -96,6 +97,23 @@ public class OrderCommandServiceImpl implements OrderCommandService {
         });
 
         return orders;
+    }
+
+    @Override
+    public OrderItem updateOrderItemAddress(OrderRequestDTO.OrderItemAddressUpdateDTO request, Long orderItemId, Member member) {
+        OrderItem orderItem = orderItemRepository.findById(orderItemId).orElseThrow(() -> new OrderHandler(ErrorStatus.ORDER_ITEM_NOT_FOUND));
+
+        // member가 해당 orderItem에 수정 권한이 있는지 검증
+        if (!orderItem.getOrders().getMember().equals(member)) {
+            throw new OrderHandler(ErrorStatus.NOT_ORDER_OWNER);
+        }
+
+        // 해당 orderItem의 status가 배송 준비 이전인지 검증
+        if (!(orderItem.getStatus() == OrderStatus.PAY_PREV || orderItem.getStatus() == OrderStatus.PAY_COMP)) {
+            throw new OrderHandler(ErrorStatus.ORDER_ITEM_UPDATE_FAIL);
+        }
+
+        return orderItem.updateAddressInfo(request);
     }
 }
 
