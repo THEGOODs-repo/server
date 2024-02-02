@@ -6,8 +6,8 @@ public enum OrderStatus {
     DEL_PREP,
     DEL_START,
     DEL_COMP,
+    CONFIRM,
     CANCEL,
-    AUTO_CANCEL,
     REFUND_ONGOING,
     REFUND_COMP
 }
