@@ -82,6 +82,11 @@ public class OrderController {
             @RequestParam(name = "status", required = false) OrderStatus orderStatus,
             Authentication authentication
     ) {
+        // 비회원인 경우 처리 불가
+        if (authentication == null) {
+            throw new MemberHandler(ErrorStatus._UNAUTHORIZED);
+        }
+        
         // request에서 member id 추출해 Member 엔티티 찾기
         MemberDetail memberDetail = (MemberDetail) authentication.getPrincipal();
         Member member = memberQueryService.findMemberById(memberDetail.getMemberId()).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
@@ -133,4 +138,21 @@ public class OrderController {
 
     }
 
+    @PostMapping("/{orderItemId}/complete")
+    public String orderPurchaseConfirm(
+            @PathVariable(name = "orderItemId") Long orderItemId,
+            Authentication authentication
+    ) {
+        // 비회원인 경우 처리 불가
+        if (authentication == null) {
+            throw new MemberHandler(ErrorStatus._UNAUTHORIZED);
+        }
+
+        // request에서 member id 추출해 Member 엔티티 찾기
+        MemberDetail memberDetail = (MemberDetail) authentication.getPrincipal();
+        Member member = memberQueryService.findMemberById(memberDetail.getMemberId()).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        orderCommandService.updateStatusToConfirm(orderItemId, member);
+        return "update succeed";
+    }
 }

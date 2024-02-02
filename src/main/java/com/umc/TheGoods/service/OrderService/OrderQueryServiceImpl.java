@@ -62,6 +62,7 @@ public class OrderQueryServiceImpl implements OrderQueryService {
 
         OrderItem orderItem = orderItemRepository.findById(orderItemId).orElseThrow(() -> new OrderHandler(ErrorStatus.ORDER_ITEM_NOT_FOUND));
 
+        // 해당 orderItem을 조회할 권한이 있는지 검증
         if (!orderItem.getOrders().getMember().equals(member) && !orderItem.getItem().getMember().equals(member)) { // 해당 orderItem의 구매자 && 판매자가 아닌 경우
             log.info("orderItem.getOrders.getMember(): {}", orderItem.getOrders().getMember().getNickname());
             log.info("member parameter: {}", member.getNickname());
