@@ -1,5 +1,6 @@
 package com.umc.TheGoods.web.dto.order;
 
+import com.umc.TheGoods.validation.annotation.ExistOrders;
 import com.umc.TheGoods.validation.annotation.OrderAvailable;
 import lombok.Getter;
 
@@ -9,13 +10,19 @@ import java.util.List;
 
 public class OrderRequestDTO {
     @Getter
-    public static class OrderAddDto {
+    public static class OrderAddDTO {
 
         @NotBlank
         String name;
 
         @NotBlank
         String phone;
+
+        @NotBlank
+        String receiverName;
+
+        @NotBlank
+        String receiverPhone;
 
         @Size(min = 5, max = 6)
         String zipcode;
@@ -43,12 +50,12 @@ public class OrderRequestDTO {
 
         @NotEmpty
         @Valid
-        List<OrderItemDto> orderItemDtoList;
+        List<OrderItemDTO> orderItemDTOList;
     }
 
     @Getter
     @OrderAvailable
-    public static class OrderItemDto {
+    public static class OrderItemDTO {
         @NotNull
         Long itemId;
 
@@ -63,5 +70,18 @@ public class OrderRequestDTO {
         @Min(1)
         @Max(100000)
         Integer amount;
+    }
+
+    @Getter
+    public static class noLoginOrderViewDTO {
+        @NotNull
+        @ExistOrders
+        Long ordersId;
+        @NotBlank
+        String name;
+        @NotBlank
+        String phone;
+        @Min(1)
+        Integer page;
     }
 }

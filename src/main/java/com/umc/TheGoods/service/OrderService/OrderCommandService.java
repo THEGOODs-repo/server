@@ -6,5 +6,5 @@ import com.umc.TheGoods.web.dto.order.OrderRequestDTO;
 
 public interface OrderCommandService {
 
-    public Orders create(OrderRequestDTO.OrderAddDto request, Member member);
+    public Orders create(OrderRequestDTO.OrderAddDTO request, Member member);
 }

@@ -4,6 +4,7 @@ import com.umc.TheGoods.domain.common.BaseDateTimeEntity;
 import com.umc.TheGoods.domain.enums.OrderStatus;
 import com.umc.TheGoods.domain.item.Item;
 import com.umc.TheGoods.domain.item.Review;
+import com.umc.TheGoods.domain.types.DeliveryType;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 
@@ -34,8 +35,18 @@ public class OrderItem extends BaseDateTimeEntity {
     @ColumnDefault("'PAY_PREV'")
     private OrderStatus status;
 
+    @Enumerated(EnumType.STRING)
+    @Column(columnDefinition = "VARCHAR(30)")
+    private DeliveryType deliveryComp;
+
     @Column(length = 30)
     private String deliveryNum;
+
+    @Column(nullable = false)
+    private String receiverName;
+
+    @Column(nullable = false)
+    private String receiverPhone;
 
     @Column(nullable = false, length = 10)
     private String zipcode;
@@ -59,7 +70,7 @@ public class OrderItem extends BaseDateTimeEntity {
     @Column(length = 30)
     private String depositor;
 
-    private LocalDate deposit_date;
+    private LocalDate depositDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "orders_id", nullable = false)
