@@ -8,6 +8,7 @@ import com.umc.TheGoods.domain.mapping.Dibs;
 import com.umc.TheGoods.domain.mapping.Tag.ItemTag;
 import com.umc.TheGoods.domain.mapping.ViewSearch.ItemView;
 import com.umc.TheGoods.domain.member.Member;
+import com.umc.TheGoods.domain.order.Cart;
 import com.umc.TheGoods.domain.order.OrderItem;
 import com.umc.TheGoods.domain.types.DeliveryType;
 import lombok.*;
@@ -91,6 +92,9 @@ public class Item extends BaseDateTimeEntity {
 
     @OneToMany(mappedBy = "item", cascade = CascadeType.ALL)
     private List<ItemTag> itemTagList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL)
+    private List<Cart> itemCartList = new ArrayList<>();
 
     @OneToMany(mappedBy = "item", cascade = CascadeType.ALL)
     private List<ItemView> itemViewList = new ArrayList<>();

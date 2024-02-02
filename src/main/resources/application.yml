@@ -10,7 +10,24 @@ spring:
     username: sa
     password:
     driver-class-name: org.h2.Driver
-
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    properties:
+      mail:
+        smtp:
+          starttls:
+            enable: true
+            required: true
+          auth: true
+          connectiontimeout: 5000
+          timeout: 5000
+          writetimeout: 5000
+    auth-code-expiration-millis: 1800000
+    username: "user"
+    password: "password"
+  
+  
   jpa:
     hibernate:
       ddl-auto: update

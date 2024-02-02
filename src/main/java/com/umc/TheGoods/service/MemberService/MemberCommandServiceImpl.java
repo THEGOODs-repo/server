@@ -4,16 +4,17 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.umc.TheGoods.apiPayload.code.status.ErrorStatus;
 import com.umc.TheGoods.apiPayload.exception.handler.MemberHandler;
+import com.umc.TheGoods.config.MailConfig;
 import com.umc.TheGoods.converter.member.MemberConverter;
 import com.umc.TheGoods.domain.item.Category;
 import com.umc.TheGoods.domain.mapping.member.MemberCategory;
 import com.umc.TheGoods.domain.mapping.member.MemberTerm;
+import com.umc.TheGoods.domain.member.Auth;
 import com.umc.TheGoods.domain.member.Member;
-import com.umc.TheGoods.domain.member.PhoneAuth;
 import com.umc.TheGoods.domain.member.Term;
+import com.umc.TheGoods.repository.member.AuthRepository;
 import com.umc.TheGoods.repository.member.CategoryRepository;
 import com.umc.TheGoods.repository.member.MemberRepository;
-import com.umc.TheGoods.repository.member.PhoneAuthRepository;
 import com.umc.TheGoods.repository.member.TermRepository;
 import com.umc.TheGoods.web.dto.member.MemberRequestDTO;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +29,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -44,8 +46,8 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     private final CategoryRepository categoryRepository;
     private final BCryptPasswordEncoder encoder; // 비밀번호 암호화
     private final TermRepository termRepository;
-    private final PhoneAuthRepository phoneAuthRepository;
-
+    private final AuthRepository authRepository;
+    private final MailConfig mailConfig;
 
     @Value("${jwt.token.secret}")
     private String key; // 토큰 만들어내는 key값
@@ -63,7 +65,9 @@ public class MemberCommandServiceImpl implements MemberCommandService {
 
         // userNAme 중복 체크
         memberRepository.findByNickname(request.getNickname())
-                .ifPresent(user -> {throw new MemberHandler(ErrorStatus.MEMBER_NICKNAME_DUPLICATED);});
+                .ifPresent(user -> {
+                    throw new MemberHandler(ErrorStatus.MEMBER_NICKNAME_DUPLICATED);
+                });
 
         //저장
         Member member = MemberConverter.toMember(request, encoder);
@@ -125,7 +129,8 @@ public class MemberCommandServiceImpl implements MemberCommandService {
      * 폰 인증번호 전송 api
      */
     @Override
-    public PhoneAuth sendPhoneAuth(String phone) {
+    @Transactional
+    public Auth sendPhoneAuth(String phone) {
 
         String code = Integer.toString((int) (Math.random() * 8999) + 1000);
 
@@ -161,19 +166,36 @@ public class MemberCommandServiceImpl implements MemberCommandService {
                 Void.class
         );
 
-        PhoneAuth phoneAuth = MemberConverter.toPhoneAuth(phone, code, expired);
-        phoneAuthRepository.save(phoneAuth);
-        return phoneAuth;
+        Auth auth = MemberConverter.toPhoneAuth(phone, code, expired);
+        Optional<Auth> delete = authRepository.findByPhone(phone);
+
+        if (delete.isPresent()) {
+
+            Auth deleteAuth = delete.orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_PHONE_AUTH_ERROR));
+            authRepository.delete(deleteAuth);
+        }
+
+        authRepository.save(auth);
+        return auth;
     }
 
     @Override
+    @Transactional
     public Boolean confirmPhoneAuth(MemberRequestDTO.PhoneAuthConfirmDTO request) {
         Boolean checkPhone = false;
-        PhoneAuth phoneAuth = phoneAuthRepository.findByPhone(request.getPhone())
+        Auth auth = authRepository.findByPhone(request.getPhone())
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_PHONE_AUTH_ERROR));
-
-        if (phoneAuth.getCode().equals(request.getCode())) {
+        LocalDateTime current = LocalDateTime.now();
+        //인증 코드 같은지 확인, 이미 사용된 인증인지 체크, 만료시간 지났는지 체크
+        if (auth.getCode().equals(request.getCode()) && !auth.getExpired() && auth.getExpireDate().isAfter(current)) {
             checkPhone = true;
+
+            //phoneAuth expired true로 update 코드
+            auth.useToken();
+            authRepository.save(auth);
+
+        } else {
+            throw new MemberHandler(ErrorStatus.MEMBER_PHONE_AUTH_ERROR);
         }
 
         return checkPhone;
@@ -201,6 +223,79 @@ public class MemberCommandServiceImpl implements MemberCommandService {
             checkNickname = true;
         }
         return checkNickname;
+    }
+
+    @Override
+    @Transactional
+    public String confirmPhoneAuthFindEmail(MemberRequestDTO.PhoneAuthConfirmFindEmailDTO request) {
+
+        Auth auth = authRepository.findByPhone(request.getPhone())
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_PHONE_AUTH_ERROR));
+        String email = "";
+        LocalDateTime current = LocalDateTime.now();
+        //코드, 만료 됐는지, 만료 시간 체크
+        if (auth.getCode().equals(request.getCode()) && !auth.getExpired() && auth.getExpireDate().isAfter(current)) {
+            Optional<Member> member = memberRepository.findByPhone(request.getPhone());
+            log.info(member.get().getEmail());
+            if (member.isPresent()) {
+                email = member.get().getEmail();
+                //사용한 인증 만료로 변
+                auth.useToken();
+                authRepository.save(auth);
+
+            } else {
+                throw new MemberHandler(ErrorStatus.MEMBER_PHONE_AUTH_ERROR);
+            }
+        } else {
+            throw new MemberHandler(ErrorStatus.MEMBER_PHONE_AUTH_ERROR);
+        }
+        return email;
+
+    }
+
+    @Override
+    @Transactional
+    public Auth sendEmailAuth(String email) {
+
+        String code = Integer.toString((int) (Math.random() * 8999) + 1000);
+        Boolean expired = false;
+
+        mailConfig.sendMail(email, code);
+
+        Auth auth = MemberConverter.toEmailAuth(email, code, expired);
+        Optional<Auth> delete = authRepository.findByEmail(email);
+
+        if (delete.isPresent()) {
+
+            Auth deleteAuth = delete.orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_EMAIL_AUTH_ERROR));
+            authRepository.delete(deleteAuth);
+        }
+
+        authRepository.save(auth);
+        return auth;
+
+    }
+
+    @Override
+    @Transactional
+    public Boolean confirmEmailAuth(MemberRequestDTO.EmailAuthConfirmDTO request) {
+        Boolean checkEmail = false;
+        Auth auth = authRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_EMAIL_AUTH_ERROR));
+        LocalDateTime current = LocalDateTime.now();
+        //인증 코드 같은지 확인, 이미 사용된 인증인지 체크, 만료시간 지났는지 체크
+        if (auth.getCode().equals(request.getCode()) && !auth.getExpired() && auth.getExpireDate().isAfter(current)) {
+            checkEmail = true;
+
+            //phoneAuth expired true로 update 코드
+            auth.useToken();
+            authRepository.save(auth);
+
+        } else {
+            throw new MemberHandler(ErrorStatus.MEMBER_EMAIL_AUTH_ERROR);
+        }
+
+        return checkEmail;
     }
 
     /**
