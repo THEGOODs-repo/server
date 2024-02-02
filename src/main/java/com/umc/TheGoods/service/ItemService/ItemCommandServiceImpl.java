@@ -59,9 +59,9 @@ public class ItemCommandServiceImpl implements ItemCommandService {
             itemTag.setItem(newItem);
         });
 
-        for (Tag tag : tagList) {
-            itemTagList.forEach(itemTag -> itemTag.setTag(tag));
-        }
+//        for (Tag tag : tagList) {
+//            itemTagList.forEach(itemTag -> itemTag.setTag(tag));
+//        }
 
         List<ItemImg> itemImgList = request.getItemImgUrlList().stream().map(
                 itemImgDTO -> ItemImageConverter.toItemImg(itemImgDTO)).collect(Collectors.toList()
@@ -81,5 +81,11 @@ public class ItemCommandServiceImpl implements ItemCommandService {
         itemImgRepository.saveAll(itemImgList);
         itemOptionRepository.saveAll(itemOptionList);
         return newItem;
+    }
+
+    @Override
+    public Item getItemContent(Long itemId) {
+        Item itemContent = itemRepository.findById(itemId).get();
+        return itemContent;
     }
 }
