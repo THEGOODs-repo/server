@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class PhoneAuth {
+public class Auth {
     //만료시간 5분
     private static final Long MAX_EXPIRE_TIME = 5L;
 
@@ -22,9 +22,10 @@ public class PhoneAuth {
     private Long id;
 
     private String phone;
+    private String email;
     private String code;
     private Boolean expired;
-    private LocalDateTime expireDate = LocalDateTime.now().plusMinutes(MAX_EXPIRE_TIME);
+    private LocalDateTime expireDate;
 
     public void useToken() {
         this.expired = true;

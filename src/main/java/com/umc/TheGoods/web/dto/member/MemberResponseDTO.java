@@ -36,7 +36,7 @@ public class MemberResponseDTO {
     @AllArgsConstructor
     public static class PhoneAuthSendResultDTO {
         String phone;
-        String authtoken;
+        String authCode;
     }
 
     @Builder
@@ -62,6 +62,32 @@ public class MemberResponseDTO {
     @AllArgsConstructor
     public static class NicknameDuplicateConfirmResultDTO {
         Boolean checkNickname;
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class PhoneAuthConfirmFindEmailResultDTO {
+        String email;
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class EmailAuthSendResultDTO {
+        String email;
+        String authCode;
+
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class EmailAuthConfirmResultDTO {
+        Boolean checkEmail;
     }
 
 }
