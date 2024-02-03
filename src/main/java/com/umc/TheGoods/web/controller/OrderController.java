@@ -82,6 +82,11 @@ public class OrderController {
             @RequestParam(name = "status", required = false) OrderStatus orderStatus,
             Authentication authentication
     ) {
+        // 비회원인 경우 처리 불가
+        if (authentication == null) {
+            throw new MemberHandler(ErrorStatus._UNAUTHORIZED);
+        }
+
         // request에서 member id 추출해 Member 엔티티 찾기
         MemberDetail memberDetail = (MemberDetail) authentication.getPrincipal();
         Member member = memberQueryService.findMemberById(memberDetail.getMemberId()).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
@@ -133,4 +138,28 @@ public class OrderController {
 
     }
 
+    @PostMapping("/{orderItemId}/complete")
+    @Operation(summary = "주문 구매 확정 API", description = "주문을 구매 확정 처리하는 API 입니다.\n\n" +
+            "orderItemId(상품 주문 내역 id)를 입력해주세요.")
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
+    })
+    @Parameter(name = "orderItemId", description = "주문 상품 내역 id, path variable 입니다.")
+    public ApiResponse<OrderResponseDTO.OrderItemUpdateResultDTO> orderPurchaseConfirm(
+            @PathVariable(name = "orderItemId") Long orderItemId,
+            Authentication authentication
+    ) {
+        // 비회원인 경우 처리 불가
+        if (authentication == null) {
+            throw new MemberHandler(ErrorStatus._UNAUTHORIZED);
+        }
+
+        // request에서 member id 추출해 Member 엔티티 찾기
+        MemberDetail memberDetail = (MemberDetail) authentication.getPrincipal();
+        Member member = memberQueryService.findMemberById(memberDetail.getMemberId()).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        OrderItem orderItem = orderCommandService.updateStatusToConfirm(orderItemId, member);
+
+        return ApiResponse.onSuccess(OrderConverter.toOrderItemUpdateResultDto(orderItem));
+    }
 }

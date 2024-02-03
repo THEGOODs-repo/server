@@ -151,4 +151,12 @@ public class OrderResponseDTO {
     }
 
 
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class OrderItemUpdateResultDTO {
+        Long orderItemId;
+        LocalDateTime updatedAt;
+    }
 }
