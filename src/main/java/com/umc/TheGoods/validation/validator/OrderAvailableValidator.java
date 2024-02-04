@@ -58,7 +58,7 @@ public class OrderAvailableValidator implements ConstraintValidator<OrderAvailab
 
                 } else { // request에 itemOptionId 값이 없는 경우
                     //item이 단일 상품인지 검증
-                    if (item.get().getPrice() == null) { // item이 단일 상품이 아닌 경우
+                    if (!item.get().getItemOptionList().isEmpty()) { // item이 단일 상품이 아닌 경우
                         context.disableDefaultConstraintViolation();
                         context.buildConstraintViolationWithTemplate(ErrorStatus.NULL_ITEMOPTION_ERROR.getMessage()).addConstraintViolation();
                         return false;

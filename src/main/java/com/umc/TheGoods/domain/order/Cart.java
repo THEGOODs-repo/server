@@ -34,4 +34,29 @@ public class Cart extends BaseDateTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "item_option_id")
     private ItemOption itemOption;
+
+    // 연관관계 메소드
+    public void setMember(Member member) {
+        if (this.member != null) {
+            this.member.getCartList().remove(this);
+        }
+        this.member = member;
+        member.getCartList().add(this);
+    }
+
+    public void setItem(Item item) {
+        if (this.item != null) {
+            this.item.getItemCartList().remove(this);
+        }
+        this.item = item;
+        item.getItemCartList().add(this);
+    }
+
+    public void setItemOption(ItemOption itemOption) {
+        if (this.itemOption != null) {
+            this.itemOption.getCartList().remove(this);
+        }
+        this.itemOption = itemOption;
+        itemOption.getCartList().add(this);
+    }
 }
