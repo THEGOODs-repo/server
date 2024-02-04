@@ -30,4 +30,14 @@ public class ItemQueryServiceImpl implements ItemQueryService {
         return itemOptionRepository.findById(id);
     }
 
+    @Override
+    public boolean isExistItem(Long id) {
+        return itemRepository.existsById(id);
+    }
+
+    @Override
+    public boolean isExistItemOption(Long id) {
+        return itemOptionRepository.existsById(id);
+    }
+
 }

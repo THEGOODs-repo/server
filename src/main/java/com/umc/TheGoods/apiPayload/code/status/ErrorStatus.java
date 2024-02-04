@@ -29,6 +29,8 @@ public enum ErrorStatus implements BaseErrorCode {
     ORDER_ITEM_NOT_FOUND(HttpStatus.NOT_FOUND, "ORDER4005", "해당 주문 상품 내역을 찾을 수 없습니다."),
     NOT_ORDER_OWNER(HttpStatus.BAD_REQUEST, "ORDER4006", "본인의 주문 내역이 아닙니다. 접근할 수 없습니다."),
     NO_LOGIN_ORDER_NOT_FOUND(HttpStatus.NOT_FOUND, "ORDER4007", "비회원 주문 내역을 찾을 수 없습니다"),
+    ORDER_ITEM_UPDATE_FAIL(HttpStatus.BAD_REQUEST, "ORDER4008", "주문 상품 정보 변경이 불가합니다."),
+    NULL_AMOUNT_ERROR(HttpStatus.BAD_REQUEST, "ORDER4009", "주문 수량은 null일 수 없습니다."),
 
     // test
     TEMP_EXCEPTION(HttpStatus.BAD_REQUEST, "TEMP4001", "테스트"),

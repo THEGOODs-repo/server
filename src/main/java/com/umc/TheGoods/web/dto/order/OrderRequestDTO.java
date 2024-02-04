@@ -84,4 +84,5 @@ public class OrderRequestDTO {
         @Min(1)
         Integer page;
     }
+
 }

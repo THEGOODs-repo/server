@@ -9,7 +9,6 @@ import com.umc.TheGoods.web.dto.order.OrderRequestDTO;
 import com.umc.TheGoods.web.dto.order.OrderResponseDTO;
 import org.springframework.data.domain.Page;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -20,7 +19,7 @@ public class OrderConverter {
     public static OrderResponseDTO.OrderAddResultDTO toOrderAddResultDto(Orders order) {
         return OrderResponseDTO.OrderAddResultDTO.builder()
                 .orderId(order.getId())
-                .createdAt(LocalDateTime.now())
+                .createdAt(order.getCreatedAt())
                 .build();
     }
 
@@ -193,5 +192,12 @@ public class OrderConverter {
         }
 
         return itemOptionName;
+    }
+
+    public static OrderResponseDTO.OrderItemUpdateResultDTO toOrderItemUpdateResultDto(OrderItem orderItem) {
+        return OrderResponseDTO.OrderItemUpdateResultDTO.builder()
+                .orderItemId(orderItem.getId())
+                .updatedAt(orderItem.getUpdatedAt())
+                .build();
     }
 }

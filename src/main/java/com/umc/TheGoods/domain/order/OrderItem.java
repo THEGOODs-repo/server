@@ -109,4 +109,10 @@ public class OrderItem extends BaseDateTimeEntity {
     public void updateTotalPrice(Long price) {
         this.totalPrice += price;
     }
+
+    // 주문 상태 업데이트 메소드
+    public OrderItem updateStatus(OrderStatus orderStatus) {
+        this.status = orderStatus;
+        return this;
+    }
 }
