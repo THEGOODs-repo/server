@@ -1,6 +1,7 @@
 package com.umc.TheGoods.service.ItemService;
 
 import com.umc.TheGoods.apiPayload.code.status.ErrorStatus;
+import com.umc.TheGoods.apiPayload.exception.handler.MemberHandler;
 import com.umc.TheGoods.apiPayload.exception.handler.TagHandler;
 import com.umc.TheGoods.converter.item.ItemConverter;
 import com.umc.TheGoods.converter.item.ItemImageConverter;
@@ -18,8 +19,11 @@ import com.umc.TheGoods.repository.item.ItemImgRepository;
 import com.umc.TheGoods.repository.item.ItemOptionRepository;
 import com.umc.TheGoods.repository.item.ItemRepository;
 import com.umc.TheGoods.service.CategoryService.CategoryQueryService;
+import com.umc.TheGoods.service.MemberService.MemberQueryService;
 import com.umc.TheGoods.web.dto.item.ItemRequestDTO;
+import com.umc.TheGoods.web.dto.member.MemberDetail;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,6 +40,7 @@ public class ItemCommandServiceImpl implements ItemCommandService {
     private final TagRepository tagRepository;
     private final ItemImgRepository itemImgRepository;
     private final ItemOptionRepository itemOptionRepository;
+    private final MemberQueryService memberQueryService;
 
     @Override
     @Transactional
@@ -84,8 +89,16 @@ public class ItemCommandServiceImpl implements ItemCommandService {
     }
 
     @Override
-    public Item getItemContent(Long itemId) {
+    public Item getItemContent(Long itemId, Authentication authentication) {
+
         Item itemContent = itemRepository.findById(itemId).get();
+        MemberDetail memberDetail = (MemberDetail) authentication.getPrincipal();
+        Member member = memberQueryService.findMemberById(memberDetail.getMemberId()).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        if (member.getId() != itemContent.getMember().getId()) {
+            itemContent.updateViewCounts();
+        }
+
         return itemContent;
     }
 }
