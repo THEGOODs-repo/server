@@ -115,6 +115,11 @@ public class Item extends BaseDateTimeEntity {
         return this;
     }
 
+    public Item updateViewCounts() {
+        this.salesCount += 1;
+        return this;
+    }
+
     public void setCategory(Category category) {
         if (this.category != null)
             category.getItemList().remove(this);
