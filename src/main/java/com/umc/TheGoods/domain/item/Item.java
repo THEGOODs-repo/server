@@ -120,7 +120,7 @@ public class Item extends BaseDateTimeEntity {
     }
 
     public Item updateViewCounts() {
-        this.salesCount += 1;
+        this.viewCount += 1;
         return this;
     }
 
