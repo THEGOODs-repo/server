@@ -89,6 +89,7 @@ public class ItemCommandServiceImpl implements ItemCommandService {
     }
 
     @Override
+    @Transactional
     public Item getItemContent(Long itemId, Authentication authentication) {
 
         Item itemContent = itemRepository.findById(itemId).get();
