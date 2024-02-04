@@ -49,8 +49,8 @@ public class ItemRestController {
     }
 
     @GetMapping("/seller/item/{itemId}")
-    public ApiResponse<ItemResponseDTO.ItemContentDTO> getPostContent(@PathVariable(name = "itemId") Long itemId) {
-        Item itemContent = itemCommandService.getItemContent(itemId);
+    public ApiResponse<ItemResponseDTO.ItemContentDTO> getPostContent(@PathVariable(name = "itemId") Long itemId, Authentication authentication) {
+        Item itemContent = itemCommandService.getItemContent(itemId, authentication);
         return ApiResponse.onSuccess(ItemConverter.getItemContentDTO(itemContent));
     }
 }
