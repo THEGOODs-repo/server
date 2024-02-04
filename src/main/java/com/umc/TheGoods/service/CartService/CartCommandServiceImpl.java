@@ -50,6 +50,8 @@ public class CartCommandServiceImpl implements CartCommandService {
                     throw new OrderHandler(ErrorStatus.LACK_OF_STOCK);
                 }
 
+                // cart 테이블에 해당 장바구니 내역 이미 존재하면, 해당 내역의 담은 수량만 업데이트하는 부분 추가 필요
+
                 // cart 엔티티 생성 및 연관관계 매핑
                 Cart cart = CartConverter.toCart(cartOptionAddDTO.getAmount());
                 cart.setMember(member);
@@ -76,6 +78,9 @@ public class CartCommandServiceImpl implements CartCommandService {
             if (request.getAmount() > item.getStock()) {
                 throw new OrderHandler(ErrorStatus.LACK_OF_STOCK);
             }
+
+            // cart 테이블에 해당 장바구니 내역 이미 존재하면, 해당 내역의 담은 수량만 업데이트하는 부분 추가 필요
+
 
             // cart 엔티티 생성 및 연관관계 매핑
             Cart cart = CartConverter.toCart(request.getAmount());
