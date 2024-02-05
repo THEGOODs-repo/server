@@ -32,6 +32,10 @@ public enum ErrorStatus implements BaseErrorCode {
     ORDER_ITEM_UPDATE_FAIL(HttpStatus.BAD_REQUEST, "ORDER4008", "주문 상품 정보 변경이 불가합니다."),
     NULL_AMOUNT_ERROR(HttpStatus.BAD_REQUEST, "ORDER4009", "주문 수량은 null일 수 없습니다."),
 
+    // 장바구니 관련 에러
+    CART_NOT_FOUND(HttpStatus.NOT_FOUND, "CART4001", "해당 장바구니 내역을 찾을 수 없습니다."),
+    NOT_CART_OWNER(HttpStatus.BAD_REQUEST, "CART4002", "본인의 장바구니 내역이 아닙니다. 접근할 수 없습니다."),
+
     // test
     TEMP_EXCEPTION(HttpStatus.BAD_REQUEST, "TEMP4001", "테스트"),
 

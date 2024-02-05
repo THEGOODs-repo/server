@@ -14,10 +14,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
@@ -56,5 +53,22 @@ public class CartController {
         return ApiResponse.onSuccess("장바구니 담기 성공");
     }
 
+    @PutMapping
+    public ApiResponse<String> update(@RequestBody @Valid CartRequestDTO.cartUpdateDTO request,
+                                      Authentication authentication) {
+        // 비회원인 경우 처리 불가
+        if (authentication == null) {
+            throw new MemberHandler(ErrorStatus._UNAUTHORIZED);
+        }
+
+        // request에서 member id 추출해 Member 엔티티 찾기
+        MemberDetail memberDetail = (MemberDetail) authentication.getPrincipal();
+        Member member = memberQueryService.findMemberById(memberDetail.getMemberId()).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        cartCommandService.updateCart(request, member);
+
+        return ApiResponse.onSuccess("장바구니 옵션 수정 성공");
+    }
+    
 
 }
