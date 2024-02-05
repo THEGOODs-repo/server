@@ -97,7 +97,7 @@ public class CartCommandServiceImpl implements CartCommandService {
                 if (request.getAmount() + existCart.get().getAmount() > item.getStock()) {
                     throw new OrderHandler(ErrorStatus.LACK_OF_STOCK);
                 }
-                
+
                 // 장바구니 내역의 수량 업데이트
                 existCart.get().updateAmount(request.getAmount());
             } else { // 장바구니 내역 신규 생성
@@ -126,8 +126,14 @@ public class CartCommandServiceImpl implements CartCommandService {
         }
 
         // 재고 수량과 비교
-        if (request.getAmount() > cart.getItem().getStock()) {
-            throw new OrderHandler(ErrorStatus.LACK_OF_STOCK);
+        if (!cart.getItem().getItemOptionList().isEmpty()) { // 상품 옵션이 있는 경우
+            if (request.getAmount() > cart.getItemOption().getStock()) {
+                throw new OrderHandler(ErrorStatus.LACK_OF_STOCK);
+            }
+        } else {
+            if (request.getAmount() > cart.getItem().getStock()) {
+                throw new OrderHandler(ErrorStatus.LACK_OF_STOCK);
+            }
         }
 
         return cart.updateAmount(request.getAmount());
