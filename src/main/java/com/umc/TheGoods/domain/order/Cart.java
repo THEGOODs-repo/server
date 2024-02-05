@@ -59,4 +59,9 @@ public class Cart extends BaseDateTimeEntity {
         this.itemOption = itemOption;
         itemOption.getCartList().add(this);
     }
+
+    public Cart updateAmount(Integer amount) {
+        this.amount = amount;
+        return this;
+    }
 }
