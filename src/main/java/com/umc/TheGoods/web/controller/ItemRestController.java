@@ -69,5 +69,15 @@ public class ItemRestController {
         return ApiResponse.onSuccess(ItemConverter.getItemContentDTO(itemContent));
     }
 
-    //@PutMapping("/seller/item/{itemId}")
+    @PutMapping("/seller/item/{itemId}")
+    public ApiResponse<ItemResponseDTO.UpdateItemResultDTO> updateItem(@RequestBody @Valid ItemRequestDTO.UpdateItemDTO request,
+                                                                       @PathVariable(name = "itemId") Long itemId, Authentication authentication) {
+        Member member;
+
+        MemberDetail memberDetail = (MemberDetail) authentication.getPrincipal();
+        member = memberQueryService.findMemberById(memberDetail.getMemberId()).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        Item item = itemCommandService.updateItem(itemId, member, request);
+        return ApiResponse.onSuccess(ItemConverter.toUpdateItemResultDTO(item));
+    }
 }

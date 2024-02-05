@@ -26,6 +26,15 @@ public class ItemResponseDTO {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
+    public static class UpdateItemResultDTO {
+        Long itemId;
+        LocalDateTime createdAt;
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class ItemContentDTO {
         Long itemId;
         ItemStatus status;
