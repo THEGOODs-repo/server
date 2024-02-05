@@ -1,29 +1,25 @@
 package com.umc.TheGoods.service.ItemService;
 
 import com.umc.TheGoods.apiPayload.code.status.ErrorStatus;
-import com.umc.TheGoods.apiPayload.exception.handler.MemberHandler;
+import com.umc.TheGoods.apiPayload.exception.handler.ItemHandler;
 import com.umc.TheGoods.apiPayload.exception.handler.TagHandler;
-import com.umc.TheGoods.converter.item.ItemConverter;
-import com.umc.TheGoods.converter.item.ItemImageConverter;
-import com.umc.TheGoods.converter.item.ItemOptionConverter;
-import com.umc.TheGoods.converter.item.ItemTagConverter;
+import com.umc.TheGoods.converter.item.*;
 import com.umc.TheGoods.domain.images.ItemImg;
 import com.umc.TheGoods.domain.item.Category;
 import com.umc.TheGoods.domain.item.Item;
 import com.umc.TheGoods.domain.item.ItemOption;
 import com.umc.TheGoods.domain.item.Tag;
 import com.umc.TheGoods.domain.mapping.Tag.ItemTag;
+import com.umc.TheGoods.domain.mapping.ViewSearch.ItemView;
 import com.umc.TheGoods.domain.member.Member;
 import com.umc.TheGoods.repository.TagRepository;
 import com.umc.TheGoods.repository.item.ItemImgRepository;
 import com.umc.TheGoods.repository.item.ItemOptionRepository;
 import com.umc.TheGoods.repository.item.ItemRepository;
+import com.umc.TheGoods.repository.item.ItemViewRepository;
 import com.umc.TheGoods.service.CategoryService.CategoryQueryService;
-import com.umc.TheGoods.service.MemberService.MemberQueryService;
 import com.umc.TheGoods.web.dto.item.ItemRequestDTO;
-import com.umc.TheGoods.web.dto.member.MemberDetail;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,7 +36,7 @@ public class ItemCommandServiceImpl implements ItemCommandService {
     private final TagRepository tagRepository;
     private final ItemImgRepository itemImgRepository;
     private final ItemOptionRepository itemOptionRepository;
-    private final MemberQueryService memberQueryService;
+    private final ItemViewRepository itemViewRepository;
 
     @Override
     @Transactional
@@ -90,14 +86,14 @@ public class ItemCommandServiceImpl implements ItemCommandService {
 
     @Override
     @Transactional
-    public Item getItemContent(Long itemId, Authentication authentication) {
+    public Item getItemContent(Long itemId, Member member) {
 
-        Item itemContent = itemRepository.findById(itemId).get();
-        MemberDetail memberDetail = (MemberDetail) authentication.getPrincipal();
-        Member member = memberQueryService.findMemberById(memberDetail.getMemberId()).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        Item itemContent = itemRepository.findById(itemId).orElseThrow(() -> new ItemHandler(ErrorStatus.ITEM_NOT_FOUND));
 
-        if (member.getId() != itemContent.getMember().getId()) {
+        if (member != itemContent.getMember()) {
             itemContent.updateViewCounts();
+            ItemView itemView = ItemViewConverter.toItemView(member, itemContent);
+            itemViewRepository.save(itemView);
         }
 
         return itemContent;
