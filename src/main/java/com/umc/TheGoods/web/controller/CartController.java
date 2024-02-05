@@ -54,6 +54,10 @@ public class CartController {
     }
 
     @PutMapping
+    @Operation(summary = "장바구니 옵션 수정 API", description = "해당 장바구니 내역의 담은 수량을 수정하는 API 입니다.")
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
+    })
     public ApiResponse<String> update(@RequestBody @Valid CartRequestDTO.cartUpdateDTO request,
                                       Authentication authentication) {
         // 비회원인 경우 처리 불가
@@ -69,6 +73,6 @@ public class CartController {
 
         return ApiResponse.onSuccess("장바구니 옵션 수정 성공");
     }
-    
+
 
 }
