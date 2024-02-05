@@ -90,4 +90,22 @@ public class MemberResponseDTO {
         Boolean checkEmail;
     }
 
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class SocialLoginResultDTO {
+        String result;
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class SocialJoinResultDTO {
+        String phone;
+        String email;
+    }
+
 }

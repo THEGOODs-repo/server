@@ -29,5 +29,9 @@ public interface MemberCommandService {
 
     Boolean confirmEmailAuth(MemberRequestDTO.EmailAuthConfirmDTO request);
 
+    String kakaoAuth(String code);
+
+    String naverAuth(String code, String state);
+
 
 }

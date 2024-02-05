@@ -16,7 +16,10 @@ import com.umc.TheGoods.repository.member.AuthRepository;
 import com.umc.TheGoods.repository.member.CategoryRepository;
 import com.umc.TheGoods.repository.member.MemberRepository;
 import com.umc.TheGoods.repository.member.TermRepository;
+import com.umc.TheGoods.web.dto.member.KakaoProfile;
 import com.umc.TheGoods.web.dto.member.MemberRequestDTO;
+import com.umc.TheGoods.web.dto.member.NaverProfile;
+import com.umc.TheGoods.web.dto.member.OAuthToken;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,6 +30,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
@@ -296,6 +301,186 @@ public class MemberCommandServiceImpl implements MemberCommandService {
         }
 
         return checkEmail;
+    }
+
+    @Override
+    @Transactional
+    public String kakaoAuth(String code) {
+
+        String jwt;
+
+        //Post방식으로 key=value 데이터를 요청
+        RestTemplate rt = new RestTemplate();
+
+        //HttpHeader 객체 생성
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
+
+        //HttpBody 객체 생성
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("grant_type", "authorization_code");
+        params.add("client_id", "49ff7dc7f5309c49f75ac2a087ffe91e");
+        params.add("redirect_uri", "http://localhost:8080/api/members/kakao/callback");
+        params.add("code", code);
+        //params.add("client_secret","");
+
+        //HttpHeader와 HttpBody를 하나의 객체로 담기
+        HttpEntity<MultiValueMap<String, String>> kakaoTokenRequest =
+                new HttpEntity<>(params, headers);
+
+        //Http 요청해서 응답 받음
+        ResponseEntity<String> response = rt.exchange(
+                "https://kauth.kakao.com/oauth/token",
+                HttpMethod.POST,
+                kakaoTokenRequest,
+                String.class
+        );
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        OAuthToken oAuthToken = null;
+
+        try {
+            oAuthToken = objectMapper.readValue(response.getBody(), OAuthToken.class);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+
+        log.info("카카오 토큰:" + oAuthToken.getAccess_token());
+
+
+        ///////////////////////////
+        //토큰 이용해서 정보 가져오기
+
+        RestTemplate rt2 = new RestTemplate();
+
+        HttpHeaders headers2 = new HttpHeaders();
+        headers2.add("Authorization", "Bearer " + oAuthToken.getAccess_token());
+        headers2.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
+
+
+        //HttpHeader와 HttpBody를 하나의 객체로 담기
+        HttpEntity<MultiValueMap<String, String>> kakaoProfileRequest =
+                new HttpEntity<>(headers2);
+
+        ResponseEntity<String> response2 = rt2.exchange(
+                "https://kapi.kakao.com/v2/user/me",
+                HttpMethod.POST,
+                kakaoProfileRequest,
+                String.class
+        );
+
+
+        ObjectMapper objectMapper2 = new ObjectMapper();
+        KakaoProfile kakaoProfile = null;
+
+        try {
+            kakaoProfile = objectMapper2.readValue(response2.getBody(), KakaoProfile.class);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+        String phone = kakaoProfile.kakao_account.phone_number.replaceAll("[^0-9]", "");
+        if (phone.startsWith("82")) {
+            phone = "0" + phone.substring(2);
+        }
+
+
+        Optional<Member> member = memberRepository.findByPhone(phone);
+
+        if (member.isPresent()) {
+            List<String> roles = new ArrayList<>();
+            roles.add("ROLE_USER");
+
+            return createJwt(member.get().getId(), member.get().getNickname(), expiredMs, key, roles);
+
+        }
+
+        return phone + kakaoProfile.getKakao_account().email;
+    }
+
+    @Override
+    @Transactional
+    public String naverAuth(String code, String state) {
+        RestTemplate rt = new RestTemplate();
+
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
+
+        //HttpBody 객체 생성
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("grant_type", "authorization_code");
+        params.add("client_id", "t6q4Bn70dY7Kli7hS58P");
+        params.add("redirect_uri", "http://localhost:8080/api/members/naver/callback");
+        params.add("client_secret", "1uPpEHHTBF");
+        params.add("code", code);
+        params.add("state", state);
+
+
+        //HttpHeader와 HttpBody를 하나의 객체로 담기
+        HttpEntity<MultiValueMap<String, String>> naverTokenRequest =
+                new HttpEntity<>(params, headers);
+
+        //Http 요청해서 응답 받음
+        ResponseEntity<String> response = rt.exchange(
+                "https://nid.naver.com/oauth2.0/token",
+                HttpMethod.POST,
+                naverTokenRequest,
+                String.class
+        );
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        OAuthToken oAuthToken = null;
+
+        try {
+            oAuthToken = objectMapper.readValue(response.getBody(), OAuthToken.class);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+
+        log.info("네이버 토큰:" + oAuthToken.getAccess_token());
+
+
+        RestTemplate rt2 = new RestTemplate();
+
+        HttpHeaders headers2 = new HttpHeaders();
+        headers2.add("Authorization", "Bearer " + oAuthToken.getAccess_token());
+        headers2.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
+
+
+        //HttpHeader와 HttpBody를 하나의 객체로 담기
+        HttpEntity<MultiValueMap<String, String>> naverProfileRequest =
+                new HttpEntity<>(headers2);
+
+        ResponseEntity<String> response2 = rt2.exchange(
+                "https://openapi.naver.com/v1/nid/me",
+                HttpMethod.POST,
+                naverProfileRequest,
+                String.class
+        );
+
+        log.info(response2.toString());
+        ObjectMapper objectMapper2 = new ObjectMapper();
+        NaverProfile naverProfile = null;
+
+        try {
+            naverProfile = objectMapper2.readValue(response2.getBody(), NaverProfile.class);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+
+        String phone = naverProfile.response.mobile.replaceAll("[^0-9]", "");
+
+        Optional<Member> member = memberRepository.findByPhone(phone);
+
+        if (member.isPresent()) {
+            List<String> roles = new ArrayList<>();
+            roles.add("ROLE_USER");
+
+            return createJwt(member.get().getId(), member.get().getNickname(), expiredMs, key, roles);
+
+        }
+
+        return phone + naverProfile.getResponse().email;
     }
 
     /**
