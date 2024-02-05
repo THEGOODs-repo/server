@@ -4,6 +4,7 @@ package com.umc.TheGoods.web.controller;
 import com.umc.TheGoods.apiPayload.ApiResponse;
 import com.umc.TheGoods.apiPayload.code.status.ErrorStatus;
 import com.umc.TheGoods.apiPayload.exception.handler.MemberHandler;
+import com.umc.TheGoods.apiPayload.exception.handler.OrderHandler;
 import com.umc.TheGoods.converter.item.ItemConverter;
 import com.umc.TheGoods.domain.item.Item;
 import com.umc.TheGoods.domain.member.Member;
@@ -49,8 +50,24 @@ public class ItemRestController {
     }
 
     @GetMapping("/seller/item/{itemId}")
+    @Operation(summary = "상품 조회 API", description = "상품 조회를 위한 API이며, path variable로 입력 값을 받는다. " +
+            "itemId : 조회할 상품의 id")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공")
+    })
     public ApiResponse<ItemResponseDTO.ItemContentDTO> getPostContent(@PathVariable(name = "itemId") Long itemId, Authentication authentication) {
-        Item itemContent = itemCommandService.getItemContent(itemId, authentication);
+        Member member;
+
+        if (authentication == null) {
+            member = memberQueryService.findMemberByNickname("no_login_user").orElseThrow(() -> new OrderHandler(ErrorStatus.NO_LOGIN_ORDER_NOT_AVAILABLE));
+        } else {
+            MemberDetail memberDetail = (MemberDetail) authentication.getPrincipal();
+            member = memberQueryService.findMemberById(memberDetail.getMemberId()).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        }
+
+        Item itemContent = itemCommandService.getItemContent(itemId, member);
         return ApiResponse.onSuccess(ItemConverter.getItemContentDTO(itemContent));
     }
+
+    //@PutMapping("/seller/item/{itemId}")
 }
