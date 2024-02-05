@@ -67,6 +67,14 @@ public class ItemConverter {
                 .build();
     }
 
+    public static ItemResponseDTO.UpdateItemResultDTO toUpdateItemResultDTO(Item item) {
+        return ItemResponseDTO.UpdateItemResultDTO.builder()
+                .itemId(item.getId())
+                .createdAt(LocalDateTime.now())
+                .build();
+    }
+
+
     public static Item toItem(ItemRequestDTO.UploadItemDTO request) {
 
         DeliveryType deliveryType = null;
