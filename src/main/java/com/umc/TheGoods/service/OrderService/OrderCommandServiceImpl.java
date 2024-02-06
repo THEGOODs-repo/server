@@ -125,7 +125,15 @@ public class OrderCommandServiceImpl implements OrderCommandService {
             throw new OrderHandler(ErrorStatus.NOT_ORDER_OWNER);
         }
 
-        // orderItem의 status가 환불 계좌 변경 가능한 단계인지 검증 필요
+        // orderItem의 status가 환불 계좌 변경 가능한 단계인지 검증
+        if (!(orderItem.getStatus() == OrderStatus.PAY_PREV
+                || orderItem.getStatus() == OrderStatus.PAY_COMP
+                || orderItem.getStatus() == OrderStatus.DEL_PREP
+                || orderItem.getStatus() == OrderStatus.DEL_START
+                || orderItem.getStatus() == OrderStatus.DEL_COMP
+        )) {
+            throw new OrderHandler(ErrorStatus.ORDER_ITEM_UPDATE_FAIL);
+        }
 
         return orderItem.updateRefundInfo(request);
     }
