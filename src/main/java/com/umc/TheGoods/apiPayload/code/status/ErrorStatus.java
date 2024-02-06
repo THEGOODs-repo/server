@@ -21,6 +21,7 @@ public enum ErrorStatus implements BaseErrorCode {
     ITEMOPTION_NOT_FOUND(HttpStatus.NOT_FOUND, "ITEM4002", "해당 상품 옵션을 찾을 수 없습니다."),
     ITEMOPTION_NOT_MATCH(HttpStatus.BAD_REQUEST, "ITEM4003", "해당 상품의 옵션이 아닙니다."),
     ITEM_UPDATE_FAIL(HttpStatus.BAD_REQUEST, "ITEM4004", "상품 정보 변경 권한이 없습니다."),
+    ITEM_VIEW_ERROR(HttpStatus.BAD_REQUEST, "ITEM4005", "비회원 상품 조회 권한이 없습니다."),
 
     // 주문 관련 에러
     LACK_OF_STOCK(HttpStatus.BAD_REQUEST, "ORDER4001", "재고가 부족합니다."),
