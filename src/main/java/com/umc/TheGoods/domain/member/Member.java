@@ -192,6 +192,9 @@ public class Member extends BaseDateTimeEntity {
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<Inquiry> inquiryList = new ArrayList<>();
 
+    @OneToMany(mappedBy = "seller", cascade = CascadeType.ALL)
+    private List<Inquiry> incommingInquiryList = new ArrayList<>();
+
     // Payment 양방향 매핑
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<Payment> paymentList = new ArrayList<>();
