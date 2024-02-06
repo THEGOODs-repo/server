@@ -8,6 +8,10 @@ import com.umc.TheGoods.web.dto.order.OrderRequestDTO;
 public interface OrderCommandService {
 
     Orders create(OrderRequestDTO.OrderAddDTO request, Member member);
-    
+
     OrderItem updateStatusToConfirm(Long orderItemId, Member member);
+
+    OrderItem updateOrderItemAddress(OrderRequestDTO.OrderItemAddressUpdateDTO request, Long orderItemId, Member member);
+
+    OrderItem updateOrderItemRefundInfo(OrderRequestDTO.OrderItemRefundInfoUpdateDTO request, Long orderItemId, Member member);
 }

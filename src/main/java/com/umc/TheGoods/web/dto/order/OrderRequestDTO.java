@@ -85,4 +85,28 @@ public class OrderRequestDTO {
         Integer page;
     }
 
+    @Getter
+    public static class OrderItemAddressUpdateDTO {
+        @NotBlank
+        String receiverName;
+        @NotBlank
+        String receiverPhone;
+        @Size(min = 5, max = 6)
+        String zipcode;
+        @NotBlank
+        String address;
+        String addressDetail;
+        String deliveryMemo;
+    }
+
+    @Getter
+    public static class OrderItemRefundInfoUpdateDTO {
+        @NotBlank
+        String refundOwner;
+        @NotBlank
+        String refundBank;
+        @NotBlank
+        String refundAccount;
+    }
+
 }
