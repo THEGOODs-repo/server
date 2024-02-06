@@ -16,10 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
@@ -32,9 +29,6 @@ import javax.validation.Valid;
 public class MemberController {
 
     private final MemberCommandService memberCommandService;
-
-    public static final String ACCOUNT_SID = "ACXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX";
-    public static final String AUTH_TOKEN = "your_auth_token";
 
 
     @PostMapping("/join")
@@ -128,6 +122,39 @@ public class MemberController {
 
         return ApiResponse.onSuccess(MemberConverter.toEmailAuthConfirmResultDTO(checkEmail));
     }
+
+
+    @GetMapping("/kakao/callback")
+    public ApiResponse<?> kakaoCallback(@RequestParam String code) {
+
+        String result = memberCommandService.kakaoAuth(code);
+
+        //반환한 카카오 프로필에서 기존 회원이면 jwt 토큰 반환 아니면 회원가입 진행
+        //토큰 반환은 쉽지만 회원가입 로직으로 보내야하면 false 반환해서 회원가입 진행하도록하기
+
+        if (result.startsWith("010")) {
+            String phone = result.substring(0, 11);
+            String email = result.substring(11);
+            return ApiResponse.onFailure("로그인 실패", "회원가입 필요", MemberConverter.toSocialJoinResultDTO(phone, email));
+        }
+
+        return ApiResponse.onSuccess(MemberConverter.toSocialLoginResultDTO(result));
+    }
+
+    @GetMapping("/naver/callback")
+    public ApiResponse<?> naverCallback(@RequestParam String code, String state) {
+
+        String result = memberCommandService.naverAuth(code, state);
+
+        if (result.startsWith("010")) {
+            String phone = result.substring(0, 11);
+            String email = result.substring(11);
+            return ApiResponse.onFailure("로그인 실패", "회원가입 필요", MemberConverter.toSocialJoinResultDTO(phone, email));
+        }
+
+        return ApiResponse.onSuccess(MemberConverter.toSocialLoginResultDTO(result));
+    }
+
 
 }
 
