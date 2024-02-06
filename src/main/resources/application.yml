@@ -1,67 +1,6 @@
 spring:
   profiles:
     active: local
-springdoc:
-  swagger-ui:
-    tags-sorter: alpha            # alpha: 알파벳 순 태그 정렬, method: HTTP Method 순 정렬
-    operations-sorter: alpha      # alpha: 알파벳 순 태그 정렬, method: HTTP Method 순 정렬
----
-spring:
-  config:
-    activate:
-      on-profile: dev
-  devtools:
-    restart:
-      enabled: true
-  thymeleaf:
-    prefix: classpath:/templates/
-    suffix: .html
-  datasource:
-    url: ${DB_URL}
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
-    driver-class-name: com.mysql.cj.jdbc.Driver
-  mail:
-    host: smtp.gmail.com
-    port: 587
-    properties:
-      mail:
-        smtp:
-          starttls:
-            enable: true
-            required: true
-          auth: true
-          connectiontimeout: 5000
-          timeout: 5000
-          writetimeout: 5000
-    auth-code-expiration-millis: 1800000
-    username: "user"
-    password: "password"
-  jpa:
-    hibernate:
-      ddl-auto: update
-    properties:
-      dialect: org.hibernate.dialect.MySQL8InnoDBDialect
-      hibernate:
-        # show_sql: true
-        format_sql: true
-logging:
-  level:
-    org.hibernate.SQL: debug
-    org.hibernate.type: trace
-jwt:
-  token:
-    secret: "secretKey"
-servlet:
-  multipart:
-    enabled: true
-    maxFileSize: 200MB
-    maxRequestSize: 300MB
----
-spring:
-  config:
-    activate:
-      on-profile: local
   devtools:
     restart:
       enabled: true
@@ -109,3 +48,7 @@ servlet:
     enabled: true
     maxFileSize: 200MB
     maxRequestSize: 300MB
+springdoc:
+  swagger-ui:
+    tags-sorter: alpha            # alpha: 알파벳 순 태그 정렬, method: HTTP Method 순 정렬
+    operations-sorter: alpha      # alpha: 알파벳 순 태그 정렬, method: HTTP Method 순 정렬
