@@ -132,11 +132,11 @@ public class ItemCommandServiceImpl implements ItemCommandService {
             itemOption.setItem(item);
         }
 
-        //itemImgRepository.deleteAll(itemImgList);
-        //itemOptionRepository.deleteAll(itemOptionList);
+        itemImgRepository.deleteAll(itemImgList);
+        itemOptionRepository.deleteAll(itemOptionList);
 
-        itemImgRepository.saveAll(itemImgList);
-        itemOptionRepository.saveAll(itemOptionList);
+        itemImgRepository.saveAll(newItemImgList);
+        itemOptionRepository.saveAll(newItemOptionList);
         return item;
     }
 
