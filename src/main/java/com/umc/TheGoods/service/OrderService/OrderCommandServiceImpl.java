@@ -100,6 +100,23 @@ public class OrderCommandServiceImpl implements OrderCommandService {
     }
 
     @Override
+    public OrderItem updateStatusToConfirm(Long orderItemId, Member member) {
+        OrderItem orderItem = orderItemRepository.findById(orderItemId).orElseThrow(() -> new OrderHandler(ErrorStatus.ORDER_ITEM_NOT_FOUND));
+
+        // 해당 orderItem을 수정할 권한이 있는지 검증
+        if (!orderItem.getOrders().getMember().equals(member)) {
+            throw new OrderHandler(ErrorStatus.NOT_ORDER_OWNER);
+        }
+
+        // 해당 orderItem의 상태가 DEL_COMP인지 검증
+        if (orderItem.getStatus() != OrderStatus.DEL_COMP) {
+            throw new OrderHandler(ErrorStatus.ORDER_ITEM_UPDATE_FAIL);
+        }
+
+        return orderItem.updateStatus(OrderStatus.CONFIRM);
+    }
+
+    @Override
     public OrderItem updateOrderItemAddress(OrderRequestDTO.OrderItemAddressUpdateDTO request, Long orderItemId, Member member) {
         OrderItem orderItem = orderItemRepository.findById(orderItemId).orElseThrow(() -> new OrderHandler(ErrorStatus.ORDER_ITEM_NOT_FOUND));
 

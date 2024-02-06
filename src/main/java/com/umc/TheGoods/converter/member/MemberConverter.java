@@ -133,8 +133,25 @@ public class MemberConverter {
     }
 
     public static MemberResponseDTO.EmailAuthConfirmResultDTO toEmailAuthConfirmResultDTO(Boolean checkEmail) {
+
+
         return MemberResponseDTO.EmailAuthConfirmResultDTO.builder()
                 .checkEmail(checkEmail)
+                .build();
+    }
+
+    public static MemberResponseDTO.SocialLoginResultDTO toSocialLoginResultDTO(String result) {
+
+        return MemberResponseDTO.SocialLoginResultDTO.builder()
+                .result(result)
+                .build();
+    }
+
+    public static MemberResponseDTO.SocialJoinResultDTO toSocialJoinResultDTO(String phone, String email) {
+
+        return MemberResponseDTO.SocialJoinResultDTO.builder()
+                .phone(phone)
+                .email(email)
                 .build();
     }
 }

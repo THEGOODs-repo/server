@@ -5,7 +5,6 @@ import com.umc.TheGoods.domain.enums.OrderStatus;
 import com.umc.TheGoods.domain.item.Item;
 import com.umc.TheGoods.domain.item.Review;
 import com.umc.TheGoods.domain.types.DeliveryType;
-import com.umc.TheGoods.web.dto.order.OrderRequestDTO;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 
@@ -111,24 +110,9 @@ public class OrderItem extends BaseDateTimeEntity {
         this.totalPrice += price;
     }
 
-    // 배송지 정보 업데이트 메소드
-    public OrderItem updateAddressInfo(OrderRequestDTO.OrderItemAddressUpdateDTO request) {
-        this.receiverName = request.getReceiverName();
-        this.receiverPhone = request.getReceiverPhone();
-        this.zipcode = request.getZipcode();
-        this.address = request.getAddress();
-        this.addressDetail = request.getAddressDetail();
-        this.deliveryMemo = request.getDeliveryMemo();
-
-        return this;
-    }
-
-    // 환불 계좌 정보 업데이트 메소드
-    public OrderItem updateRefundInfo(OrderRequestDTO.OrderItemRefundInfoUpdateDTO request) {
-        this.refundOwner = request.getRefundOwner();
-        this.refundBank = request.getRefundBank();
-        this.refundAccount = request.getRefundAccount();
-
+    // 주문 상태 업데이트 메소드
+    public OrderItem updateStatus(OrderStatus orderStatus) {
+        this.status = orderStatus;
         return this;
     }
 }

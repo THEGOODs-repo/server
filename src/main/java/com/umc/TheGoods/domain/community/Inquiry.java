@@ -31,6 +31,10 @@ public class Inquiry extends BaseDateTimeEntity {
     @JoinColumn(name = "item_id")
     private Item item;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "seller_id")
+    private Member seller;
+
     @OneToMany(mappedBy = "inquiry", cascade = CascadeType.ALL)
     private List<InquiryReply> inquiryReplyList = new ArrayList<>();
 

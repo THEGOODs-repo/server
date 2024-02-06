@@ -11,4 +11,8 @@ public interface ItemQueryService {
 
     Optional<ItemOption> findItemOptionById(Long id);
 
+    boolean isExistItem(Long id);
+
+    boolean isExistItemOption(Long id);
+
 }
