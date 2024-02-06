@@ -40,9 +40,6 @@ logging:
   level:
     org.hibernate.SQL: debug
     org.hibernate.type: trace
-jwt:
-  token:
-    secret: "secretKey"
 servlet:
   multipart:
     enabled: true
