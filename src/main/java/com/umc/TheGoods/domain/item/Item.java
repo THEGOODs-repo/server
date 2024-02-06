@@ -11,6 +11,7 @@ import com.umc.TheGoods.domain.member.Member;
 import com.umc.TheGoods.domain.order.Cart;
 import com.umc.TheGoods.domain.order.OrderItem;
 import com.umc.TheGoods.domain.types.DeliveryType;
+import com.umc.TheGoods.web.dto.item.ItemRequestDTO;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 
@@ -119,6 +120,11 @@ public class Item extends BaseDateTimeEntity {
         return this;
     }
 
+    public Item updateViewCounts() {
+        this.viewCount += 1;
+        return this;
+    }
+
     public void setCategory(Category category) {
         if (this.category != null)
             category.getItemList().remove(this);
@@ -145,5 +151,48 @@ public class Item extends BaseDateTimeEntity {
             this.itemImgList = new ArrayList<>();
         }
         return this.itemImgList;
+    }
+
+    public void updateItem(ItemRequestDTO.UpdateItemDTO updateItemDTO) {
+
+        DeliveryType deliveryType = null;
+
+        switch (updateItemDTO.getDeliveryType()) {
+            case 1:
+                deliveryType = DeliveryType.PO;
+                break;
+            case 2:
+                deliveryType = DeliveryType.CJ;
+                break;
+            case 3:
+                deliveryType = DeliveryType.LOTTE;
+                break;
+            case 4:
+                deliveryType = DeliveryType.LOGEN;
+                break;
+            case 5:
+                deliveryType = DeliveryType.HANJIN;
+                break;
+            case 6:
+                deliveryType = DeliveryType.GS25;
+                break;
+            case 7:
+                deliveryType = DeliveryType.CU;
+                break;
+            case 8:
+                deliveryType = DeliveryType.ETC;
+                break;
+        }
+
+        this.name = updateItemDTO.getName();
+        this.description = updateItemDTO.getDescription();
+        this.price = updateItemDTO.getPrice();
+        this.stock = updateItemDTO.getStock();
+        this.deliveryType = deliveryType;
+        this.deliveryDate = updateItemDTO.getDeliveryDate();
+        this.deliveryFee = updateItemDTO.getDeliveryFee();
+        this.isLimitless = updateItemDTO.getIsLimitless();
+        this.startDate = updateItemDTO.getStartDate();
+        this.endDate = updateItemDTO.getEndDate();
     }
 }

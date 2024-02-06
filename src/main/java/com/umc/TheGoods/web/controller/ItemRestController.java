@@ -3,6 +3,7 @@ package com.umc.TheGoods.web.controller;
 
 import com.umc.TheGoods.apiPayload.ApiResponse;
 import com.umc.TheGoods.apiPayload.code.status.ErrorStatus;
+import com.umc.TheGoods.apiPayload.exception.handler.ItemHandler;
 import com.umc.TheGoods.apiPayload.exception.handler.MemberHandler;
 import com.umc.TheGoods.converter.item.ItemConverter;
 import com.umc.TheGoods.domain.item.Item;
@@ -18,10 +19,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
@@ -49,5 +47,42 @@ public class ItemRestController {
 
         Item item = itemCommandService.uploadItem(member, request);
         return ApiResponse.onSuccess(ItemConverter.toUploadItemResultDTO(item));
+    }
+
+    @GetMapping("/seller/item/{itemId}")
+    @Operation(summary = "상품 조회 API", description = "상품 조회를 위한 API이며, path variable로 입력 값을 받는다. " +
+            "itemId : 조회할 상품의 id")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공")
+    })
+    public ApiResponse<ItemResponseDTO.ItemContentDTO> getPostContent(@PathVariable(name = "itemId") Long itemId, Authentication authentication) {
+        Member member;
+
+        if (authentication == null) {
+            member = memberQueryService.findMemberByNickname("no_login_user").orElseThrow(() -> new ItemHandler(ErrorStatus.ITEM_VIEW_ERROR));
+        } else {
+            MemberDetail memberDetail = (MemberDetail) authentication.getPrincipal();
+            member = memberQueryService.findMemberById(memberDetail.getMemberId()).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        }
+
+        Item itemContent = itemCommandService.getItemContent(itemId, member);
+        return ApiResponse.onSuccess(ItemConverter.getItemContentDTO(itemContent));
+    }
+
+    @PutMapping("/seller/item/{itemId}")
+    @Operation(summary = "상품 수정 API", description = "상품 수정을 위한 API이며, path variable로 입력 값을 받습니다. " +
+            "itemId : 조회할 상품의 id")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공")
+    })
+    public ApiResponse<ItemResponseDTO.UpdateItemResultDTO> updateItem(@RequestBody @Valid ItemRequestDTO.UpdateItemDTO request,
+                                                                       @PathVariable(name = "itemId") Long itemId, Authentication authentication) {
+        Member member;
+
+        MemberDetail memberDetail = (MemberDetail) authentication.getPrincipal();
+        member = memberQueryService.findMemberById(memberDetail.getMemberId()).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        Item item = itemCommandService.updateItem(itemId, member, request);
+        return ApiResponse.onSuccess(ItemConverter.toUpdateItemResultDTO(item));
     }
 }
