@@ -7,6 +7,7 @@ import com.umc.TheGoods.domain.item.ItemOption;
 import com.umc.TheGoods.domain.types.DeliveryType;
 import com.umc.TheGoods.web.dto.item.ItemRequestDTO;
 import com.umc.TheGoods.web.dto.item.ItemResponseDTO;
+import org.springframework.data.domain.Page;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -40,6 +41,7 @@ public class ItemConverter {
 
         return ItemResponseDTO.ItemContentDTO.builder()
                 .itemId(item.getId())
+                .name(item.getName())
                 .category(item.getCategory().getName())
                 .deliveryDate(item.getDeliveryDate())
                 .deliveryFee(item.getDeliveryFee())
@@ -57,6 +59,34 @@ public class ItemConverter {
                 .itemTag(item.getItemTagList().stream().map(tag -> tag.getTag().getName()).toList())
                 .itemImgUrlList(itemImgResponseDTOList)
                 .itemOptionList(itemOptionResponseDTOList)
+                .build();
+    }
+
+    public static ItemResponseDTO.ItemPreviewDTO itemPreviewDTO(Item item) {
+        List<ItemResponseDTO.ItemImgResponseDTO> itemImgResponseDTOList = item.getItemImgList().stream()
+                .map(ItemConverter::getItemImgDTO).collect(Collectors.toList());
+
+        return ItemResponseDTO.ItemPreviewDTO.builder()
+                .itemId(item.getId())
+                .name(item.getName())
+                .status(item.getStatus())
+                .itemImgUrlList(itemImgResponseDTOList)
+                .createdAt(item.getCreatedAt())
+                .build();
+    }
+
+    public static ItemResponseDTO.ItemPreviewListDTO itemPreviewListDTO(Page<Item> itemList) {
+
+        List<ItemResponseDTO.ItemPreviewDTO> itemPreviewDTOList = itemList.stream()
+                .map(ItemConverter::itemPreviewDTO).collect(Collectors.toList());
+
+        return ItemResponseDTO.ItemPreviewListDTO.builder()
+                .itemList(itemPreviewDTOList)
+                .isFirst(itemList.isFirst())
+                .isLast(itemList.isLast())
+                .listSize(itemList.getSize())
+                .totalPage(itemList.getTotalPages())
+                .totalElements(itemList.getTotalElements())
                 .build();
     }
 
