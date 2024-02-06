@@ -15,7 +15,7 @@ import java.util.List;
 @Transactional(readOnly = true)
 public class PostQueryServiceImpl implements PostQueryService {
 
-    final PostRepository postRepository;
+    private final PostRepository postRepository;
 
     @Override
     public List<PostResponseDto.PostViewDto> getPostsOrderByLike() {
