@@ -46,10 +46,18 @@ public class Comment extends BaseDateTimeEntity {
     @Column(columnDefinition = "TEXT", nullable = false)
     private String content;
 
-
     @OneToMany(mappedBy = "comment", cascade = CascadeType.ALL)
     private List<CommentLike> commentLikeList = new ArrayList<>();
 
     @OneToMany(mappedBy = "comment", cascade = CascadeType.ALL)
     private List<CommentMention> commentMentionList = new ArrayList<>();
+
+    // 엔티티 핵심 메서드
+    public void setContent(String newContent) {
+        this.content = newContent;
+    }
+
+    public void removeCommentLike(Long id) {
+        this.commentLikeList.removeIf((like) -> like.getId() == id);
+    }
 }
