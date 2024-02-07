@@ -115,6 +115,45 @@ public class OrderCommandServiceImpl implements OrderCommandService {
 
         return orderItem.updateStatus(OrderStatus.CONFIRM);
     }
+
+    @Override
+    public OrderItem updateOrderItemAddress(OrderRequestDTO.OrderItemAddressUpdateDTO request, Long orderItemId, Member member) {
+        OrderItem orderItem = orderItemRepository.findById(orderItemId).orElseThrow(() -> new OrderHandler(ErrorStatus.ORDER_ITEM_NOT_FOUND));
+
+        // member가 해당 orderItem에 수정 권한이 있는지 검증
+        if (!orderItem.getOrders().getMember().equals(member)) {
+            throw new OrderHandler(ErrorStatus.NOT_ORDER_OWNER);
+        }
+
+        // 해당 orderItem의 status가 배송 준비 이전인지 검증
+        if (!(orderItem.getStatus() == OrderStatus.PAY_PREV || orderItem.getStatus() == OrderStatus.PAY_COMP)) {
+            throw new OrderHandler(ErrorStatus.ORDER_ITEM_UPDATE_FAIL);
+        }
+
+        return orderItem.updateAddressInfo(request);
+    }
+
+    @Override
+    public OrderItem updateOrderItemRefundInfo(OrderRequestDTO.OrderItemRefundInfoUpdateDTO request, Long orderItemId, Member member) {
+        OrderItem orderItem = orderItemRepository.findById(orderItemId).orElseThrow(() -> new OrderHandler(ErrorStatus.ORDER_ITEM_NOT_FOUND));
+
+        // member가 해당 orderItem에 수정 권한이 있는지 검증
+        if (!orderItem.getOrders().getMember().equals(member)) {
+            throw new OrderHandler(ErrorStatus.NOT_ORDER_OWNER);
+        }
+
+        // orderItem의 status가 환불 계좌 변경 가능한 단계인지 검증
+        if (!(orderItem.getStatus() == OrderStatus.PAY_PREV
+                || orderItem.getStatus() == OrderStatus.PAY_COMP
+                || orderItem.getStatus() == OrderStatus.DEL_PREP
+                || orderItem.getStatus() == OrderStatus.DEL_START
+                || orderItem.getStatus() == OrderStatus.DEL_COMP
+        )) {
+            throw new OrderHandler(ErrorStatus.ORDER_ITEM_UPDATE_FAIL);
+        }
+
+        return orderItem.updateRefundInfo(request);
+    }
 }
 
 

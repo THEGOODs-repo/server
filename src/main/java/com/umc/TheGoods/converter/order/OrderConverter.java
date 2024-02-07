@@ -194,7 +194,7 @@ public class OrderConverter {
         return itemOptionName;
     }
 
-    public static OrderResponseDTO.OrderItemUpdateResultDTO toOrderItemUpdateResultDto(OrderItem orderItem) {
+    public static OrderResponseDTO.OrderItemUpdateResultDTO toOrderItemUpdateResultDTO(OrderItem orderItem) {
         return OrderResponseDTO.OrderItemUpdateResultDTO.builder()
                 .orderItemId(orderItem.getId())
                 .updatedAt(orderItem.getUpdatedAt())

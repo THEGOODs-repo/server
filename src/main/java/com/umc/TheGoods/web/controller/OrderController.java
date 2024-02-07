@@ -160,6 +160,62 @@ public class OrderController {
 
         OrderItem orderItem = orderCommandService.updateStatusToConfirm(orderItemId, member);
 
-        return ApiResponse.onSuccess(OrderConverter.toOrderItemUpdateResultDto(orderItem));
+        return ApiResponse.onSuccess(OrderConverter.toOrderItemUpdateResultDTO(orderItem));
+    }
+
+    @PutMapping("/{orderItemId}/info/address")
+    @Operation(summary = "주문 배송지 정보 수정 API", description = "상품 주문 내역의 배송지 정보를 변경하는 API 입니다.\n\n" +
+            "orderItemId(상품 주문 내역 id)와 배송지 정보를 보내주세요.")
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
+    })
+    @Parameter(name = "orderItemId", description = "주문 상품 내역 id, path variable 입니다.")
+    public ApiResponse<OrderResponseDTO.OrderItemUpdateResultDTO> updateOrderItemAddress(
+            @RequestBody OrderRequestDTO.OrderItemAddressUpdateDTO request,
+            @PathVariable(name = "orderItemId") Long orderItemId,
+            Authentication authentication
+    ) {
+        Member member = null;
+
+        // 비로그인 요청인 경우 비회원 계정 불러오기
+        if (authentication == null) {
+            member = memberQueryService.findMemberByNickname("no_login_user").orElseThrow(() -> new OrderHandler(ErrorStatus.NO_LOGIN_ORDER_NOT_AVAILABLE));
+        } else {
+            // request에서 member id 추출해 Member 엔티티 찾기
+            MemberDetail memberDetail = (MemberDetail) authentication.getPrincipal();
+            member = memberQueryService.findMemberById(memberDetail.getMemberId()).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        }
+
+        OrderItem orderItem = orderCommandService.updateOrderItemAddress(request, orderItemId, member);
+
+        return ApiResponse.onSuccess(OrderConverter.toOrderItemUpdateResultDTO(orderItem));
+    }
+
+    @PutMapping("/{orderItemId}/info/refund")
+    @Operation(summary = "주문 환불 계좌 정보 수정 API", description = "상품 주문 내역의 환불 계좌 정보를 변경하는 API 입니다.\n\n" +
+            "orderItemId(상품 주문 내역 id)와 환불 계좌 정보를 보내주세요.")
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
+    })
+    @Parameter(name = "orderItemId", description = "주문 상품 내역 id, path variable 입니다.")
+    public ApiResponse<OrderResponseDTO.OrderItemUpdateResultDTO> updateOrderItemRefundInfo(
+            @RequestBody OrderRequestDTO.OrderItemRefundInfoUpdateDTO request,
+            @PathVariable(name = "orderItemId") Long orderItemId,
+            Authentication authentication
+    ) {
+        Member member = null;
+
+        // 비로그인 요청인 경우 비회원 계정 불러오기
+        if (authentication == null) {
+            member = memberQueryService.findMemberByNickname("no_login_user").orElseThrow(() -> new OrderHandler(ErrorStatus.NO_LOGIN_ORDER_NOT_AVAILABLE));
+        } else {
+            // request에서 member id 추출해 Member 엔티티 찾기
+            MemberDetail memberDetail = (MemberDetail) authentication.getPrincipal();
+            member = memberQueryService.findMemberById(memberDetail.getMemberId()).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        }
+
+        OrderItem orderItem = orderCommandService.updateOrderItemRefundInfo(request, orderItemId, member);
+
+        return ApiResponse.onSuccess(OrderConverter.toOrderItemUpdateResultDTO(orderItem));
     }
 }
