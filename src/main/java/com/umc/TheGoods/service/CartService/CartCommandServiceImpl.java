@@ -65,7 +65,7 @@ public class CartCommandServiceImpl implements CartCommandService {
                         existCartDetail.get().updateAmount(existCartDetail.get().getAmount() + cartOptionAddDTO.getAmount());
                         cartDetailRepository.save(existCartDetail.get());
 
-                    } else { // cart 내역은 존재하지만 cartDetail 내역은 존재하지 않는 경우
+                    } else { // cart 내역은 존재하지만 cartDetail 내역은 존재하지 않는 경
                         // 신규 장바구니 상세 내역 생성
                         CartDetail cartDetail = CartConverter.toCartDetail(cartOptionAddDTO.getAmount());
                         cartDetail.setCart(cart.get());
@@ -158,4 +158,5 @@ public class CartCommandServiceImpl implements CartCommandService {
 
         return cartDetail.updateAmount(request.getAmount());
     }
+
 }

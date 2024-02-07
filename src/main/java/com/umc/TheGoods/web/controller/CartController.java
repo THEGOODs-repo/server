@@ -3,10 +3,14 @@ package com.umc.TheGoods.web.controller;
 import com.umc.TheGoods.apiPayload.ApiResponse;
 import com.umc.TheGoods.apiPayload.code.status.ErrorStatus;
 import com.umc.TheGoods.apiPayload.exception.handler.MemberHandler;
+import com.umc.TheGoods.converter.cart.CartConverter;
 import com.umc.TheGoods.domain.member.Member;
+import com.umc.TheGoods.domain.order.Cart;
 import com.umc.TheGoods.service.CartService.CartCommandService;
+import com.umc.TheGoods.service.CartService.CartQueryService;
 import com.umc.TheGoods.service.MemberService.MemberQueryService;
 import com.umc.TheGoods.web.dto.cart.CartRequestDTO;
+import com.umc.TheGoods.web.dto.cart.CartResponseDTO;
 import com.umc.TheGoods.web.dto.member.MemberDetail;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -17,6 +21,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @Slf4j
 @Tag(name = "Cart", description = "장바구니 관련 API")
@@ -28,6 +33,7 @@ public class CartController {
 
     private final MemberQueryService memberQueryService;
     private final CartCommandService cartCommandService;
+    private final CartQueryService cartQueryService;
 
     @PostMapping
     @Operation(summary = "장바구니 담기 API", description = "해당 상품/옵션을 장바구니에 추가하는 API 입니다.\n\n" +
@@ -53,6 +59,22 @@ public class CartController {
         return ApiResponse.onSuccess("장바구니 담기 성공");
     }
 
+    @GetMapping
+    public ApiResponse<CartResponseDTO.cartViewListDTO> cartView(Authentication authentication) {
+        // 비회원인 경우 처리 불가
+        if (authentication == null) {
+            throw new MemberHandler(ErrorStatus._UNAUTHORIZED);
+        }
+
+        // request에서 member id 추출해 Member 엔티티 찾기
+        MemberDetail memberDetail = (MemberDetail) authentication.getPrincipal();
+        Member member = memberQueryService.findMemberById(memberDetail.getMemberId()).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        List<Cart> cartList = cartQueryService.getCartList(member);
+
+        return ApiResponse.onSuccess(CartConverter.toCartViewListDTO(cartList));
+    }
+
     @PutMapping
     @Operation(summary = "장바구니 옵션 수정 API", description = "해당 장바구니 내역의 담은 수량을 수정하는 API 입니다.")
     @ApiResponses(value = {
@@ -73,6 +95,5 @@ public class CartController {
 
         return ApiResponse.onSuccess("장바구니 옵션 수정 성공");
     }
-
 
 }
