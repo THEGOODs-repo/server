@@ -487,5 +487,9 @@ public class MemberCommandServiceImpl implements MemberCommandService {
         return categoryRepository.existsById(categoryId);
     }
 
+    @Override
+    public boolean existMemberById(Long memberId) {
+        return memberRepository.existsById(memberId);
+    }
 }
 
