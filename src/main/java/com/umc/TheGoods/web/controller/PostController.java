@@ -5,12 +5,14 @@ import com.umc.TheGoods.service.PostService.PostQueryService;
 import com.umc.TheGoods.web.dto.post.PostResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/posts")
+@Tag(name = "Post", description = "포스트 관련된 API 입니다.")
 public class PostController {
 
     final PostQueryService queryService;
@@ -19,6 +21,7 @@ public class PostController {
     @Operation(summary = "인기 사장님 피드 전체 조회 API", description = "포스트의 기본 디폴트 정렬로, 좋아요 순으로 내림차순 정렬합니다. \n\n")
     @ApiResponses(value = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON404", description = "Fail, 이미 존재하는 이름입니다.")
     })
     public ApiResponse<PostResponseDto.PostListViewDto> posts(@RequestParam("like") boolean like) {
         return ApiResponse.onSuccess((PostResponseDto.PostListViewDto) queryService.getPostsOrderByLike());
