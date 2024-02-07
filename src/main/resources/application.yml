@@ -26,8 +26,8 @@ spring:
           timeout: 5000
           writetimeout: 5000
     auth-code-expiration-millis: 1800000
-    username: ${MAIL_USER}
-    password: ${MAIL_PASSWORD}
+    username: ${SPRING_MAIL_USERNAME}
+    password: ${SPRING_MAIL_PASSWORD}
   jpa:
     hibernate:
       ddl-auto: update
@@ -49,3 +49,7 @@ springdoc:
   swagger-ui:
     tags-sorter: alpha            # alpha: 알파벳 순 태그 정렬, method: HTTP Method 순 정렬
     operations-sorter: alpha      # alpha: 알파벳 순 태그 정렬, method: HTTP Method 순 정렬
+
+jwt:
+  token:
+    secret: ${JWT_TOKEN_SECRET}
