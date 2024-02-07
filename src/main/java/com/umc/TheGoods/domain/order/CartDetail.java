@@ -21,10 +21,21 @@ public class CartDetail extends BaseDateTimeEntity {
     @Column(nullable = false)
     private Integer amount;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "cart_id")
+    private Cart cart;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "item_option_id")
     private ItemOption itemOption;
+
+    public void setCart(Cart cart) {
+        if (this.cart != null) {
+            this.cart.getCartDetailList().remove(this);
+        }
+        this.cart = cart;
+        cart.getCartDetailList().add(this);
+    }
 
 
     public void setItemOption(ItemOption itemOption) {
