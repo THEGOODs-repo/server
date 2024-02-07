@@ -160,7 +160,7 @@ public class OrderController {
 
         OrderItem orderItem = orderCommandService.updateStatusToConfirm(orderItemId, member);
 
-        return ApiResponse.onSuccess(OrderConverter.toOrderItemUpdateResultDto(orderItem));
+        return ApiResponse.onSuccess(OrderConverter.toOrderItemUpdateResultDTO(orderItem));
     }
 
     @PutMapping("/{orderItemId}/info/address")
@@ -188,7 +188,7 @@ public class OrderController {
 
         OrderItem orderItem = orderCommandService.updateOrderItemAddress(request, orderItemId, member);
 
-        return ApiResponse.onSuccess(OrderConverter.toOrderItemUpdateResultDto(orderItem));
+        return ApiResponse.onSuccess(OrderConverter.toOrderItemUpdateResultDTO(orderItem));
     }
 
     @PutMapping("/{orderItemId}/info/refund")
@@ -216,6 +216,6 @@ public class OrderController {
 
         OrderItem orderItem = orderCommandService.updateOrderItemRefundInfo(request, orderItemId, member);
 
-        return ApiResponse.onSuccess(OrderConverter.toOrderItemUpdateResultDto(orderItem));
+        return ApiResponse.onSuccess(OrderConverter.toOrderItemUpdateResultDTO(orderItem));
     }
 }
