@@ -37,7 +37,6 @@ public class CartDetail extends BaseDateTimeEntity {
         cart.getCartDetailList().add(this);
     }
 
-
     public void setItemOption(ItemOption itemOption) {
         if (this.itemOption != null) {
             this.itemOption.getCartDetailList().remove(this);

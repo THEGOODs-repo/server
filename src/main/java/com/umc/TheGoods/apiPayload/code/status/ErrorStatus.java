@@ -37,6 +37,7 @@ public enum ErrorStatus implements BaseErrorCode {
     // 장바구니 관련 에러
     CART_NOT_FOUND(HttpStatus.NOT_FOUND, "CART4001", "해당 장바구니 내역을 찾을 수 없습니다."),
     NOT_CART_OWNER(HttpStatus.BAD_REQUEST, "CART4002", "본인의 장바구니 내역이 아닙니다. 접근할 수 없습니다."),
+    CART_DETAIL_FOUND_ERROR(HttpStatus.NOT_FOUND, "CART4003", "단일 상품의 장바구니 상세 내역을 찾을 수 없습니다. 관리자에게 문의 바랍니다."),
 
     // test
     TEMP_EXCEPTION(HttpStatus.BAD_REQUEST, "TEMP4001", "테스트"),
