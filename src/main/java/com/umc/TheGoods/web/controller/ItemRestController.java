@@ -13,6 +13,7 @@ import com.umc.TheGoods.service.ItemService.ItemQueryService;
 import com.umc.TheGoods.service.MemberService.MemberQueryService;
 import com.umc.TheGoods.validation.annotation.CheckPage;
 import com.umc.TheGoods.validation.annotation.ExistItem;
+import com.umc.TheGoods.validation.annotation.ExistMemberName;
 import com.umc.TheGoods.web.dto.item.ItemRequestDTO;
 import com.umc.TheGoods.web.dto.item.ItemResponseDTO;
 import com.umc.TheGoods.web.dto.member.MemberDetail;
@@ -121,4 +122,31 @@ public class ItemRestController {
         return ApiResponse.onSuccess(ItemConverter.itemPreviewListDTO(itemList));
     }
 
+    @GetMapping("/search/item/")
+    @Operation(summary = "판매 상품 검색 API", description = "상품 검색을 위한 API이며, request parameter로 입력 값을 받습니다. " +
+            "page : 상품 조회 페이지 번호")
+    @Parameters(value = {
+            @Parameter(name = "page", description = "페이지 번호, 1 이상의 숫자를 입력해주세요.")
+    })
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공")
+    })
+    public ApiResponse<ItemResponseDTO.ItemPreviewListDTO> searchItemList(@CheckPage @RequestParam(name = "page") Integer page,
+                                                                          @RequestParam(name = "itemName", required = false) String itemName,
+                                                                          @RequestParam(name = "category", required = false) String categoryName,
+                                                                          @ExistMemberName @RequestParam(name = "sellerName", required = false) String sellerName,
+                                                                          Authentication authentication) {
+        Member member;
+
+        if (authentication == null) {
+            member = memberQueryService.findMemberByNickname("no_login_user").orElseThrow(() -> new ItemHandler(ErrorStatus.ITEM_VIEW_ERROR));
+        } else {
+            MemberDetail memberDetail = (MemberDetail) authentication.getPrincipal();
+            member = memberQueryService.findMemberById(memberDetail.getMemberId()).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        }
+
+        Page<Item> itemList = itemQueryService.searchItem(member, itemName, categoryName, sellerName, page - 1);
+
+        return ApiResponse.onSuccess(ItemConverter.itemPreviewListDTO(itemList));
+    }
 }
