@@ -9,14 +9,20 @@ import com.umc.TheGoods.converter.item.ItemConverter;
 import com.umc.TheGoods.domain.item.Item;
 import com.umc.TheGoods.domain.member.Member;
 import com.umc.TheGoods.service.ItemService.ItemCommandService;
+import com.umc.TheGoods.service.ItemService.ItemQueryService;
 import com.umc.TheGoods.service.MemberService.MemberQueryService;
+import com.umc.TheGoods.validation.annotation.CheckPage;
+import com.umc.TheGoods.validation.annotation.ExistItem;
 import com.umc.TheGoods.web.dto.item.ItemRequestDTO;
 import com.umc.TheGoods.web.dto.item.ItemResponseDTO;
 import com.umc.TheGoods.web.dto.member.MemberDetail;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -31,6 +37,7 @@ import javax.validation.Valid;
 public class ItemRestController {
 
     private final ItemCommandService itemCommandService;
+    private final ItemQueryService itemQueryService;
     private final MemberQueryService memberQueryService;
 
     @PostMapping("/seller/item")
@@ -52,10 +59,13 @@ public class ItemRestController {
     @GetMapping("/seller/item/{itemId}")
     @Operation(summary = "상품 조회 API", description = "상품 조회를 위한 API이며, path variable로 입력 값을 받는다. " +
             "itemId : 조회할 상품의 id")
+    @Parameters(value = {
+            @Parameter(name = "itemId", description = "조회할 상품의 id 입니다.")
+    })
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공")
     })
-    public ApiResponse<ItemResponseDTO.ItemContentDTO> getPostContent(@PathVariable(name = "itemId") Long itemId, Authentication authentication) {
+    public ApiResponse<ItemResponseDTO.ItemContentDTO> getPostContent(@ExistItem @PathVariable(name = "itemId") Long itemId, Authentication authentication) {
         Member member;
 
         if (authentication == null) {
@@ -72,11 +82,14 @@ public class ItemRestController {
     @PutMapping("/seller/item/{itemId}")
     @Operation(summary = "상품 수정 API", description = "상품 수정을 위한 API이며, path variable로 입력 값을 받습니다. " +
             "itemId : 조회할 상품의 id")
+    @Parameters(value = {
+            @Parameter(name = "itemId", description = "조회할 상품의 id 입니다.")
+    })
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공")
     })
     public ApiResponse<ItemResponseDTO.UpdateItemResultDTO> updateItem(@RequestBody @Valid ItemRequestDTO.UpdateItemDTO request,
-                                                                       @PathVariable(name = "itemId") Long itemId, Authentication authentication) {
+                                                                       @ExistItem @PathVariable(name = "itemId") Long itemId, Authentication authentication) {
         Member member;
 
         MemberDetail memberDetail = (MemberDetail) authentication.getPrincipal();
@@ -85,4 +98,27 @@ public class ItemRestController {
         Item item = itemCommandService.updateItem(itemId, member, request);
         return ApiResponse.onSuccess(ItemConverter.toUpdateItemResultDTO(item));
     }
+
+    @GetMapping("/seller/item/")
+    @Operation(summary = "나의 판매 상품 조회 API", description = "상품 수정을 위한 API이며, request parameter로 입력 값을 받습니다. " +
+            "page : 상품 조회 페이지 번호")
+    @Parameters(value = {
+            @Parameter(name = "page", description = "페이지 번호, 1 이상의 숫자를 입력해주세요.")
+    })
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공")
+    })
+    public ApiResponse<ItemResponseDTO.ItemPreviewListDTO> getMyItemList(@CheckPage @RequestParam(name = "page") Integer page,
+                                                                         Authentication authentication) {
+        if (authentication == null) {
+            throw new MemberHandler(ErrorStatus._UNAUTHORIZED);
+        }
+
+        MemberDetail memberDetail = (MemberDetail) authentication.getPrincipal();
+        Member member = memberQueryService.findMemberById(memberDetail.getMemberId()).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        Page<Item> itemList = itemQueryService.getMyItemList(member, page - 1);
+        return ApiResponse.onSuccess(ItemConverter.itemPreviewListDTO(itemList));
+    }
+
 }
