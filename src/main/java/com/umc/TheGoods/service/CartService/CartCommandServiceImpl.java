@@ -135,27 +135,27 @@ public class CartCommandServiceImpl implements CartCommandService {
         }
     }
 
-//    @Override
-//    public Cart updateCart(CartRequestDTO.cartUpdateDTO request, Member member) {
-//        // cart 존재 여부 검증은 annotation에서 진행
-//        Cart cart = cartRepository.findById(request.getCartId()).get();
-//
-//        // 해당 cart 내역을 수정할 권한 있는지 검증
-//        if (!cart.getMember().equals(member)) {
-//            throw new OrderHandler(ErrorStatus.NOT_CART_OWNER);
-//        }
-//
-//        // 재고 수량과 비교
-//        if (!cart.getItem().getItemOptionList().isEmpty()) { // 상품 옵션이 있는 경우
-//            if (request.getAmount() > cart.getItemOption().getStock()) {
-//                throw new OrderHandler(ErrorStatus.LACK_OF_STOCK);
-//            }
-//        } else {
-//            if (request.getAmount() > cart.getItem().getStock()) {
-//                throw new OrderHandler(ErrorStatus.LACK_OF_STOCK);
-//            }
-//        }
-//
-//        return cart.updateAmount(request.getAmount());
-//    }
+    @Override
+    public CartDetail updateCart(CartRequestDTO.cartUpdateDTO request, Member member) {
+        // cartDetail 존재 여부 검증은 annotation에서 진행
+        CartDetail cartDetail = cartDetailRepository.findById(request.getCartDetailId()).get();
+
+        // 해당 cart 내역을 수정할 권한 있는지 검증
+        if (!cartDetail.getCart().getMember().equals(member)) {
+            throw new OrderHandler(ErrorStatus.NOT_CART_OWNER);
+        }
+
+        // 재고 수량과 비교
+        if (!cartDetail.getCart().getItem().getItemOptionList().isEmpty()) { // 상품 옵션이 있는 경우
+            if (request.getAmount() > cartDetail.getItemOption().getStock()) {
+                throw new OrderHandler(ErrorStatus.LACK_OF_STOCK);
+            }
+        } else {
+            if (request.getAmount() > cartDetail.getCart().getItem().getStock()) {
+                throw new OrderHandler(ErrorStatus.LACK_OF_STOCK);
+            }
+        }
+
+        return cartDetail.updateAmount(request.getAmount());
+    }
 }
