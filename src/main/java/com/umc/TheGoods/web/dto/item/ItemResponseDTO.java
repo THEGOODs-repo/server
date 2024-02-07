@@ -37,6 +37,7 @@ public class ItemResponseDTO {
     @AllArgsConstructor
     public static class ItemContentDTO {
         Long itemId;
+        String name;
         ItemStatus status;
         Integer stock;
         Long price;
@@ -54,6 +55,31 @@ public class ItemResponseDTO {
         List<ItemImgResponseDTO> itemImgUrlList;
         List<ItemOptionResponseDTO> itemOptionList;
         List<String> itemTag;
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ItemPreviewListDTO {
+        List<ItemPreviewDTO> itemList;
+        Integer listSize;
+        Integer totalPage;
+        Long totalElements;
+        Boolean isFirst;
+        Boolean isLast;
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ItemPreviewDTO {
+        Long itemId;
+        String name;
+        ItemStatus status;
+        List<ItemImgResponseDTO> itemImgUrlList;
+        LocalDateTime createdAt;
     }
 
     @Builder

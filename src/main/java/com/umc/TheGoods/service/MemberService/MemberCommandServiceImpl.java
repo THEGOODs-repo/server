@@ -265,6 +265,12 @@ public class MemberCommandServiceImpl implements MemberCommandService {
         String code = Integer.toString((int) (Math.random() * 8999) + 1000);
         Boolean expired = false;
 
+        Optional<Member> member = memberRepository.findByEmail(email);
+
+        if (!member.isPresent()) {
+            throw new MemberHandler(ErrorStatus.MEMBER_EMAIL_AUTH_ERROR);
+        }
+
         mailConfig.sendMail(email, code);
 
         Auth auth = MemberConverter.toEmailAuth(email, code, expired);
@@ -320,7 +326,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("grant_type", "authorization_code");
         params.add("client_id", "49ff7dc7f5309c49f75ac2a087ffe91e");
-        params.add("redirect_uri", "http://localhost:8080/api/members/kakao/callback");
+        params.add("redirect_uri", "https://dev.the-goods.store/api/members/kakao/callback");
         params.add("code", code);
         //params.add("client_secret","");
 
@@ -344,8 +350,6 @@ public class MemberCommandServiceImpl implements MemberCommandService {
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
-
-        log.info("카카오 토큰:" + oAuthToken.getAccess_token());
 
 
         ///////////////////////////
@@ -410,7 +414,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("grant_type", "authorization_code");
         params.add("client_id", "t6q4Bn70dY7Kli7hS58P");
-        params.add("redirect_uri", "http://localhost:8080/api/members/naver/callback");
+        params.add("redirect_uri", "https://dev.the-goods.store/api/members/naver/callback");
         params.add("client_secret", "1uPpEHHTBF");
         params.add("code", code);
         params.add("state", state);
@@ -437,8 +441,6 @@ public class MemberCommandServiceImpl implements MemberCommandService {
             throw new RuntimeException(e);
         }
 
-        log.info("네이버 토큰:" + oAuthToken.getAccess_token());
-
 
         RestTemplate rt2 = new RestTemplate();
 
@@ -458,7 +460,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
                 String.class
         );
 
-        log.info(response2.toString());
+
         ObjectMapper objectMapper2 = new ObjectMapper();
         NaverProfile naverProfile = null;
 

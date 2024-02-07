@@ -2,6 +2,8 @@ package com.umc.TheGoods.service.ItemService;
 
 import com.umc.TheGoods.domain.item.Item;
 import com.umc.TheGoods.domain.item.ItemOption;
+import com.umc.TheGoods.domain.member.Member;
+import org.springframework.data.domain.Page;
 
 import java.util.Optional;
 
@@ -15,4 +17,5 @@ public interface ItemQueryService {
 
     boolean isExistItemOption(Long id);
 
+    public Page<Item> getMyItemList(Member member, Integer page);
 }

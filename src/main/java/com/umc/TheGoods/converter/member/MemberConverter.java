@@ -86,7 +86,6 @@ public class MemberConverter {
     public static MemberResponseDTO.PhoneAuthSendResultDTO toPhoneAuthSendResultDTO(Auth auth) {
         return MemberResponseDTO.PhoneAuthSendResultDTO.builder()
                 .phone(auth.getPhone())
-                .authCode(auth.getCode())
                 .build();
     }
 
@@ -118,7 +117,6 @@ public class MemberConverter {
     public static MemberResponseDTO.EmailAuthSendResultDTO toEmailAuthSendResultDTO(Auth auth) {
         return MemberResponseDTO.EmailAuthSendResultDTO.builder()
                 .email(auth.getEmail())
-                .authCode(auth.getCode())
                 .build();
     }
 

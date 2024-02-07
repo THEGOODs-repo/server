@@ -36,7 +36,7 @@ public class MemberResponseDTO {
     @AllArgsConstructor
     public static class PhoneAuthSendResultDTO {
         String phone;
-        String authCode;
+        
     }
 
     @Builder
@@ -78,7 +78,7 @@ public class MemberResponseDTO {
     @AllArgsConstructor
     public static class EmailAuthSendResultDTO {
         String email;
-        String authCode;
+
 
     }
 

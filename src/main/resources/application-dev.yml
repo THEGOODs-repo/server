@@ -7,6 +7,9 @@ spring:
   jpa:
     hibernate:
       ddl-auto: create
+  mail:
+    username: ${SPRING_MAIL_USERNAME}
+    password: ${SPRING_MAIL_PASSWORD}
 jwt:
   token:
-    secret: "secretKey"
+    secret: ${JWT_TOKEN_SECRET}
