@@ -60,6 +60,10 @@ public class CartController {
     }
 
     @GetMapping
+    @Operation(summary = "나의 장바구니 목록 조회 API", description = "나의 장바구니 목록을 조회하는 API 입니다. (구매자 회원용")
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
+    })
     public ApiResponse<CartResponseDTO.cartViewListDTO> cartView(Authentication authentication) {
         // 비회원인 경우 처리 불가
         if (authentication == null) {
