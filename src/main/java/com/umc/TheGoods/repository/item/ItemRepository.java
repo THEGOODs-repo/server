@@ -9,4 +9,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface ItemRepository extends JpaRepository<Item, Long> {
 
     Page<Item> findAllByMember(Member member, PageRequest pageRequest);
+
+    Page<Item> findAllByNameContaining(String name, PageRequest pageRequest);
+
+    Page<Item> findAllByCategoryName(String name, PageRequest pageRequest);
 }
