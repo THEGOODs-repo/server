@@ -265,6 +265,12 @@ public class MemberCommandServiceImpl implements MemberCommandService {
         String code = Integer.toString((int) (Math.random() * 8999) + 1000);
         Boolean expired = false;
 
+        Optional<Member> member = memberRepository.findByEmail(email);
+
+        if (!member.isPresent()) {
+            throw new MemberHandler(ErrorStatus.MEMBER_EMAIL_AUTH_ERROR);
+        }
+
         mailConfig.sendMail(email, code);
 
         Auth auth = MemberConverter.toEmailAuth(email, code, expired);
