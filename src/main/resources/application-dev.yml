@@ -4,6 +4,10 @@ spring:
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
+
+  mail:
+    username: ${MAIL_USER}
+    password: ${MAIL_PASSWORD}
 jwt:
   token:
-    secret: "secretKey"
+    secret: ${JWT_TOKEN_SECRET}
