@@ -18,4 +18,6 @@ public interface ItemQueryService {
     boolean isExistItemOption(Long id);
 
     public Page<Item> getMyItemList(Member member, Integer page);
+
+    public Page<Item> searchItem(Member member, String itemName, String categoryName, String sellerName, Integer page);
 }
