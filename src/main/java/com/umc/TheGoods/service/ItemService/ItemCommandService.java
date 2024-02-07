@@ -7,4 +7,8 @@ import com.umc.TheGoods.web.dto.item.ItemRequestDTO;
 public interface ItemCommandService {
 
     public Item uploadItem(Member member, ItemRequestDTO.UploadItemDTO request);
+
+    public Item updateItem(Long itemId, Member member, ItemRequestDTO.UpdateItemDTO request);
+
+    public Item getItemContent(Long itemId, Member member);
 }

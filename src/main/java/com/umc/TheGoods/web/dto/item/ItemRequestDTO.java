@@ -56,6 +56,42 @@ public class ItemRequestDTO {
 
     @Getter
     @AllArgsConstructor
+    public static class UpdateItemDTO {
+        @NotBlank
+        String name;
+        @NotNull
+        String status;
+        @Nullable
+        Integer stock;
+        @Nullable
+        Long price;
+        @NotNull
+        Integer deliveryFee;
+        @NotNull
+        Integer deliveryType;
+        @NotNull
+        Integer deliveryDate;
+        @NotNull
+        String description;
+        @NotNull
+        Boolean isLimitless;
+        @Nullable
+        LocalDate startDate;
+        @Nullable
+        LocalDate endDate;
+        @NotNull
+        Long category;
+        @NotNull
+        List<itemImgDTO> itemImgUrlList;
+        @Nullable
+        List<itemOptionDTO> itemOptionList;
+        @NotNull
+        @ExistTag
+        List<Long> itemTag;
+    }
+
+    @Getter
+    @AllArgsConstructor
     public static class itemImgDTO {
         @Nullable
         Boolean isThumbnail;
