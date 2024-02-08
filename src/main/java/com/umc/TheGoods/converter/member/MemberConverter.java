@@ -1,6 +1,7 @@
 package com.umc.TheGoods.converter.member;
 
 import com.umc.TheGoods.domain.enums.MemberRole;
+import com.umc.TheGoods.domain.images.ProfileImg;
 import com.umc.TheGoods.domain.item.Category;
 import com.umc.TheGoods.domain.mapping.member.MemberCategory;
 import com.umc.TheGoods.domain.mapping.member.MemberTerm;
@@ -150,6 +151,27 @@ public class MemberConverter {
         return MemberResponseDTO.SocialJoinResultDTO.builder()
                 .phone(phone)
                 .email(email)
+                .build();
+    }
+
+    public static MemberResponseDTO.ProfileModifyResultDTO toProfileModify(Member member) {
+
+        return MemberResponseDTO.ProfileModifyResultDTO.builder()
+                .nickname(member.getNickname())
+                .build();
+    }
+
+    public static ProfileImg toProfileImg(String url, Member member) {
+        return ProfileImg.builder()
+                .url(url)
+                .member(member)
+                .build();
+    }
+
+    public static MemberResponseDTO.ProfileResultDTO toProfile(String nickname, String url) {
+        return MemberResponseDTO.ProfileResultDTO.builder()
+                .nickname(nickname)
+                .url(url)
                 .build();
     }
 }

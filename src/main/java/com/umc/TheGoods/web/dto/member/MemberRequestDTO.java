@@ -88,4 +88,6 @@ public class MemberRequestDTO {
         private String email;
         private String code;
     }
+
+
 }

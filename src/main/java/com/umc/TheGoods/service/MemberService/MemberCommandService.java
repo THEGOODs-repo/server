@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.umc.TheGoods.domain.member.Auth;
 import com.umc.TheGoods.domain.member.Member;
 import com.umc.TheGoods.web.dto.member.MemberRequestDTO;
+import org.springframework.web.multipart.MultipartFile;
 
 
 public interface MemberCommandService {
@@ -32,6 +33,8 @@ public interface MemberCommandService {
     String kakaoAuth(String code);
 
     String naverAuth(String code, String state);
+
+    Member profileModify(MultipartFile profile, String nickname, String introduce, Member member);
 
 
 }

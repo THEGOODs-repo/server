@@ -9,6 +9,7 @@ import com.umc.TheGoods.domain.community.Post;
 import com.umc.TheGoods.domain.enums.Gender;
 import com.umc.TheGoods.domain.enums.MemberRole;
 import com.umc.TheGoods.domain.enums.MemberStatus;
+import com.umc.TheGoods.domain.images.ProfileImg;
 import com.umc.TheGoods.domain.item.Item;
 import com.umc.TheGoods.domain.item.Review;
 import com.umc.TheGoods.domain.mapping.Dibs;
@@ -25,7 +26,6 @@ import com.umc.TheGoods.domain.order.Orders;
 import com.umc.TheGoods.domain.types.SocialType;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
-
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -72,7 +72,6 @@ public class Member extends BaseDateTimeEntity {
     private SocialType socialType;
 
     @Enumerated(EnumType.STRING)
-
     @Column(columnDefinition = "VARCHAR(15)")
     @ColumnDefault("'ACTIVE'")
     private MemberStatus memberStatus;
@@ -82,6 +81,9 @@ public class Member extends BaseDateTimeEntity {
 
     @Column(columnDefinition = "TEXT")
     private String naverAuth;
+
+    @Column(columnDefinition = "VARCHAR(160)")
+    private String introduce;
 
     //메세지 관련 수신 동의
     @Column(columnDefinition = "BOOLEAN")
@@ -125,6 +127,9 @@ public class Member extends BaseDateTimeEntity {
 
     @OneToOne(mappedBy = "member")
     private WithdrawReason withdrawReason;
+
+    @OneToOne(mappedBy = "member")
+    private ProfileImg profileImg;
 
     //notification 양방향 매핑
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
@@ -198,4 +203,17 @@ public class Member extends BaseDateTimeEntity {
     // Payment 양방향 매핑
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<Payment> paymentList = new ArrayList<>();
+
+    public void setProfileImg(ProfileImg profileImg) {
+
+        this.profileImg = profileImg;
+    }
+
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
+    public void setIntroduce(String introduce) {
+        this.introduce = introduce;
+    }
 }
