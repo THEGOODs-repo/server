@@ -13,7 +13,6 @@ import com.umc.TheGoods.service.ItemService.ItemQueryService;
 import com.umc.TheGoods.service.MemberService.MemberQueryService;
 import com.umc.TheGoods.validation.annotation.CheckPage;
 import com.umc.TheGoods.validation.annotation.ExistItem;
-import com.umc.TheGoods.validation.annotation.ExistMemberName;
 import com.umc.TheGoods.web.dto.item.ItemRequestDTO;
 import com.umc.TheGoods.web.dto.item.ItemResponseDTO;
 import com.umc.TheGoods.web.dto.member.MemberDetail;
@@ -29,6 +28,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -82,7 +82,7 @@ public class ItemRestController {
 
     @PutMapping("/seller/item/{itemId}")
     @Operation(summary = "상품 수정 API", description = "상품 수정을 위한 API이며, path variable로 입력 값을 받습니다. " +
-            "itemId : 조회할 상품의 id")
+            "itemId : 수정할 상품의 id")
     @Parameters(value = {
             @Parameter(name = "itemId", description = "조회할 상품의 id 입니다.")
     })
@@ -134,7 +134,8 @@ public class ItemRestController {
     public ApiResponse<ItemResponseDTO.ItemPreviewListDTO> searchItemList(@CheckPage @RequestParam(name = "page") Integer page,
                                                                           @RequestParam(name = "itemName", required = false) String itemName,
                                                                           @RequestParam(name = "category", required = false) String categoryName,
-                                                                          @ExistMemberName @RequestParam(name = "sellerName", required = false) String sellerName,
+                                                                          @RequestParam(name = "sellerName", required = false) String sellerName,
+                                                                          @RequestParam(name = "tagNames", required = false) List<String> tagName,
                                                                           Authentication authentication) {
         Member member;
 
@@ -145,7 +146,7 @@ public class ItemRestController {
             member = memberQueryService.findMemberById(memberDetail.getMemberId()).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
         }
 
-        Page<Item> itemList = itemQueryService.searchItem(member, itemName, categoryName, sellerName, page - 1);
+        Page<Item> itemList = itemQueryService.searchItem(member, itemName, categoryName, sellerName, tagName, page - 1);
 
         return ApiResponse.onSuccess(ItemConverter.itemPreviewListDTO(itemList));
     }
