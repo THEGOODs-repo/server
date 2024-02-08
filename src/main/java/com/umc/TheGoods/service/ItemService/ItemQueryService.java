@@ -5,6 +5,7 @@ import com.umc.TheGoods.domain.item.ItemOption;
 import com.umc.TheGoods.domain.member.Member;
 import org.springframework.data.domain.Page;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface ItemQueryService {
@@ -19,5 +20,5 @@ public interface ItemQueryService {
 
     public Page<Item> getMyItemList(Member member, Integer page);
 
-    public Page<Item> searchItem(Member member, String itemName, String categoryName, String sellerName, Integer page);
+    public Page<Item> searchItem(Member member, String itemName, String categoryName, String sellerName, List<String> tagName, Integer page);
 }
