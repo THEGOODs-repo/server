@@ -1,10 +1,13 @@
 package com.umc.TheGoods.repository.item;
 
 import com.umc.TheGoods.domain.item.Item;
+import com.umc.TheGoods.domain.item.Tag;
 import com.umc.TheGoods.domain.member.Member;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.List;
 
 public interface ItemRepository extends JpaRepository<Item, Long> {
 
@@ -13,4 +16,8 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
     Page<Item> findAllByNameContaining(String name, PageRequest pageRequest);
 
     Page<Item> findAllByCategoryName(String name, PageRequest pageRequest);
+
+    Page<Item> findAllByItemTagListTagIn(List<Tag> tags, PageRequest pageRequest);
+
+    //Page<Item> findAllByItemTagListIn(List<ItemTag> itemTagList, PageRequest pageRequest);
 }
