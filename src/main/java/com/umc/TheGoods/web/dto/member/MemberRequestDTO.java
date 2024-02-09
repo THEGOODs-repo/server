@@ -90,4 +90,12 @@ public class MemberRequestDTO {
     }
 
 
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class PasswordUpdateDTO {
+        private String password;
+        private String checkPassword;
+    }
+
 }

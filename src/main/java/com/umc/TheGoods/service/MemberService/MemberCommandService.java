@@ -30,6 +30,8 @@ public interface MemberCommandService {
 
     Boolean confirmEmailAuth(MemberRequestDTO.EmailAuthConfirmDTO request);
 
+    Boolean updatePassword(MemberRequestDTO.PasswordUpdateDTO request, Member member);
+
     String kakaoAuth(String code);
 
     String naverAuth(String code, String state);

@@ -63,6 +63,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     private String key; // 토큰 만들어내는 key값
     private int expiredMs = 1000 * 60 * 60 * 24 * 5;// 토큰 만료 시간 1일
 
+
     /**
      * 회원가입 api
      *
@@ -316,6 +317,18 @@ public class MemberCommandServiceImpl implements MemberCommandService {
 
     @Override
     @Transactional
+    public Boolean updatePassword(MemberRequestDTO.PasswordUpdateDTO request, Member member) {
+        boolean updatePassword = true;
+
+        Member update = MemberConverter.toUpdatePassword(member, encoder.encode(request.getPassword()));
+
+        memberRepository.save(update);
+
+        return updatePassword;
+    }
+
+    @Override
+    @Transactional
     public String kakaoAuth(String code) {
 
         String jwt;
@@ -505,12 +518,11 @@ public class MemberCommandServiceImpl implements MemberCommandService {
         String profileUrl = s3Manager.uploadFile(s3Manager.generateMemberKeyName(saveUuid), profile);
 
         ProfileImg profileImg = MemberConverter.toProfileImg(profileUrl, member);
-
-        member.setProfileImg(profileImg);
-        member.setNickname(nickname);
-        member.setIntroduce(introduce);
-        memberRepository.save(member);
         profileImgRepository.save(profileImg);
+
+        Member update = MemberConverter.toUpdateProfile(member, profileImg, nickname, introduce);
+        memberRepository.save(update);
+
 
         return member;
     }
