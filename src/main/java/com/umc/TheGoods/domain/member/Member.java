@@ -204,16 +204,5 @@ public class Member extends BaseDateTimeEntity {
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<Payment> paymentList = new ArrayList<>();
 
-    public void setProfileImg(ProfileImg profileImg) {
 
-        this.profileImg = profileImg;
-    }
-
-    public void setNickname(String nickname) {
-        this.nickname = nickname;
-    }
-
-    public void setIntroduce(String introduce) {
-        this.introduce = introduce;
-    }
 }

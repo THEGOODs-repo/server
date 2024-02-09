@@ -128,6 +128,22 @@ public class MemberController {
         return ApiResponse.onSuccess(MemberConverter.toEmailAuthConfirmResultDTO(checkEmail));
     }
 
+    @PostMapping("password/update")
+    @Operation(summary = "새로운 비밀번호 설정 api", description = "request: 비밀번호, 비밀번호 확인 response: 변경완료 true")
+    public ApiResponse<MemberResponseDTO.PasswordUpdateResultDTO> updatePassword(@RequestBody MemberRequestDTO.PasswordUpdateDTO request, Authentication authentication) {
+
+        if (request.getPassword() != request.getCheckPassword()) {
+            new MemberHandler(ErrorStatus.MEMBER_PASSWORD_NOT_EQUAL);
+        }
+
+        MemberDetail memberDetail = (MemberDetail) authentication.getPrincipal();
+        Member member = memberQueryService.findMemberById(memberDetail.getMemberId()).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        Boolean updatePassword = memberCommandService.updatePassword(request, member);
+
+        return ApiResponse.onSuccess(MemberConverter.toPasswordUpdateResultDTO(updatePassword));
+    }
+
 
     @GetMapping("/kakao/callback")
     @Operation(summary = "카카오 소셜 로그인 api", description = "callback 용도 api여서 swagger에서 test 안됩니다")
@@ -182,6 +198,7 @@ public class MemberController {
     }
 
     @GetMapping(value = "/profile")
+    @Operation(summary = "프로필 조회 api", description = "프로필이미지, 닉네임을 조회할 수 있습니다.")
     public ApiResponse<MemberResponseDTO.ProfileResultDTO> getProfile(Authentication authentication) {
 
         MemberDetail memberDetail = (MemberDetail) authentication.getPrincipal();

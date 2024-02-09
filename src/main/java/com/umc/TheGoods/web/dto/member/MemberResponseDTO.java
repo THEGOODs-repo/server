@@ -90,6 +90,14 @@ public class MemberResponseDTO {
         Boolean checkEmail;
     }
 
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class PasswordUpdateResultDTO {
+        boolean updatePassword;
+    }
+
 
     @Builder
     @Getter
@@ -124,5 +132,6 @@ public class MemberResponseDTO {
         String nickname;
         String url;
     }
+
 
 }
