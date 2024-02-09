@@ -4,18 +4,21 @@ import com.umc.TheGoods.apiPayload.code.status.ErrorStatus;
 import com.umc.TheGoods.apiPayload.exception.handler.ItemHandler;
 import com.umc.TheGoods.apiPayload.exception.handler.MemberHandler;
 import com.umc.TheGoods.apiPayload.exception.handler.TagHandler;
+import com.umc.TheGoods.converter.tag.TagSearchConverter;
 import com.umc.TheGoods.domain.item.Item;
 import com.umc.TheGoods.domain.item.ItemOption;
 import com.umc.TheGoods.domain.item.Tag;
+import com.umc.TheGoods.domain.mapping.ViewSearch.TagSearch;
 import com.umc.TheGoods.domain.member.Member;
 import com.umc.TheGoods.repository.TagRepository;
+import com.umc.TheGoods.repository.TagSearchRepository;
 import com.umc.TheGoods.repository.item.ItemOptionRepository;
 import com.umc.TheGoods.repository.item.ItemRepository;
-import com.umc.TheGoods.repository.item.ItemTagRepository;
 import com.umc.TheGoods.repository.member.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -33,7 +36,7 @@ public class ItemQueryServiceImpl implements ItemQueryService {
 
     private final ItemRepository itemRepository;
     private final ItemOptionRepository itemOptionRepository;
-    private final ItemTagRepository itemTagRepository;
+    private final TagSearchRepository tagSearchRepository;
     private final MemberRepository memberRepository;
     private final TagRepository tagRepository;
 
@@ -92,14 +95,24 @@ public class ItemQueryServiceImpl implements ItemQueryService {
                 // 아이템을 검색하는 메소드 호출
                 itemPage = itemRepository.findAllByItemTagListTagIn(tags, PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "createdAt")));
                 searchCondition++;
+
+                // 중복된 아이템을 아이디를 기준으로 제거
+                List<Item> distinctItems = itemPage.stream()
+                        .collect(Collectors.toMap(Item::getId, item -> item, (existing, replacement) -> existing))
+                        .values()
+                        .stream()
+                        .collect(Collectors.toList());
+
+                // 중복이 제거된 아이템으로 새로운 Page 생성
+                itemPage = new PageImpl<>(distinctItems, itemPage.getPageable(), distinctItems.size());
             }
-//            List<ItemTag> newTagList = tagName.stream()
-//                    .map(tag -> {
-//                        return itemTagRepository.findByTagId(tagRepository.findByName(tag).orElseThrow(() -> new TagHandler(ErrorStatus.TAG_NOT_FOUND)).getId());
-//                    }).distinct().collect(Collectors.toList());
-//
-//            itemPage = itemRepository.findAllByItemTagListIn(newTagList, PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "createdAt")));
-//            searchCondition++;
+            List<TagSearch> tagSearchList = TagSearchConverter.toTagSearchList(tags, member);
+
+            tagSearchList.forEach(tagSearch -> {
+                tagSearch.setMember(member);
+            });
+            
+            tagSearchRepository.saveAll(tagSearchList);
         }
         if (searchCondition > 1) {
             throw new ItemHandler(ErrorStatus.ITEM_SEARCH_ERROR);

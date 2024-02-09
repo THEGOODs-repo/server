@@ -4,6 +4,7 @@ import com.umc.TheGoods.apiPayload.code.status.ErrorStatus;
 import com.umc.TheGoods.apiPayload.exception.handler.ItemHandler;
 import com.umc.TheGoods.apiPayload.exception.handler.TagHandler;
 import com.umc.TheGoods.converter.item.*;
+import com.umc.TheGoods.domain.enums.MemberRole;
 import com.umc.TheGoods.domain.images.ItemImg;
 import com.umc.TheGoods.domain.item.Category;
 import com.umc.TheGoods.domain.item.Item;
@@ -39,6 +40,10 @@ public class ItemCommandServiceImpl implements ItemCommandService {
     @Override
     @Transactional
     public Item uploadItem(Member member, ItemRequestDTO.UploadItemDTO request) {
+
+        if (member.getMemberRole() != MemberRole.SELLER) {
+            throw new ItemHandler(ErrorStatus.ITEM_NOT_SELLER);
+        }
 
         Item newItem = ItemConverter.toItem(request);
 
