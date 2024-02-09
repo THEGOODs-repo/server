@@ -145,7 +145,7 @@ public class MemberController {
     }
 
 
-    @GetMapping("/kakao/callback")
+    @PostMapping("/kakao/callback")
     @Operation(summary = "카카오 소셜 로그인 api", description = "callback 용도 api여서 swagger에서 test 안됩니다")
     public ApiResponse<?> kakaoCallback(@RequestParam String code) {
 
@@ -163,7 +163,7 @@ public class MemberController {
         return ApiResponse.onSuccess(MemberConverter.toSocialLoginResultDTO(result));
     }
 
-    @GetMapping("/naver/callback")
+    @PostMapping("/naver/callback")
     @Operation(summary = "네이버 소셜 로그인 api", description = "callback 용도 api여서 swagger에서 test 안됩니다")
     public ApiResponse<?> naverCallback(@RequestParam String code, String state) {
 
