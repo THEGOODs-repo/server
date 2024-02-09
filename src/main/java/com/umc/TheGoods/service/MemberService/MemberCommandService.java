@@ -12,6 +12,8 @@ public interface MemberCommandService {
 
     boolean existCategoryById(Long categoryId);
 
+    boolean existMemberById(Long memberId);
+
     Member join(MemberRequestDTO.JoinDTO request);
 
     String login(MemberRequestDTO.LoginDTO request);

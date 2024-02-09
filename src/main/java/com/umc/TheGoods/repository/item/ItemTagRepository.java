@@ -8,4 +8,6 @@ import java.util.List;
 public interface ItemTagRepository extends JpaRepository<ItemTag, Long> {
 
     List<ItemTag> findByItemId(Long itemId);
+
+    ItemTag findByTagId(Long tagId);
 }

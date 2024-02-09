@@ -28,6 +28,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -65,7 +66,7 @@ public class ItemRestController {
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공")
     })
-    public ApiResponse<ItemResponseDTO.ItemContentDTO> getPostContent(@ExistItem @PathVariable(name = "itemId") Long itemId, Authentication authentication) {
+    public ApiResponse<ItemResponseDTO.ItemContentDTO> getItemContent(@ExistItem @PathVariable(name = "itemId") Long itemId, Authentication authentication) {
         Member member;
 
         if (authentication == null) {
@@ -81,7 +82,7 @@ public class ItemRestController {
 
     @PutMapping("/seller/item/{itemId}")
     @Operation(summary = "상품 수정 API", description = "상품 수정을 위한 API이며, path variable로 입력 값을 받습니다. " +
-            "itemId : 조회할 상품의 id")
+            "itemId : 수정할 상품의 id")
     @Parameters(value = {
             @Parameter(name = "itemId", description = "조회할 상품의 id 입니다.")
     })
@@ -121,4 +122,36 @@ public class ItemRestController {
         return ApiResponse.onSuccess(ItemConverter.itemPreviewListDTO(itemList));
     }
 
+    @GetMapping("/search/item/")
+    @Operation(summary = "판매 상품 검색 API", description = "상품 검색을 위한 API이며, request parameter로 입력 값을 받습니다. \n\n" +
+            "page : 상품 조회 페이지 번호 \n\n itemName : 상품 이름(String) \n\n category : 카테고리 이름(String) \n\n sellerName : 판매자 이름(String) \n\n tagNames : 태그 이름(List(String))")
+    @Parameters(value = {
+            @Parameter(name = "page", description = "페이지 번호, 1 이상의 숫자를 입력해주세요."),
+            @Parameter(name = "itemName", description = "상품 이름, 상품 검색이 아닐시 빈칸을 입력해주세요."),
+            @Parameter(name = "category", description = "카테고리 이름, 카테고리 검색이 아닐시 빈칸을 입력해주세요."),
+            @Parameter(name = "sellerName", description = "판매자 이름, 판매자 검색이 아닐시 빈칸을 입력해주세요."),
+            @Parameter(name = "tagNames", description = "태그 이름, 태그 검색이 아닐시 빈칸을 입력해주세요.")
+    })
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공")
+    })
+    public ApiResponse<ItemResponseDTO.ItemPreviewListDTO> searchItemList(@CheckPage @RequestParam(name = "page") Integer page,
+                                                                          @RequestParam(name = "itemName", required = false) String itemName,
+                                                                          @RequestParam(name = "category", required = false) String categoryName,
+                                                                          @RequestParam(name = "sellerName", required = false) String sellerName,
+                                                                          @RequestParam(name = "tagNames", required = false) List<String> tagName,
+                                                                          Authentication authentication) {
+        Member member;
+
+        if (authentication == null) {
+            member = memberQueryService.findMemberByNickname("no_login_user").orElseThrow(() -> new ItemHandler(ErrorStatus.ITEM_VIEW_ERROR));
+        } else {
+            MemberDetail memberDetail = (MemberDetail) authentication.getPrincipal();
+            member = memberQueryService.findMemberById(memberDetail.getMemberId()).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        }
+
+        Page<Item> itemList = itemQueryService.searchItem(member, itemName, categoryName, sellerName, tagName, page - 1);
+
+        return ApiResponse.onSuccess(ItemConverter.itemPreviewListDTO(itemList));
+    }
 }
