@@ -66,7 +66,7 @@ public class ItemRestController {
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공")
     })
-    public ApiResponse<ItemResponseDTO.ItemContentDTO> getPostContent(@ExistItem @PathVariable(name = "itemId") Long itemId, Authentication authentication) {
+    public ApiResponse<ItemResponseDTO.ItemContentDTO> getItemContent(@ExistItem @PathVariable(name = "itemId") Long itemId, Authentication authentication) {
         Member member;
 
         if (authentication == null) {
@@ -123,10 +123,14 @@ public class ItemRestController {
     }
 
     @GetMapping("/search/item/")
-    @Operation(summary = "판매 상품 검색 API", description = "상품 검색을 위한 API이며, request parameter로 입력 값을 받습니다. " +
-            "page : 상품 조회 페이지 번호")
+    @Operation(summary = "판매 상품 검색 API", description = "상품 검색을 위한 API이며, request parameter로 입력 값을 받습니다. \n\n" +
+            "page : 상품 조회 페이지 번호 \n\n itemName : 상품 이름(String) \n\n category : 카테고리 이름(String) \n\n sellerName : 판매자 이름(String) \n\n tagNames : 태그 이름(List(String))")
     @Parameters(value = {
-            @Parameter(name = "page", description = "페이지 번호, 1 이상의 숫자를 입력해주세요.")
+            @Parameter(name = "page", description = "페이지 번호, 1 이상의 숫자를 입력해주세요."),
+            @Parameter(name = "itemName", description = "상품 이름, 상품 검색이 아닐시 빈칸을 입력해주세요."),
+            @Parameter(name = "category", description = "카테고리 이름, 카테고리 검색이 아닐시 빈칸을 입력해주세요."),
+            @Parameter(name = "sellerName", description = "판매자 이름, 판매자 검색이 아닐시 빈칸을 입력해주세요."),
+            @Parameter(name = "tagNames", description = "태그 이름, 태그 검색이 아닐시 빈칸을 입력해주세요.")
     })
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공")
