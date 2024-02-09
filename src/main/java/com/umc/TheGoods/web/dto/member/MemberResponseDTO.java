@@ -36,7 +36,7 @@ public class MemberResponseDTO {
     @AllArgsConstructor
     public static class PhoneAuthSendResultDTO {
         String phone;
-        
+
     }
 
     @Builder
@@ -106,6 +106,23 @@ public class MemberResponseDTO {
     public static class SocialJoinResultDTO {
         String phone;
         String email;
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ProfileModifyResultDTO {
+        String nickname;
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ProfileResultDTO {
+        String nickname;
+        String url;
     }
 
 }

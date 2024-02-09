@@ -2,10 +2,14 @@ package com.umc.TheGoods.web.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.umc.TheGoods.apiPayload.ApiResponse;
+import com.umc.TheGoods.apiPayload.code.status.ErrorStatus;
+import com.umc.TheGoods.apiPayload.exception.handler.MemberHandler;
 import com.umc.TheGoods.converter.member.MemberConverter;
+import com.umc.TheGoods.domain.images.ProfileImg;
 import com.umc.TheGoods.domain.member.Auth;
 import com.umc.TheGoods.domain.member.Member;
 import com.umc.TheGoods.service.MemberService.MemberCommandService;
+import com.umc.TheGoods.service.MemberService.MemberQueryService;
 import com.umc.TheGoods.web.dto.member.MemberDetail;
 import com.umc.TheGoods.web.dto.member.MemberRequestDTO;
 import com.umc.TheGoods.web.dto.member.MemberResponseDTO;
@@ -17,6 +21,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 
@@ -29,7 +34,7 @@ import javax.validation.Valid;
 public class MemberController {
 
     private final MemberCommandService memberCommandService;
-
+    private final MemberQueryService memberQueryService;
 
     @PostMapping("/join")
     @Operation(summary = "회원가입 API", description = "request 파라미터 : 닉네임, 비밀번호(String), 이메일, 생일(yyyymmdd), 성별(MALE, FEMALE, NO_SELECET), 폰번호(010xxxxxxxx),이용약관(Boolean 배열), 카테고리(Long 배열)")
@@ -125,6 +130,7 @@ public class MemberController {
 
 
     @GetMapping("/kakao/callback")
+    @Operation(summary = "카카오 소셜 로그인 api", description = "callback 용도 api여서 swagger에서 test 안됩니다")
     public ApiResponse<?> kakaoCallback(@RequestParam String code) {
 
         String result = memberCommandService.kakaoAuth(code);
@@ -142,6 +148,7 @@ public class MemberController {
     }
 
     @GetMapping("/naver/callback")
+    @Operation(summary = "네이버 소셜 로그인 api", description = "callback 용도 api여서 swagger에서 test 안됩니다")
     public ApiResponse<?> naverCallback(@RequestParam String code, String state) {
 
         String result = memberCommandService.naverAuth(code, state);
@@ -155,6 +162,35 @@ public class MemberController {
         return ApiResponse.onSuccess(MemberConverter.toSocialLoginResultDTO(result));
     }
 
+    /**
+     * 마이페이지 프로필 수정 API
+     */
+
+    @PutMapping(value = "/profile/modify", consumes = "multipart/form-data")
+    @Operation(summary = "프로필 수정 api", description = "request : 프로필 이미지, 닉네임, 자기소개 ")
+    public ApiResponse<MemberResponseDTO.ProfileModifyResultDTO> profileModify(@RequestParam("profile") MultipartFile profile,
+                                                                               @RequestParam("nickname") String nickname,
+                                                                               @RequestParam("introduce") String introduce,
+                                                                               Authentication authentication) {
+        MemberDetail memberDetail = (MemberDetail) authentication.getPrincipal();
+        Member member = memberQueryService.findMemberById(memberDetail.getMemberId()).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+
+        Member modifyMember = memberCommandService.profileModify(profile, nickname, introduce, member);
+
+        return ApiResponse.onSuccess(MemberConverter.toProfileModify(modifyMember));
+    }
+
+    @GetMapping(value = "/profile")
+    public ApiResponse<MemberResponseDTO.ProfileResultDTO> getProfile(Authentication authentication) {
+
+        MemberDetail memberDetail = (MemberDetail) authentication.getPrincipal();
+        Member member = memberQueryService.findMemberById(memberDetail.getMemberId()).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        ProfileImg profileImg = memberQueryService.findProfileImgByMember(member.getId()).orElseThrow(() -> new MemberHandler(ErrorStatus.PROFILEIMG_NOT_FOUND));
+
+
+        return ApiResponse.onSuccess(MemberConverter.toProfile(member.getNickname(), profileImg.getUrl()));
+    }
 
 }
 

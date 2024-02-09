@@ -53,3 +53,20 @@ springdoc:
 jwt:
   token:
     secret: ${JWT_TOKEN_SECRET}
+
+cloud:
+  aws:
+    s3:
+      bucket: thegoods-bucket
+      path:
+        item: item
+        member: member
+        post: post
+        review: review
+    region:
+      static: ap-northeast-2
+    stack:
+      auto: false
+    credentials:
+      accessKey: ${CLOUD_AWS_CREDENTIALS_ACCESSKEY}
+      secretKey: ${CLOUD_AWS_CREDENTIALS_SECRETKEY}

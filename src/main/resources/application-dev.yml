@@ -13,3 +13,9 @@ spring:
 jwt:
   token:
     secret: ${JWT_TOKEN_SECRET}
+
+cloud:
+  aws:
+    credentials:
+      accessKey: ${CLOUD_AWS_CREDENTIALS_ACCESSKEY}
+      secretKey: ${CLOUD_AWS_CREDENTIALS_SECRETKEY}
