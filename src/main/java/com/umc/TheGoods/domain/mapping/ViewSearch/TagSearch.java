@@ -26,4 +26,18 @@ public class TagSearch extends BaseDateTimeEntity {
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
+
+    public void setMember(Member member) {
+        if (this.member != null)
+            member.getTagSearchList().remove(this);
+        this.member = member;
+        member.getTagSearchList().add(this);
+    }
+
+    public void setTag(Tag tag) {
+        if (this.tag != null)
+            tag.getTagSearchList().remove(this);
+        this.tag = tag;
+        tag.getTagSearchList().add(this);
+    }
 }
