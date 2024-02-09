@@ -1,7 +1,9 @@
 package com.umc.TheGoods.converter.member;
 
 import com.umc.TheGoods.domain.enums.MemberRole;
+import com.umc.TheGoods.domain.images.ProfileImg;
 import com.umc.TheGoods.domain.item.Category;
+import com.umc.TheGoods.domain.item.Item;
 import com.umc.TheGoods.domain.mapping.member.MemberCategory;
 import com.umc.TheGoods.domain.mapping.member.MemberTerm;
 import com.umc.TheGoods.domain.member.Auth;
@@ -51,6 +53,36 @@ public class MemberConverter {
 
     }
 
+    public static Member toUpdatePassword(Member member, String password) {
+        List<MemberTerm> memberTermList = member.getMemberTermList();
+        List<MemberCategory> memberCategoryList = member.getMemberCategoryList();
+        List<Item> memberItemList = member.getItemList();
+        if (memberItemList == null) {
+            memberItemList = new ArrayList<>();
+        }
+
+        if (memberTermList == null) {
+            memberTermList = new ArrayList<>();
+        }
+
+        if (memberCategoryList == null) {
+            memberCategoryList = new ArrayList<>();
+        }
+        return Member.builder()
+                .id(member.getId())
+                .nickname(member.getNickname())
+                .password(password)
+                .email(member.getEmail())
+                .birthday(member.getBirthday())
+                .gender(member.getGender())
+                .phone(member.getPhone())
+                .memberRole(MemberRole.BUYER)
+                .memberCategoryList(memberCategoryList)
+                .memberTermList(memberTermList)
+                .itemList(memberItemList)
+                .build();
+    }
+
     public static List<MemberCategory> toMemberCategoryList(List<Category> categoryList) {
 
 
@@ -86,7 +118,6 @@ public class MemberConverter {
     public static MemberResponseDTO.PhoneAuthSendResultDTO toPhoneAuthSendResultDTO(Auth auth) {
         return MemberResponseDTO.PhoneAuthSendResultDTO.builder()
                 .phone(auth.getPhone())
-                .authCode(auth.getCode())
                 .build();
     }
 
@@ -118,7 +149,6 @@ public class MemberConverter {
     public static MemberResponseDTO.EmailAuthSendResultDTO toEmailAuthSendResultDTO(Auth auth) {
         return MemberResponseDTO.EmailAuthSendResultDTO.builder()
                 .email(auth.getEmail())
-                .authCode(auth.getCode())
                 .build();
     }
 
@@ -154,4 +184,65 @@ public class MemberConverter {
                 .email(email)
                 .build();
     }
+
+    public static MemberResponseDTO.ProfileModifyResultDTO toProfileModify(Member member) {
+
+        return MemberResponseDTO.ProfileModifyResultDTO.builder()
+                .nickname(member.getNickname())
+                .build();
+    }
+
+    public static ProfileImg toProfileImg(String url, Member member) {
+        return ProfileImg.builder()
+                .url(url)
+                .member(member)
+                .build();
+    }
+
+    public static MemberResponseDTO.ProfileResultDTO toProfile(String nickname, String url) {
+        return MemberResponseDTO.ProfileResultDTO.builder()
+                .nickname(nickname)
+                .url(url)
+                .build();
+    }
+
+    public static MemberResponseDTO.PasswordUpdateResultDTO toPasswordUpdateResultDTO(boolean updatePassword) {
+        return MemberResponseDTO.PasswordUpdateResultDTO.builder()
+                .updatePassword(updatePassword)
+                .build();
+    }
+
+    public static Member toUpdateProfile(Member member, ProfileImg profileImg, String nickname, String introduce) {
+        List<MemberTerm> memberTermList = member.getMemberTermList();
+        List<MemberCategory> memberCategoryList = member.getMemberCategoryList();
+        List<Item> memberItemList = member.getItemList();
+        if (memberItemList == null) {
+            memberItemList = new ArrayList<>();
+        }
+
+        if (memberTermList == null) {
+            memberTermList = new ArrayList<>();
+        }
+
+        if (memberCategoryList == null) {
+            memberCategoryList = new ArrayList<>();
+        }
+        return Member.builder()
+                .id(member.getId())
+                .nickname(nickname)
+                .password(member.getPassword())
+                .email(member.getEmail())
+                .birthday(member.getBirthday())
+                .gender(member.getGender())
+                .phone(member.getPhone())
+                .memberRole(MemberRole.BUYER)
+                .memberCategoryList(memberCategoryList)
+                .memberTermList(memberTermList)
+                .itemList(memberItemList)
+                .introduce(introduce)
+                .profileImg(profileImg)
+                .build();
+    }
+
+
 }

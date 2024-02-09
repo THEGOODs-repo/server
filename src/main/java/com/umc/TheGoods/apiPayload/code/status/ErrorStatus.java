@@ -39,6 +39,8 @@ public enum ErrorStatus implements BaseErrorCode {
     // 장바구니 관련 에러
     CART_NOT_FOUND(HttpStatus.NOT_FOUND, "CART4001", "해당 장바구니 내역을 찾을 수 없습니다."),
     NOT_CART_OWNER(HttpStatus.BAD_REQUEST, "CART4002", "본인의 장바구니 내역이 아닙니다. 접근할 수 없습니다."),
+    CART_DETAIL_FOUND_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "CART4003", "단일 상품의 장바구니 상세 내역을 찾을 수 없습니다. 관리자에게 문의 바랍니다."),
+    CART_DETAIL_NOT_FOUND(HttpStatus.NOT_FOUND, "CART4004", "해당 장바구니 상세 내역을 찾을 수 없습니다"),
 
     // test
     TEMP_EXCEPTION(HttpStatus.BAD_REQUEST, "TEMP4001", "테스트"),
@@ -50,6 +52,7 @@ public enum ErrorStatus implements BaseErrorCode {
     MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "MEMBER4004", "해당 회원을 찾을 수 없습니다."),
     MEMBER_PHONE_AUTH_ERROR(HttpStatus.BAD_REQUEST, "MEMBER4005", "유효하지 않는 번호입니다."),
     MEMBER_EMAIL_AUTH_ERROR(HttpStatus.BAD_REQUEST, "MEMBER4006", "유효하지 않는 이메일입니다."),
+    MEMBER_PASSWORD_NOT_EQUAL(HttpStatus.BAD_REQUEST, "MEMBER4007", "비밀번호가 일치하지 않습니다."),
 
 
     //Category
@@ -57,6 +60,9 @@ public enum ErrorStatus implements BaseErrorCode {
 
     //Term
     TERM_NOT_FOUND(HttpStatus.NOT_FOUND, "TERM4001", "해당 약관이 존재하지 않습니다."),
+
+    //ProfileImg
+    PROFILEIMG_NOT_FOUND(HttpStatus.NOT_FOUND, "PROFILEIMG4001", "해당 프로필 이미지가 존재하지 않습니다."),
 
     //tag error
     TAG_NOT_FOUND(HttpStatus.BAD_REQUEST, "TAG4001", "존재하지 않는 태그입니다."),

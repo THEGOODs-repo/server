@@ -88,4 +88,14 @@ public class MemberRequestDTO {
         private String email;
         private String code;
     }
+
+
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class PasswordUpdateDTO {
+        private String password;
+        private String checkPassword;
+    }
+
 }

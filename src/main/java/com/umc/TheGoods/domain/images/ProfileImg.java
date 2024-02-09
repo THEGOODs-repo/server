@@ -1,5 +1,6 @@
 package com.umc.TheGoods.domain.images;
 
+import com.umc.TheGoods.domain.member.Member;
 import lombok.*;
 
 import javax.persistence.*;
@@ -18,4 +19,8 @@ public class ProfileImg {
 
     @Column(columnDefinition = "TEXT", nullable = false)
     private String url;
+
+    @OneToOne
+    @JoinColumn(name = "member_id")
+    private Member member;
 }

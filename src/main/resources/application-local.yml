@@ -6,9 +6,15 @@ spring:
     driver-class-name: ${DB_DRIVER}
 
   mail:
-    username: ${MAIL_USER}
-    password: ${MAIL_PASSWORD}
+    username: ${SPRING_MAIL_USERNAME}
+    password: ${SPRING_MAIL_PASSWORD}
 
 jwt:
   token:
     secret: ${JWT_TOKEN_SECRET}
+
+cloud:
+  aws:
+    credentials:
+      accessKey: ${CLOUD_AWS_CREDENTIALS_ACCESSKEY}
+      secretKey: ${CLOUD_AWS_CREDENTIALS_SECRETKEY}
