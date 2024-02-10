@@ -48,7 +48,7 @@ public class Member extends BaseDateTimeEntity {
     @Column(nullable = false, columnDefinition = "VARCHAR(10)")
     private MemberRole memberRole;
 
-    @Column(columnDefinition = "VARCHAR(15)")
+    @Column(columnDefinition = "VARCHAR(50)")
     private String nickname;
 
     @Column(nullable = false, columnDefinition = "VARCHAR(30)")
