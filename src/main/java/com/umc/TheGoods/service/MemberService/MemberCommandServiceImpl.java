@@ -341,7 +341,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("grant_type", "authorization_code");
         params.add("client_id", "49ff7dc7f5309c49f75ac2a087ffe91e");
-        params.add("redirect_uri", "http://localhost:3000/login/kakao");
+        params.add("redirect_uri", "http://localhost:3000/api/members/kakao/callback");
         params.add("code", code);
         //params.add("client_secret","");
 
@@ -429,7 +429,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("grant_type", "authorization_code");
         params.add("client_id", "t6q4Bn70dY7Kli7hS58P");
-        params.add("redirect_uri", "http://localhost:3000/login/kakao");
+        params.add("redirect_uri", "http://localhost:3000/api/members/naver/callback");
         params.add("client_secret", "1uPpEHHTBF");
         params.add("code", code);
         params.add("state", state);
@@ -529,5 +529,9 @@ public class MemberCommandServiceImpl implements MemberCommandService {
         return categoryRepository.existsById(categoryId);
     }
 
+    @Override
+    public boolean existMemberById(Long memberId) {
+        return memberRepository.existsById(memberId);
+    }
 }
 
