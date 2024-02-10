@@ -7,6 +7,7 @@ import com.umc.TheGoods.domain.images.ItemImg;
 import com.umc.TheGoods.domain.item.Item;
 import com.umc.TheGoods.domain.item.Tag;
 import com.umc.TheGoods.domain.mapping.Tag.CategoryTag;
+import com.umc.TheGoods.domain.mapping.Tag.ItemTag;
 import com.umc.TheGoods.domain.member.Member;
 import com.umc.TheGoods.domain.types.DeliveryType;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -109,7 +110,7 @@ public class TestConverter {
         }).collect(Collectors.toList());
     }
 
-    public static CategoryTag toCategoryTag(Tag tag) {
+    public static CategoryTag toCategoryTag() {
         return CategoryTag.builder().build();
     }
 
@@ -118,6 +119,10 @@ public class TestConverter {
                 .itemId(item.getId())
                 .createdAt(item.getCreatedAt())
                 .build();
+    }
+
+    public static ItemTag toItemTag() {
+        return ItemTag.builder().build();
     }
 
 }

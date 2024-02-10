@@ -3,7 +3,6 @@ package com.umc.TheGoods.test.service;
 import com.umc.TheGoods.apiPayload.code.status.ErrorStatus;
 import com.umc.TheGoods.apiPayload.exception.handler.MemberHandler;
 import com.umc.TheGoods.converter.item.ItemOptionConverter;
-import com.umc.TheGoods.converter.item.ItemTagConverter;
 import com.umc.TheGoods.converter.member.MemberConverter;
 import com.umc.TheGoods.domain.images.ItemImg;
 import com.umc.TheGoods.domain.item.Category;
@@ -108,70 +107,69 @@ public class TestCommandServiceImpl implements TestCommandService {
         Category category = categoryQueryService.findCategoryById(request.getCategory());
         newItem.setCategory(category);
 
+        Item savedItem = itemRepository.save(newItem);
+
 
         // 태그 생성 및 연관관계 매핑
-        List<Tag> tagList = request.getItemTag().stream()
-                .map(tagName -> {
-                    if (tagRepository.findByName(tagName).isEmpty()) { // 기존에 존재하지 않는 태그인 경우
-                        return TestConverter.toTag(tagName);
-                    } else { // 기존에 존재하는 태그인 경우
-                        return tagRepository.findByName(tagName).get();
-                    }
-                }).collect(Collectors.toList());
+        if (request.getItemTag() != null) {
+            request.getItemTag().forEach(tagName -> {
+                if (!tagRepository.existsByName(tagName)) { // 기존에 존재하지 않는 태그인 경우
+                    Tag newTag = TestConverter.toTag(tagName);
+                    Tag savedTag = tagRepository.save(newTag);
 
-        tagRepository.saveAll(tagList);
+                    ItemTag itemTag = TestConverter.toItemTag();
+                    itemTag.setItem(savedItem);
+                    itemTag.setTag(savedTag);
 
-        // 상품-태그 생성 및 연관관계 매핑
-        List<ItemTag> itemTagList = ItemTagConverter.toItemTagList(tagList);
-        itemTagList.forEach(itemTag -> {
-            itemTag.setItem(newItem);
-        });
+                    itemTagRepository.save(itemTag);
 
-        itemTagRepository.saveAll(itemTagList);
+                    CategoryTag categoryTag = TestConverter.toCategoryTag();
+                    categoryTag.setTag(savedTag);
+                    categoryTag.setCategory(category);
 
-        // 카테고리-태그 생성 및 연관관계 매핑
-        List<CategoryTag> categoryTagList = tagList.stream().map(tag -> {
-            CategoryTag categoryTag = TestConverter.toCategoryTag(tag);
-            categoryTag.setTag(tag);
-            categoryTag.setCategory(category);
-            return categoryTag;
-        }).collect(Collectors.toList());
+                    categoryTagRepository.save(categoryTag);
 
-        categoryTagRepository.saveAll(categoryTagList);
+                } else { // 기존에 존재하는 태그인 경우
+                    Tag tag = tagRepository.findFirstByNameOrderByCreatedAtAsc(tagName).get();
+                    ItemTag itemTag = TestConverter.toItemTag();
+                    itemTag.setItem(savedItem);
+                    itemTag.setTag(tag);
 
+                    itemTagRepository.save(itemTag);
+                }
+            });
+        }
 
         // 이미지 등록 및 연관관계 매핑
         // 썸네일 이미지
         String thumnnailUil = utilService.uploadS3Img("item", itemThumbnail);
         ItemImg thumbnailItemImg = TestConverter.toItemImg(thumnnailUil, true);
-        thumbnailItemImg.setItem(newItem);
+        thumbnailItemImg.setItem(savedItem);
         itemImgRepository.save(thumbnailItemImg);
 
         // 일반 상품 이미지
-        List<ItemImg> itemImgList = multipartFileList.stream().map(multipartFile -> {
-            String itemImgUrl = utilService.uploadS3Img("item", multipartFile);
+        if (multipartFileList != null) {
+            List<ItemImg> itemImgList = multipartFileList.stream().map(multipartFile -> {
+                String itemImgUrl = utilService.uploadS3Img("item", multipartFile);
 
-            ItemImg itemImg = TestConverter.toItemImg(itemImgUrl, false);
-            itemImg.setItem(newItem);
-            return itemImg;
-        }).collect(Collectors.toList());
+                ItemImg itemImg = TestConverter.toItemImg(itemImgUrl, false);
+                itemImg.setItem(savedItem);
+                return itemImg;
+            }).collect(Collectors.toList());
 
-        itemImgRepository.saveAll(itemImgList);
+            itemImgRepository.saveAll(itemImgList);
+        }
 
 
         // 상품 옵션 등록
         List<ItemOption> itemOptionList = request.getItemOptionList().stream().map(itemOptionDTO -> {
             ItemOption itemOption = ItemOptionConverter.toItemOption(itemOptionDTO);
-            itemOption.setItem(newItem);
+            itemOption.setItem(savedItem);
             return itemOption;
         }).collect(Collectors.toList());
 
         itemOptionRepository.saveAll(itemOptionList);
 
-
-        itemRepository.save(newItem);
-        return newItem;
+        return savedItem;
     }
-
-
 }
