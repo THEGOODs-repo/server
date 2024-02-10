@@ -64,7 +64,7 @@ public class TestController {
 //    }
 
 
-    @PostMapping(value = "/setItemData", consumes = "")
+    @PostMapping(value = "/setItemData")
     public ApiResponse<TestResponseDTO.addItemDTO> setItemData(
             @RequestPart(value = "request") @Valid TestRequestDTO.setItemDTO request,
             @RequestPart(value = "itemThumbnail") MultipartFile itemThumbnail,
