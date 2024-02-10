@@ -1,0 +1,177 @@
+package com.umc.TheGoods.test.service;
+
+import com.umc.TheGoods.apiPayload.code.status.ErrorStatus;
+import com.umc.TheGoods.apiPayload.exception.handler.MemberHandler;
+import com.umc.TheGoods.converter.item.ItemOptionConverter;
+import com.umc.TheGoods.converter.item.ItemTagConverter;
+import com.umc.TheGoods.converter.member.MemberConverter;
+import com.umc.TheGoods.domain.images.ItemImg;
+import com.umc.TheGoods.domain.item.Category;
+import com.umc.TheGoods.domain.item.Item;
+import com.umc.TheGoods.domain.item.ItemOption;
+import com.umc.TheGoods.domain.item.Tag;
+import com.umc.TheGoods.domain.mapping.Tag.CategoryTag;
+import com.umc.TheGoods.domain.mapping.Tag.ItemTag;
+import com.umc.TheGoods.domain.mapping.member.MemberCategory;
+import com.umc.TheGoods.domain.mapping.member.MemberTerm;
+import com.umc.TheGoods.domain.member.Member;
+import com.umc.TheGoods.domain.member.Term;
+import com.umc.TheGoods.repository.TagRepository;
+import com.umc.TheGoods.repository.item.*;
+import com.umc.TheGoods.repository.member.CategoryRepository;
+import com.umc.TheGoods.repository.member.MemberRepository;
+import com.umc.TheGoods.repository.member.ProfileImgRepository;
+import com.umc.TheGoods.repository.member.TermRepository;
+import com.umc.TheGoods.service.CategoryService.CategoryQueryService;
+import com.umc.TheGoods.service.UtilService;
+import com.umc.TheGoods.test.TestConverter;
+import com.umc.TheGoods.test.TestRequestDTO;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Service
+@RequiredArgsConstructor
+@Transactional
+public class TestCommandServiceImpl implements TestCommandService {
+
+    private final MemberRepository memberRepository;
+    private final BCryptPasswordEncoder encoder; // 비밀번호 암호화
+    private final CategoryRepository categoryRepository;
+    private final TermRepository termRepository;
+    private final ProfileImgRepository profileImgRepository;
+    private final CategoryQueryService categoryQueryService;
+    private final ItemRepository itemRepository;
+    private final TagRepository tagRepository;
+    private final ItemImgRepository itemImgRepository;
+    private final ItemTagRepository itemTagRepository;
+    private final ItemOptionRepository itemOptionRepository;
+    private final CategoryTagRepository categoryTagRepository;
+    private final UtilService utilService;
+
+
+    @Override
+    public Member addMember(TestRequestDTO.setMemberDTO request, MultipartFile multipartFile) {
+        // userNAme 중복 체크
+        memberRepository.findByNickname(request.getNickname())
+                .ifPresent(user -> {
+                    throw new MemberHandler(ErrorStatus.MEMBER_NICKNAME_DUPLICATED);
+                });
+
+        //저장
+        Member member = TestConverter.toTestMember(request, encoder);
+
+        // 카테고리 저장 로직
+        List<Category> categoryList = request.getMemberCategory().stream()
+                .map(category -> {
+                    return categoryRepository.findById(category).orElseThrow(() -> new MemberHandler(ErrorStatus.CATEGORY_NOT_FOUND));
+                }).collect(Collectors.toList());
+
+        List<MemberCategory> memberCategoryList = MemberConverter.toMemberCategoryList(categoryList);
+
+        memberCategoryList.forEach(memberCategory -> {
+            memberCategory.setMember(member);
+        });
+
+        // 약관동의 저장 로직
+        HashMap<Term, Boolean> termMap = new HashMap<>();
+        for (int i = 0; i < request.getMemberTerm().size(); i++) {
+            termMap.put(termRepository.findById(i + 1L).orElseThrow(() -> new MemberHandler(ErrorStatus.TERM_NOT_FOUND)), request.getMemberTerm().get(i));
+
+        }
+
+        List<MemberTerm> memberTermList = MemberConverter.toMemberTermList(termMap);
+        memberTermList.forEach(memberTerm -> {
+            memberTerm.setMember(member);
+        });
+
+        String profileUrl = utilService.uploadS3Img("member", multipartFile);
+
+        memberRepository.save(member);
+        return member;
+    }
+
+    @Override
+    public Item addItem(Member member, TestRequestDTO.setItemDTO request, MultipartFile itemThumbnail, List<MultipartFile> multipartFileList) {
+        Item newItem = TestConverter.toTestItem(request);
+
+        // 판매자 설정
+        newItem.setMember(member);
+
+        // 카테고리 설정
+        Category category = categoryQueryService.findCategoryById(request.getCategory());
+        newItem.setCategory(category);
+
+
+        // 태그 생성 및 연관관계 매핑
+        List<Tag> tagList = request.getItemTag().stream()
+                .map(tagName -> {
+                    if (tagRepository.findByName(tagName).isEmpty()) { // 기존에 존재하지 않는 태그인 경우
+                        return TestConverter.toTag(tagName);
+                    } else { // 기존에 존재하는 태그인 경우
+                        return tagRepository.findByName(tagName).get();
+                    }
+                }).collect(Collectors.toList());
+
+        tagRepository.saveAll(tagList);
+
+        // 상품-태그 생성 및 연관관계 매핑
+        List<ItemTag> itemTagList = ItemTagConverter.toItemTagList(tagList);
+        itemTagList.forEach(itemTag -> {
+            itemTag.setItem(newItem);
+        });
+
+        itemTagRepository.saveAll(itemTagList);
+
+        // 카테고리-태그 생성 및 연관관계 매핑
+        List<CategoryTag> categoryTagList = tagList.stream().map(tag -> {
+            CategoryTag categoryTag = TestConverter.toCategoryTag(tag);
+            categoryTag.setTag(tag);
+            categoryTag.setCategory(category);
+            return categoryTag;
+        }).collect(Collectors.toList());
+
+        categoryTagRepository.saveAll(categoryTagList);
+
+
+        // 이미지 등록 및 연관관계 매핑
+        // 썸네일 이미지
+        String thumnnailUil = utilService.uploadS3Img("item", itemThumbnail);
+        ItemImg thumbnailItemImg = TestConverter.toItemImg(thumnnailUil, true);
+        thumbnailItemImg.setItem(newItem);
+        itemImgRepository.save(thumbnailItemImg);
+
+        // 일반 상품 이미지
+        List<ItemImg> itemImgList = multipartFileList.stream().map(multipartFile -> {
+            String itemImgUrl = utilService.uploadS3Img("item", multipartFile);
+
+            ItemImg itemImg = TestConverter.toItemImg(itemImgUrl, false);
+            itemImg.setItem(newItem);
+            return itemImg;
+        }).collect(Collectors.toList());
+
+        itemImgRepository.saveAll(itemImgList);
+
+
+        // 상품 옵션 등록
+        List<ItemOption> itemOptionList = request.getItemOptionList().stream().map(itemOptionDTO -> {
+            ItemOption itemOption = ItemOptionConverter.toItemOption(itemOptionDTO);
+            itemOption.setItem(newItem);
+            return itemOption;
+        }).collect(Collectors.toList());
+
+        itemOptionRepository.saveAll(itemOptionList);
+
+
+        itemRepository.save(newItem);
+        return newItem;
+    }
+
+
+}
