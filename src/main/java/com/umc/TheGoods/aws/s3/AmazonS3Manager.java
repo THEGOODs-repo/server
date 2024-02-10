@@ -22,10 +22,31 @@ public class AmazonS3Manager {
     private final AmazonConfig amazonConfig;
 
 
-    public String uploadFile(String keyName, MultipartFile file) {
+    public String uploadFile(String path, Uuid uuid, MultipartFile file) {
         ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentLength(file.getSize());
         metadata.setContentType(file.getContentType());
+
+        String keyName = "";
+        switch (path) {
+            case "member":
+                keyName = generateMemberKeyName(uuid);
+                break;
+
+            case "item":
+                keyName = generateItemKeyName(uuid);
+                break;
+
+            case "review":
+                keyName = generateReviewKeyName(uuid);
+                break;
+
+            case "post":
+                keyName = generatePostKeyName(uuid);
+                break;
+            default:
+                keyName = "./" + uuid.getUuid();
+        }
 
         try {
             amazonS3.putObject(new PutObjectRequest(amazonConfig.getBucket(), keyName, file.getInputStream(), metadata));
@@ -44,4 +65,17 @@ public class AmazonS3Manager {
     public String generateMemberKeyName(Uuid uuid) {
         return amazonConfig.getMemberPath() + '/' + uuid.getUuid();
     }
+
+    public String generateItemKeyName(Uuid uuid) {
+        return amazonConfig.getItemPath() + '/' + uuid.getUuid();
+    }
+
+    public String generateReviewKeyName(Uuid uuid) {
+        return amazonConfig.getReviewPath() + '/' + uuid.getUuid();
+    }
+
+    public String generatePostKeyName(Uuid uuid) {
+        return amazonConfig.getPostPath() + '/' + uuid.getUuid();
+    }
+
 }

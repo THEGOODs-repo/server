@@ -20,7 +20,7 @@ public class ProfileImg {
     @Column(columnDefinition = "TEXT", nullable = false)
     private String url;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
 }

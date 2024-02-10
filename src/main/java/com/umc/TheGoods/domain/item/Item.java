@@ -32,7 +32,7 @@ public class Item extends BaseDateTimeEntity {
     @Column(name = "item_id")
     private Long id;
 
-    @Column(nullable = false, length = 100)
+    @Column(nullable = false, length = 300)
     private String name;
 
     @Enumerated(EnumType.STRING)

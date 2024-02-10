@@ -1,32 +1,102 @@
-package com.umc.TheGoods.web.controller;
+package com.umc.TheGoods.test;
 
+import com.umc.TheGoods.apiPayload.ApiResponse;
 import com.umc.TheGoods.domain.enums.Gender;
+import com.umc.TheGoods.domain.item.Item;
 import com.umc.TheGoods.domain.member.Member;
 import com.umc.TheGoods.service.ItemService.ItemCommandService;
 import com.umc.TheGoods.service.MemberService.MemberCommandServiceImpl;
 import com.umc.TheGoods.service.MemberService.MemberQueryService;
+import com.umc.TheGoods.test.service.TestCommandService;
 import com.umc.TheGoods.web.dto.item.ItemRequestDTO;
 import com.umc.TheGoods.web.dto.member.MemberRequestDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.Valid;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("api")
+@Slf4j
 public class TestController {
 
     private final MemberCommandServiceImpl memberCommandService;
     private final MemberQueryService memberQueryService;
     private final ItemCommandService itemCommandService;
+    private final TestCommandService testCommandService;
 
+
+//    @PostMapping(value = "/setItemData")
+//    public ApiResponse<TestResponseDTO.addItemDTO> setItemData(
+//            @RequestPart(value = "request") @Valid TestRequestDTO.setItemDTO request,
+//            @RequestPart(value = "itemThumbnail") MultipartFile itemThumbnail,
+//            @RequestPart(value = "itemImgList") List<MultipartFile> itemImgList,
+//            @RequestPart(value = "sellerProfile") MultipartFile sellerProfile
+//    ) {
+//
+//        // 회원 가입
+//        Member member = null;
+//        if (memberQueryService.findMemberByNickname(request.getSellerName()).isEmpty()) { // 해당 판매자 회원이 없으면
+//            // 회원 가입
+//            List<Boolean> termAgreeList = new ArrayList<>();
+//            termAgreeList.add(true);
+//            List<Long> memberCategoryList = new ArrayList<>();
+//            memberCategoryList.add(1L);
+//            TestRequestDTO.setMemberDTO sellerDTO = new TestRequestDTO.setMemberDTO(request.sellerName, request.itemUuid, termAgreeList, memberCategoryList);
+//            member = testCommandService.addMember(sellerDTO, sellerProfile);
+//        } else {
+//            member = memberQueryService.findMemberByNickname(request.getSellerName()).get();
+//        }
+//
+//        // 상품 등록
+//        Item item = testCommandService.addItem(member, request, itemThumbnail, itemImgList);
+//
+//        return ApiResponse.onSuccess(TestConverter.toAddItemDTO(item));
+//    }
+
+
+    @PostMapping(value = "/setItemData")
+    public ApiResponse<TestResponseDTO.addItemDTO> setItemData(
+            @RequestPart(value = "request") @Valid TestRequestDTO.setItemDTO request,
+            @RequestPart(value = "itemThumbnail") MultipartFile itemThumbnail,
+            @RequestPart(value = "itemImgList", required = false) List<MultipartFile> itemImgList,
+            @RequestPart(value = "sellerProfile") MultipartFile sellerProfile
+    ) {
+        log.info("=========================== 회원 찾기 시작 =======================");
+
+        // 회원 가입
+        Optional<Member> member = memberQueryService.findMemberByNickname(request.getSellerName());
+        Member seller = null;
+        if (member.isEmpty()) { // 해당 판매자 회원이 없으면
+            log.info("=========================== 닉네임으로 회원 찾을 수 없음 ================================");
+
+            // 회원 가입
+            List<Boolean> termAgreeList = new ArrayList<>();
+            termAgreeList.add(true);
+            List<Long> memberCategoryList = new ArrayList<>();
+            memberCategoryList.add(1L);
+            TestRequestDTO.setMemberDTO sellerDTO = new TestRequestDTO.setMemberDTO(request.sellerName, request.itemUuid, termAgreeList, memberCategoryList);
+            seller = testCommandService.addMember(sellerDTO, sellerProfile);
+        } else {
+            log.info("=========================== 닉네임으로 회원 찾음 ================================");
+
+            seller = memberQueryService.findMemberByNickname(request.getSellerName()).get();
+        }
+
+        // 상품 등록
+        Item item = testCommandService.addItem(seller, request, itemThumbnail, itemImgList);
+
+        return ApiResponse.onSuccess(TestConverter.toAddItemDTO(item));
+    }
 
     @GetMapping("/test/hello")
     @Operation(summary = "Return hello", description = "simple API for swagger test!")

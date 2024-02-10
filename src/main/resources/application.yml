@@ -34,17 +34,22 @@ spring:
     properties:
       dialect: org.hibernate.dialect.MySQL8InnoDBDialect
       hibernate:
-        # show_sql: true
-        format_sql: true
+      # show_sql: true
+      #format_sql: true
+  servlet:
+    multipart:
+      max-file-size: 500MB
+      max-request-size: 500MB
+
 logging:
   level:
-    org.hibernate.SQL: debug
+    org.hibernate.SQL: info
     org.hibernate.type: trace
 servlet:
   multipart:
     enabled: true
-    maxFileSize: 200MB
-    maxRequestSize: 300MB
+    maxFileSize: 1000MB
+    maxRequestSize: 1000MB
 springdoc:
   swagger-ui:
     tags-sorter: alpha            # alpha: 알파벳 순 태그 정렬, method: HTTP Method 순 정렬

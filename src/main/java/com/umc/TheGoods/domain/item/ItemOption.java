@@ -21,7 +21,7 @@ public class ItemOption extends BaseDateTimeEntity {
     @Column(name = "item_option_id")
     private Long id;
 
-    @Column(nullable = false, length = 60)
+    @Column(nullable = false, length = 200)
     private String name;
 
     @Column(nullable = false)

@@ -4,19 +4,17 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.umc.TheGoods.apiPayload.code.status.ErrorStatus;
 import com.umc.TheGoods.apiPayload.exception.handler.MemberHandler;
-import com.umc.TheGoods.aws.s3.AmazonS3Manager;
 import com.umc.TheGoods.config.MailConfig;
 import com.umc.TheGoods.converter.member.MemberConverter;
 import com.umc.TheGoods.domain.images.ProfileImg;
-import com.umc.TheGoods.domain.images.Uuid;
 import com.umc.TheGoods.domain.item.Category;
 import com.umc.TheGoods.domain.mapping.member.MemberCategory;
 import com.umc.TheGoods.domain.mapping.member.MemberTerm;
 import com.umc.TheGoods.domain.member.Auth;
 import com.umc.TheGoods.domain.member.Member;
 import com.umc.TheGoods.domain.member.Term;
-import com.umc.TheGoods.repository.UuidRepository;
 import com.umc.TheGoods.repository.member.*;
+import com.umc.TheGoods.service.UtilService;
 import com.umc.TheGoods.web.dto.member.KakaoProfile;
 import com.umc.TheGoods.web.dto.member.MemberRequestDTO;
 import com.umc.TheGoods.web.dto.member.NaverProfile;
@@ -55,9 +53,8 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     private final TermRepository termRepository;
     private final AuthRepository authRepository;
     private final MailConfig mailConfig;
-    private final AmazonS3Manager s3Manager;
-    private final UuidRepository uuidRepository;
     private final ProfileImgRepository profileImgRepository;
+    private final UtilService utilService;
 
     @Value("${jwt.token.secret}")
     private String key; // 토큰 만들어내는 key값
@@ -512,10 +509,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
             profileImgRepository.delete(older.orElseThrow());
         }
 
-        String uuid = UUID.randomUUID().toString();
-        Uuid saveUuid = uuidRepository.save(Uuid.builder()
-                .uuid(uuid).build());
-        String profileUrl = s3Manager.uploadFile(s3Manager.generateMemberKeyName(saveUuid), profile);
+        String profileUrl = utilService.uploadS3Img("member", profile);
 
         ProfileImg profileImg = MemberConverter.toProfileImg(profileUrl, member);
         profileImgRepository.save(profileImg);

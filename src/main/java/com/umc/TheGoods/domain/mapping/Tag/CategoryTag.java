@@ -26,4 +26,21 @@ public class CategoryTag extends BaseDateTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tag_id")
     private Tag tag;
+
+    // 연관관계 메소드
+    public void setCategory(Category category) {
+        if (this.category != null) {
+            category.getCategoryTagList().remove(this);
+        }
+        this.category = category;
+        category.getCategoryTagList().add(this);
+
+    }
+
+    public void setTag(Tag tag) {
+        if (this.tag != null)
+            tag.getCategoryTagList().remove(this);
+        this.tag = tag;
+        tag.getCategoryTagList().add(this);
+    }
 }
