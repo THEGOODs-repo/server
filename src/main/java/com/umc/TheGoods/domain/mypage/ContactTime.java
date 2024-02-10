@@ -5,7 +5,6 @@ import com.umc.TheGoods.domain.member.Member;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 
-
 import javax.persistence.*;
 
 @Entity
@@ -29,7 +28,7 @@ public class ContactTime extends BaseDateTimeEntity {
     private Boolean allTime;
 
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
 
