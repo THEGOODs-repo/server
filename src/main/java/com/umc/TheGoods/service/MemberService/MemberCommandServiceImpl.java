@@ -60,6 +60,21 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     private String key; // 토큰 만들어내는 key값
     private int expiredMs = 1000 * 60 * 60 * 24 * 5;// 토큰 만료 시간 1일
 
+    @Value("${social.kakao.client-id}")
+    private String kakao_client_id;
+
+    @Value("${social.kakao.redirect-uri}")
+    private String kakao_redirect_uri;
+
+    @Value("${social.naver.client-id}")
+    private String naver_client_id;
+
+    @Value("${social.naver.redirect-uri}")
+    private String naver_redirect_uri;
+
+    @Value("${social.naver.client-secret}")
+    private String naver_client_secret;
+
 
     /**
      * 회원가입 api
@@ -313,6 +328,18 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     }
 
     @Override
+    public String emailAuthCreateJWT(MemberRequestDTO.EmailAuthConfirmDTO request) {
+
+        Member member = memberRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        List<String> roles = new ArrayList<>();
+        roles.add("ROLE_USER");
+
+        return createJwt(member.getId(), member.getNickname(), expiredMs, key, roles);
+    }
+
+    @Override
     @Transactional
     public Boolean updatePassword(MemberRequestDTO.PasswordUpdateDTO request, Member member) {
         boolean updatePassword = true;
@@ -340,8 +367,8 @@ public class MemberCommandServiceImpl implements MemberCommandService {
         //HttpBody 객체 생성
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("grant_type", "authorization_code");
-        params.add("client_id", "49ff7dc7f5309c49f75ac2a087ffe91e");
-        params.add("redirect_uri", "http://localhost:3000/api/members/kakao/callback");
+        params.add("client_id", kakao_client_id);
+        params.add("redirect_uri", kakao_redirect_uri);
         params.add("code", code);
         //params.add("client_secret","");
 
@@ -428,9 +455,9 @@ public class MemberCommandServiceImpl implements MemberCommandService {
         //HttpBody 객체 생성
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("grant_type", "authorization_code");
-        params.add("client_id", "t6q4Bn70dY7Kli7hS58P");
-        params.add("redirect_uri", "http://localhost:3000/api/members/naver/callback");
-        params.add("client_secret", "1uPpEHHTBF");
+        params.add("client_id", naver_client_id);
+        params.add("redirect_uri", naver_redirect_uri);
+        params.add("client_secret", naver_client_secret);
         params.add("code", code);
         params.add("state", state);
 

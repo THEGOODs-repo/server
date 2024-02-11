@@ -35,7 +35,7 @@ spring:
       dialect: org.hibernate.dialect.MySQL8InnoDBDialect
       hibernate:
       # show_sql: true
-      #format_sql: true
+      format_sql: true
   servlet:
     multipart:
       max-file-size: 500MB
@@ -75,3 +75,13 @@ cloud:
     credentials:
       accessKey: ${CLOUD_AWS_CREDENTIALS_ACCESSKEY}
       secretKey: ${CLOUD_AWS_CREDENTIALS_SECRETKEY}
+
+social:
+  kakao:
+    client-id: ${KAKAO_CLIENT_ID}
+    redirect-uri: ${KAKAO_REDIRECT_URI}
+
+  naver:
+    client-id: ${NAVER_CLIENT_ID}
+    redirect-uri: ${NAVER_REDIRECT_URI}
+    client-secret: ${NAVER_CLIENT_SECRET}

@@ -162,11 +162,12 @@ public class MemberConverter {
                 .build();
     }
 
-    public static MemberResponseDTO.EmailAuthConfirmResultDTO toEmailAuthConfirmResultDTO(Boolean checkEmail) {
+    public static MemberResponseDTO.EmailAuthConfirmResultDTO toEmailAuthConfirmResultDTO(Boolean checkEmail, String jwt) {
 
 
         return MemberResponseDTO.EmailAuthConfirmResultDTO.builder()
                 .checkEmail(checkEmail)
+                .jwt(jwt)
                 .build();
     }
 

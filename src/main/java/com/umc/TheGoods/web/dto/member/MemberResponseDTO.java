@@ -88,6 +88,7 @@ public class MemberResponseDTO {
     @AllArgsConstructor
     public static class EmailAuthConfirmResultDTO {
         Boolean checkEmail;
+        String jwt;
     }
 
     @Builder
