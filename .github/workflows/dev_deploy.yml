@@ -33,11 +33,11 @@ jobs:
           spring.mail.password: ${{ secrets.SPRING_MAIL_PASSWORD }}
           cloud.aws.credentials.accessKey: ${{ secrets.CLOUD_AWS_CREDENTIALS_ACCESSKEY }}
           cloud.aws.credentials.secretKey: ${{ secrets.CLOUD_AWS_CREDENTIALS_SECRETKEY }}
-          social.kakao.client-id: $ {{secrets.KAKAO_CLIENT_ID }}
-          social.kakao.redirect-uri: $ {{secrets.KAKAO_REDIRECT_URI }}
-          social.naver.client-id: $ {{secrets.NAVER_CLIENT_ID }}
-          social.naver.redirect-uri: $ {{secrets.NAVER_REDIRECT_URI }}
-          social.naver.client-secret: $ {{secrets.NAVER_CLIENT_SECRET }}
+          social.kakao.client-id: ${{ secrets.KAKAO_CLIENT_ID }}
+          social.kakao.redirect-uri: ${{ secrets.KAKAO_REDIRECT_URI }}
+          social.naver.client-id: ${{ secrets.NAVER_CLIENT_ID }}
+          social.naver.redirect-uri: ${{ secrets.NAVER_REDIRECT_URI }}
+          social.naver.client-secret: ${{ secrets.NAVER_CLIENT_SECRET }}
 
 
 
