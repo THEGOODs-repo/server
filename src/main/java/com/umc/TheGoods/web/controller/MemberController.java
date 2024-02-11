@@ -125,7 +125,14 @@ public class MemberController {
     public ApiResponse<MemberResponseDTO.EmailAuthConfirmResultDTO> emailAuth(@RequestBody MemberRequestDTO.EmailAuthConfirmDTO request) {
         Boolean checkEmail = memberCommandService.confirmEmailAuth(request);
 
-        return ApiResponse.onSuccess(MemberConverter.toEmailAuthConfirmResultDTO(checkEmail));
+
+        if (checkEmail == true) {
+            String jwt = memberCommandService.emailAuthCreateJWT(request);
+            return ApiResponse.onSuccess(MemberConverter.toEmailAuthConfirmResultDTO(checkEmail, jwt));
+        }
+
+        return ApiResponse.onSuccess(MemberConverter.toEmailAuthConfirmResultDTO(checkEmail, null));
+
     }
 
     @PostMapping("password/update")
