@@ -4,6 +4,7 @@ import com.umc.TheGoods.domain.common.BaseDateTimeEntity;
 import com.umc.TheGoods.domain.enums.OrderStatus;
 import com.umc.TheGoods.domain.item.Item;
 import com.umc.TheGoods.domain.item.Review;
+import com.umc.TheGoods.domain.payment.Payment;
 import com.umc.TheGoods.domain.types.DeliveryType;
 import com.umc.TheGoods.web.dto.order.OrderRequestDTO;
 import lombok.*;
@@ -13,6 +14,9 @@ import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+
+import static javax.persistence.CascadeType.ALL;
+import static javax.persistence.FetchType.LAZY;
 
 @Entity
 @Getter
@@ -89,6 +93,11 @@ public class OrderItem extends BaseDateTimeEntity {
 
     @OneToOne(mappedBy = "orderItem", cascade = CascadeType.ALL)
     private Review review;
+
+    // 결제 관련 연관관계 매핑(1:1)
+    @OneToOne(fetch = LAZY, cascade = ALL)
+    @JoinColumn(name = "payment_id")
+    private Payment payment;
 
     public void setOrders(Orders orders) {
         if (this.orders != null) {
