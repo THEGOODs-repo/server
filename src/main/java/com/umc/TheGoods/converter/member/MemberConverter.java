@@ -245,5 +245,12 @@ public class MemberConverter {
                 .build();
     }
 
+    public static MemberResponseDTO.RoleUpdateResultDTO toUpdateRole(Member member) {
+
+        return MemberResponseDTO.RoleUpdateResultDTO.builder()
+                .role(member.getMemberRole())
+                .build();
+    }
+
 
 }

@@ -6,6 +6,7 @@ import com.umc.TheGoods.apiPayload.code.status.ErrorStatus;
 import com.umc.TheGoods.apiPayload.exception.handler.MemberHandler;
 import com.umc.TheGoods.config.MailConfig;
 import com.umc.TheGoods.converter.member.MemberConverter;
+import com.umc.TheGoods.domain.enums.MemberRole;
 import com.umc.TheGoods.domain.images.ProfileImg;
 import com.umc.TheGoods.domain.item.Category;
 import com.umc.TheGoods.domain.mapping.member.MemberCategory;
@@ -44,7 +45,7 @@ import static com.umc.TheGoods.config.springSecurity.utils.JwtUtil.createJwt;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
+@Transactional
 public class MemberCommandServiceImpl implements MemberCommandService {
 
     private final MemberRepository memberRepository;
@@ -546,6 +547,22 @@ public class MemberCommandServiceImpl implements MemberCommandService {
 
 
         return member;
+    }
+
+
+    @Override
+    public Member updateRole(Member member) {
+
+        if (member.getMemberRole() == MemberRole.BUYER) {
+
+            memberRepository.changeMemberRole(member.getId(), MemberRole.SELLER);
+            log.info(memberRepository.findByNickname(member.getNickname()).get().getMemberRole().toString());
+            return member;
+        } else {
+            memberRepository.changeMemberRole(member.getId(), MemberRole.BUYER);
+            return member;
+        }
+
     }
 
     /**
