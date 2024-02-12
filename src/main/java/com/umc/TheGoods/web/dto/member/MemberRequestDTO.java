@@ -1,5 +1,7 @@
 package com.umc.TheGoods.web.dto.member;
 
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.umc.TheGoods.domain.enums.Gender;
 import com.umc.TheGoods.validation.annotation.ExistCategory;
 import lombok.AllArgsConstructor;
@@ -87,5 +89,15 @@ public class MemberRequestDTO {
     public static class EmailAuthConfirmDTO {
         private String email;
         private String code;
+    }
+
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+    public static class PaymentDTO {
+        private String username;
+        private String email;
+        private String address;
     }
 }
