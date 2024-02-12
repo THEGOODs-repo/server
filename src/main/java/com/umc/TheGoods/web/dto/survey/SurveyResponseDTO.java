@@ -18,5 +18,19 @@ public class SurveyResponseDTO {
         String nickname;
         String introduce;
         List<Long> tagList;
+        String url1;
+        String url2;
     }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class PopularItemResultDTO {
+        String img;
+        String tag;
+        List<Long> tagList;
+    }
+
+
 }

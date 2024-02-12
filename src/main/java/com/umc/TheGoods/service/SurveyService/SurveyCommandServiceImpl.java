@@ -23,9 +23,9 @@ public class SurveyCommandServiceImpl implements SurveyCommandService {
     private final MemberRepository memberRepository;
 
     @Override
-    public List<Item> getPopularItems(Member member) {
+    public List<Item> getPopularItems(Member member, int page) {
 
-        PageRequest pageRequest = PageRequest.of(0, 3);
+        PageRequest pageRequest = PageRequest.of(0, page);
 
         List<Item> item = itemRepository.findPopularItemList(pageRequest, member.getMemberCategoryList().get(0).getCategory());
 
@@ -39,5 +39,17 @@ public class SurveyCommandServiceImpl implements SurveyCommandService {
                 .collect(Collectors.toList());
 
         return member;
+    }
+
+    @Override
+    public List<List<Item>> getPopularSellerItem(List<Member> member) {
+        PageRequest pageRequest = PageRequest.of(0, 2);
+
+
+        List<List<Item>> item = member.stream().map(m ->
+                        itemRepository.findPopularSellerItemList(pageRequest, m))
+                .collect(Collectors.toList());
+
+        return item;
     }
 }

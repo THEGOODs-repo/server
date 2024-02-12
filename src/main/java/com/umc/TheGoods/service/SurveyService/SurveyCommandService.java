@@ -7,7 +7,9 @@ import java.util.List;
 
 public interface SurveyCommandService {
 
-    List<Item> getPopularItems(Member member);
+    List<Item> getPopularItems(Member member, int page);
 
     List<Member> getPopularSeller(List<Item> item);
+
+    List<List<Item>> getPopularSellerItem(List<Member> member);
 }

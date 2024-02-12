@@ -40,10 +40,26 @@ public class SurveyController {
         MemberDetail memberDetail = (MemberDetail) authentication.getPrincipal();
         Member member = memberQueryService.findMemberById(memberDetail.getMemberId()).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
-        List<Item> item = surveyCommandService.getPopularItems(member);
+        List<Item> item = surveyCommandService.getPopularItems(member, 3);
 
 
         List<Member> popular_member = surveyCommandService.getPopularSeller(item);
-        return ApiResponse.onSuccess(SurveyConverter.toPopularSellerResultDTO(popular_member, item));
+
+        List<List<Item>> popular_member_item = surveyCommandService.getPopularSellerItem(popular_member);
+
+        return ApiResponse.onSuccess(SurveyConverter.toPopularSellerResultDTO(popular_member, popular_member_item));
     }
+
+    @GetMapping("/popular/item")
+    @Operation(summary = "해당 카테고리 인기 상품 조회 API", description = "인기 상품 정보 가져오기")
+    public ApiResponse<List<SurveyResponseDTO.PopularItemResultDTO>> getPopularItem(Authentication authentication) {
+
+        MemberDetail memberDetail = (MemberDetail) authentication.getPrincipal();
+        Member member = memberQueryService.findMemberById(memberDetail.getMemberId()).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        List<Item> item = surveyCommandService.getPopularItems(member, 5);
+
+        return ApiResponse.onSuccess(SurveyConverter.toPopularItemResultDTO(item));
+    }
+
 }

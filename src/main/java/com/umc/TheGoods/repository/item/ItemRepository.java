@@ -28,5 +28,7 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
     @Query("SELECT item FROM Item item WHERE item.category = :category ORDER BY (item.viewCount + item.salesCount) DESC")
     List<Item> findPopularItemList(Pageable pageable, Category category);
 
+    @Query("SELECT item FROM Item item WHERE item.member = :member ORDER BY (item.viewCount + item.salesCount) DESC")
+    List<Item> findPopularSellerItemList(Pageable pageable, Member member);
 
 }
