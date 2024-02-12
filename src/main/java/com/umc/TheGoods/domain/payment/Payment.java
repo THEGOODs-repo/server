@@ -50,6 +50,25 @@ public class Payment extends BaseDateTimeEntity {
     @Column(nullable = false)
     private LocalDateTime paymentTime;
 
+    /**
+     * 조회 메서드
+     */
+    public Long getTotalPrice() {
+        Long totalPrice = 0L;
+
+        // 주문 내역 확인
+        Orders order = this.orders;
+        if (order != null) {
+            // 주문 상품 리스트 가져오기
+            List<OrderItem> orderItems = order.getOrderItemList();
+            for (OrderItem orderItem : orderItems) {
+                totalPrice += orderItem.getTotalPrice(); // 주문 상품 가격 합산
+            }
+        }
+
+        return totalPrice;
+    }
+    
     @Builder
     public Payment(Long price, PaymentStatus status) {
         this.price = price;
@@ -59,25 +78,6 @@ public class Payment extends BaseDateTimeEntity {
     public void changePaymentBySuccess(PaymentStatus status, String paymentUid) {
         this.status = status;
         this.paymentUid = paymentUid;
-    }
-
-    public Long getTotalPrice() {
-        Long totalPrice = 0L;
-
-        // 주문 정보 확인
-        Orders order = this.orders;
-        if (order != null) {
-            // 주문 상품 정보 확인
-            List<OrderItem> orderItems = order.getOrderItem();
-            for (OrderItem orderItem : orderItems) {
-                totalPrice += orderItem.getTotalPrice(); // 주문 상품 가격 합산
-            }
-
-            // 배송비 추가
-            totalPrice += order.getDeliveryFee();
-        }
-
-        return totalPrice;
     }
 
     public void setBuyer(Member buyer) {
