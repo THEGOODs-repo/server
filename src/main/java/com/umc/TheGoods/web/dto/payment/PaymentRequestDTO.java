@@ -1,28 +1,25 @@
 package com.umc.TheGoods.web.dto.payment;
 
-import com.fasterxml.jackson.databind.PropertyNamingStrategies;
-import com.fasterxml.jackson.databind.annotation.JsonNaming;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
 @Data
-@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+@AllArgsConstructor
+@Builder
 public class PaymentRequestDTO {
+
+    @JsonProperty("imp_uid")
+    private String impUid;
+
+    @JsonProperty("merchant_uid")
+    private String merchantUid;
 
     private String orderUid;
     private String itemName;
     private String buyerName;
-    private Long paymentPrice;
+    private Long paymentTotalPrice;
     private String buyerEmail;
     private String buyerAddress;
-
-    @Builder
-    public PaymentRequestDTO(String orderUid, String itemName, String buyerName, Long paymentPrice, String buyerEmail, String buyerAddress) {
-        this.orderUid = orderUid;
-        this.itemName = itemName;
-        this.buyerName = buyerName;
-        this.paymentPrice = paymentPrice;
-        this.buyerEmail = buyerEmail;
-        this.buyerAddress = buyerAddress;
-    }
 }
