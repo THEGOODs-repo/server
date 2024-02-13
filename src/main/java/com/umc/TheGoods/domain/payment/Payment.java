@@ -4,6 +4,7 @@ import com.umc.TheGoods.domain.common.BaseDateTimeEntity;
 import com.umc.TheGoods.domain.member.Member;
 import com.umc.TheGoods.domain.order.OrderItem;
 import com.umc.TheGoods.domain.order.Orders;
+import com.umc.TheGoods.web.dto.payment.PaymentRequestDTO;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -29,7 +30,7 @@ public class Payment extends BaseDateTimeEntity {
     private Member buyer;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "orders_id", unique = true)
+    @JoinColumn(name = "orders_id")
     private Orders orders;
 
     @Column(nullable = false)
@@ -68,7 +69,22 @@ public class Payment extends BaseDateTimeEntity {
 
         return totalPrice;
     }
-    
+
+    /**
+     * 사전 결제 정보 검증 메서드
+     *
+     * @param paymentRequest 결제 요청 정보
+     * @return 검증 결과
+     */
+    public boolean validatePaymentRequest(PaymentRequestDTO paymentRequest) {
+        // 결제 요청 정보가 유효한지 확인하고, 필요한 경우 추가적인 검증 로직을 수행합니다.
+        // 예를 들어, 결제 금액, 주문 번호 등의 필수 정보가 올바르게 설정되었는지 확인할 수 있습니다.
+        // 이 메서드는 결제 요청이 유효하면 true를 반환하고, 그렇지 않으면 false를 반환합니다.
+
+        // 예시: 결제 금액이 주문 총액과 일치하는지 확인
+        return paymentRequest.getPaymentTotalPrice().equals(getTotalPrice());
+    }
+
     @Builder
     public Payment(Long price, PaymentStatus status) {
         this.price = price;
