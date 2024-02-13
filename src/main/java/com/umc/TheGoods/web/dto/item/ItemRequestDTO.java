@@ -45,8 +45,6 @@ public class ItemRequestDTO {
         Long salesCount;
         @NotNull
         Long category;
-        @NotNull
-        List<itemImgDTO> itemImgUrlList;
         @Nullable
         List<itemOptionDTO> itemOptionList;
         @NotNull
@@ -81,8 +79,6 @@ public class ItemRequestDTO {
         LocalDate endDate;
         @NotNull
         Long category;
-        @NotNull
-        List<itemImgDTO> itemImgUrlList;
         @Nullable
         List<itemOptionDTO> itemOptionList;
         @NotNull
