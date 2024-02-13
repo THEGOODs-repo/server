@@ -21,6 +21,8 @@ public class Orders extends BaseDateTimeEntity {
     @Column(name = "orders_id")
     private Long id;
 
+    private String orderUid;    // 주문 고유 번호
+
     @Column(nullable = false, length = 30)
     private String name;
 
