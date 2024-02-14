@@ -1,10 +1,12 @@
 package com.umc.TheGoods.service.ItemService;
 
 import com.umc.TheGoods.apiPayload.code.status.ErrorStatus;
+import com.umc.TheGoods.apiPayload.exception.handler.CategoryHandler;
 import com.umc.TheGoods.apiPayload.exception.handler.ItemHandler;
 import com.umc.TheGoods.apiPayload.exception.handler.MemberHandler;
 import com.umc.TheGoods.apiPayload.exception.handler.TagHandler;
 import com.umc.TheGoods.converter.tag.TagSearchConverter;
+import com.umc.TheGoods.domain.item.Category;
 import com.umc.TheGoods.domain.item.Item;
 import com.umc.TheGoods.domain.item.ItemOption;
 import com.umc.TheGoods.domain.item.Tag;
@@ -14,6 +16,7 @@ import com.umc.TheGoods.repository.TagRepository;
 import com.umc.TheGoods.repository.TagSearchRepository;
 import com.umc.TheGoods.repository.item.ItemOptionRepository;
 import com.umc.TheGoods.repository.item.ItemRepository;
+import com.umc.TheGoods.repository.member.CategoryRepository;
 import com.umc.TheGoods.repository.member.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -39,6 +42,7 @@ public class ItemQueryServiceImpl implements ItemQueryService {
     private final TagSearchRepository tagSearchRepository;
     private final MemberRepository memberRepository;
     private final TagRepository tagRepository;
+    private final CategoryRepository categoryRepository;
 
     @Override
     public Optional<Item> findItemById(Long id) {
@@ -78,6 +82,7 @@ public class ItemQueryServiceImpl implements ItemQueryService {
             searchCondition++;
         }
         if (categoryName != null) {
+            Category category = categoryRepository.findByName(categoryName).orElseThrow(() -> new CategoryHandler(ErrorStatus.CATEGORY_NOT_FOUND));
             itemPage = itemRepository.findAllByCategoryName(categoryName, PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "createdAt")));
             searchCondition++;
         }
