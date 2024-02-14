@@ -25,7 +25,7 @@ public class ItemExistValidator implements ConstraintValidator<ExistItem, Long> 
         boolean isValid = itemQueryService.isExistItem(value);
         if (!isValid) {
             context.disableDefaultConstraintViolation();
-            context.buildConstraintViolationWithTemplate(ErrorStatus.ITEM_NOT_FOUND.getMessage()).addConstraintViolation();
+            context.buildConstraintViolationWithTemplate(ErrorStatus.ITEM_NOT_FOUND.toString()).addConstraintViolation();
         }
         return isValid;
     }
