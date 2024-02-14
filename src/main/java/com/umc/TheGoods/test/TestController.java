@@ -144,30 +144,30 @@ public class TestController {
         tagList.add(1L);
 
         // 뉴진스 포카 item 등록
-        ItemRequestDTO.itemOptionDTO itemOptionDTO1 = new ItemRequestDTO.itemOptionDTO("해린 포카", 1000L, 20);
-        ItemRequestDTO.itemOptionDTO itemOptionDTO2 = new ItemRequestDTO.itemOptionDTO("민지 포카", 2000L, 20);
-        ItemRequestDTO.itemOptionDTO itemOptionDTO3 = new ItemRequestDTO.itemOptionDTO("하니 포카", 3000L, 20);
-        List<ItemRequestDTO.itemOptionDTO> itemOptionDTOList1 = new ArrayList<>();
-        itemOptionDTOList1.add(itemOptionDTO1);
-        itemOptionDTOList1.add(itemOptionDTO2);
-        itemOptionDTOList1.add(itemOptionDTO3);
-
-        ItemRequestDTO.UploadItemDTO uploadItemDTO1 = new ItemRequestDTO.UploadItemDTO("뉴진스 포카", "ONSALE", null, null, 3000, 1, 3, "뉴진스 포카입니다.", false, startDate, endDate, 0L, 0L, 0L, 1L, itemImgDTOList, itemOptionDTOList1, tagList);
-        itemCommandService.uploadItem(member, uploadItemDTO1);
-
-        // 아이브 포카 item 등록
-        ItemRequestDTO.itemOptionDTO itemOptionDTO4 = new ItemRequestDTO.itemOptionDTO("원영 포카", 1000L, 20);
-        ItemRequestDTO.itemOptionDTO itemOptionDTO5 = new ItemRequestDTO.itemOptionDTO("유진 포카", 2000L, 20);
-        List<ItemRequestDTO.itemOptionDTO> itemOptionDTOList2 = new ArrayList<>();
-        itemOptionDTOList2.add(itemOptionDTO4);
-        itemOptionDTOList2.add(itemOptionDTO5);
-
-        ItemRequestDTO.UploadItemDTO uploadItemDTO2 = new ItemRequestDTO.UploadItemDTO("아이브 포카", "ONSALE", null, null, 2000, 1, 3, "아이브 포카입니다.", false, startDate, endDate, 0L, 0L, 0L, 1L, itemImgDTOList, itemOptionDTOList2, tagList);
-        itemCommandService.uploadItem(member, uploadItemDTO2);
-
-        // 카리나 포카 item 등록 (단일 상품)
-        ItemRequestDTO.UploadItemDTO uploadItemDTO3 = new ItemRequestDTO.UploadItemDTO("카리나 포카", "ONSALE", 100, 3000L, 3000, 1, 3, "카리나 포카입니다.", false, startDate, endDate, 0L, 0L, 0L, 1L, itemImgDTOList, new ArrayList<>(), tagList);
-        itemCommandService.uploadItem(member, uploadItemDTO3);
+//        ItemRequestDTO.itemOptionDTO itemOptionDTO1 = new ItemRequestDTO.itemOptionDTO("해린 포카", 1000L, 20);
+//        ItemRequestDTO.itemOptionDTO itemOptionDTO2 = new ItemRequestDTO.itemOptionDTO("민지 포카", 2000L, 20);
+//        ItemRequestDTO.itemOptionDTO itemOptionDTO3 = new ItemRequestDTO.itemOptionDTO("하니 포카", 3000L, 20);
+//        List<ItemRequestDTO.itemOptionDTO> itemOptionDTOList1 = new ArrayList<>();
+//        itemOptionDTOList1.add(itemOptionDTO1);
+//        itemOptionDTOList1.add(itemOptionDTO2);
+//        itemOptionDTOList1.add(itemOptionDTO3);
+//
+//        ItemRequestDTO.UploadItemDTO uploadItemDTO1 = new ItemRequestDTO.UploadItemDTO("뉴진스 포카", "ONSALE", null, null, 3000, 1, 3, "뉴진스 포카입니다.", false, startDate, endDate, 0L, 0L, 0L, 1L, itemImgDTOList, itemOptionDTOList1, tagList);
+//        //itemCommandService.uploadItem(member, uploadItemDTO1);
+//
+//        // 아이브 포카 item 등록
+//        ItemRequestDTO.itemOptionDTO itemOptionDTO4 = new ItemRequestDTO.itemOptionDTO("원영 포카", 1000L, 20);
+//        ItemRequestDTO.itemOptionDTO itemOptionDTO5 = new ItemRequestDTO.itemOptionDTO("유진 포카", 2000L, 20);
+//        List<ItemRequestDTO.itemOptionDTO> itemOptionDTOList2 = new ArrayList<>();
+//        itemOptionDTOList2.add(itemOptionDTO4);
+//        itemOptionDTOList2.add(itemOptionDTO5);
+//
+//        ItemRequestDTO.UploadItemDTO uploadItemDTO2 = new ItemRequestDTO.UploadItemDTO("아이브 포카", "ONSALE", null, null, 2000, 1, 3, "아이브 포카입니다.", false, startDate, endDate, 0L, 0L, 0L, 1L, itemImgDTOList, itemOptionDTOList2, tagList);
+//        //itemCommandService.uploadItem(member, uploadItemDTO2);
+//
+//        // 카리나 포카 item 등록 (단일 상품)
+//        ItemRequestDTO.UploadItemDTO uploadItemDTO3 = new ItemRequestDTO.UploadItemDTO("카리나 포카", "ONSALE", 100, 3000L, 3000, 1, 3, "카리나 포카입니다.", false, startDate, endDate, 0L, 0L, 0L, 1L, itemImgDTOList, new ArrayList<>(), tagList);
+//        //itemCommandService.uploadItem(member, uploadItemDTO3);
 
 
         return "Setting Test Data";

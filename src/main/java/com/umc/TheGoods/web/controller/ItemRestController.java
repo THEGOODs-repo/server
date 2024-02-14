@@ -26,6 +26,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -47,13 +48,15 @@ public class ItemRestController {
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공")
     })
-    public ApiResponse<ItemResponseDTO.UploadItemResultDTO> upload(@RequestBody @Valid ItemRequestDTO.UploadItemDTO request,
+    public ApiResponse<ItemResponseDTO.UploadItemResultDTO> upload(@RequestPart(value = "request") @Valid ItemRequestDTO.UploadItemDTO request,
+                                                                   @RequestPart(value = "itemThumbnail") MultipartFile itemThumbnail,
+                                                                   @RequestPart(value = "itemImgList", required = false) List<MultipartFile> itemImgList,
                                                                    Authentication authentication) {
 
         MemberDetail memberDetail = (MemberDetail) authentication.getPrincipal();
         Member member = memberQueryService.findMemberById(memberDetail.getMemberId()).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
-        Item item = itemCommandService.uploadItem(member, request);
+        Item item = itemCommandService.uploadItem(member, request, itemThumbnail, itemImgList);
         return ApiResponse.onSuccess(ItemConverter.toUploadItemResultDTO(item));
     }
 
@@ -89,19 +92,22 @@ public class ItemRestController {
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공")
     })
-    public ApiResponse<ItemResponseDTO.UpdateItemResultDTO> updateItem(@RequestBody @Valid ItemRequestDTO.UpdateItemDTO request,
-                                                                       @ExistItem @PathVariable(name = "itemId") Long itemId, Authentication authentication) {
+    public ApiResponse<ItemResponseDTO.UpdateItemResultDTO> updateItem(@RequestPart(value = "request") @Valid ItemRequestDTO.UpdateItemDTO request,
+                                                                       @ExistItem @PathVariable(name = "itemId") Long itemId,
+                                                                       @RequestPart(value = "itemThumbnail") MultipartFile itemThumbnail,
+                                                                       @RequestPart(value = "itemImgList", required = false) List<MultipartFile> itemImgList,
+                                                                       Authentication authentication) {
         Member member;
 
         MemberDetail memberDetail = (MemberDetail) authentication.getPrincipal();
         member = memberQueryService.findMemberById(memberDetail.getMemberId()).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
-        Item item = itemCommandService.updateItem(itemId, member, request);
+        Item item = itemCommandService.updateItem(itemId, member, request, itemThumbnail, itemImgList);
         return ApiResponse.onSuccess(ItemConverter.toUpdateItemResultDTO(item));
     }
 
     @GetMapping("/seller/item/")
-    @Operation(summary = "나의 판매 상품 조회 API", description = "상품 수정을 위한 API이며, request parameter로 입력 값을 받습니다. " +
+    @Operation(summary = "나의 판매 상품 조회 API", description = "판매중인 상품 조회를 위한 API이며, request parameter로 입력 값을 받습니다. " +
             "page : 상품 조회 페이지 번호")
     @Parameters(value = {
             @Parameter(name = "page", description = "페이지 번호, 1 이상의 숫자를 입력해주세요.")

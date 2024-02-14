@@ -87,10 +87,14 @@ public class ItemQueryServiceImpl implements ItemQueryService {
         }
         if (tagName != null) {
             //이 방식대로 tag 탐색시 잘못 탐색됨. tag 전체를 가지고 있는 경우만 찾도록 해야함.
-            List<Tag> tags = tagName.stream()
-                    .map(tag -> tagRepository.findByName(tag).orElseThrow(() -> new TagHandler(ErrorStatus.TAG_NOT_FOUND)))
+            List<String> tagNameWithoutHashtag = tagName.stream()
+                    .map(tag -> tag.replace("#", ""))
                     .collect(Collectors.toList());
 
+            List<Tag> tags = tagNameWithoutHashtag.stream()
+                    .map(tag -> tagRepository.findByName(tag).orElseThrow(() -> new TagHandler(ErrorStatus.TAG_NOT_FOUND)))
+                    .collect(Collectors.toList());
+            
             if (!tags.isEmpty()) {
                 // 아이템을 검색하는 메소드 호출
                 itemPage = itemRepository.findAllByItemTagListTagIn(tags, PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "createdAt")));
@@ -111,7 +115,7 @@ public class ItemQueryServiceImpl implements ItemQueryService {
             tagSearchList.forEach(tagSearch -> {
                 tagSearch.setMember(member);
             });
-            
+
             tagSearchRepository.saveAll(tagSearchList);
         }
         if (searchCondition > 1) {
