@@ -68,6 +68,7 @@ public class ItemQueryServiceImpl implements ItemQueryService {
     }
 
     @Override
+    @Transactional
     public Page<Item> searchItem(Member member, String itemName, String categoryName, String sellerName, List<String> tagName, Integer page) {
         Page<Item> itemPage = null;
         Integer searchCondition = 0;
@@ -94,7 +95,7 @@ public class ItemQueryServiceImpl implements ItemQueryService {
             List<Tag> tags = tagNameWithoutHashtag.stream()
                     .map(tag -> tagRepository.findByName(tag).orElseThrow(() -> new TagHandler(ErrorStatus.TAG_NOT_FOUND)))
                     .collect(Collectors.toList());
-            
+
             if (!tags.isEmpty()) {
                 // 아이템을 검색하는 메소드 호출
                 itemPage = itemRepository.findAllByItemTagListTagIn(tags, PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "createdAt")));
