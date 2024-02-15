@@ -1,8 +1,10 @@
 package com.umc.TheGoods.converter.cart;
 
+import com.umc.TheGoods.converter.item.ItemConverter;
 import com.umc.TheGoods.domain.order.Cart;
 import com.umc.TheGoods.domain.order.CartDetail;
 import com.umc.TheGoods.web.dto.cart.CartResponseDTO;
+import com.umc.TheGoods.web.dto.item.ItemResponseDTO;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,10 +33,16 @@ public class CartConverter {
         List<CartResponseDTO.cartDetailViewDTO> cartDetailViewDTOList = cart.getCartDetailList().stream()
                 .map(CartConverter::toCartDetailViewDTO).collect(Collectors.toList());
 
+        List<ItemResponseDTO.ItemImgResponseDTO> itemImgResponseDTOList = cart.getItem().getItemImgList().stream()
+                .map(ItemConverter::getItemImgDTO)
+                .filter(ItemResponseDTO.ItemImgResponseDTO::getIsThumbNail).collect(Collectors.toList());
+
+        String itemImgUrl = itemImgResponseDTOList.get(0).getItemImgUrl();
+
         return CartResponseDTO.cartViewDTO.builder()
                 .sellerName(cart.getItem().getMember().getNickname())
                 .itemName(cart.getItem().getName())
-                .itemImg("img url") // item 썸네일 가져오는 메소드 필요
+                .itemImg(itemImgUrl)
                 .deliveryFee(cart.getItem().getDeliveryFee())
                 .cartDetailViewDTOList(cartDetailViewDTOList)
                 .build();
