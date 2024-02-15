@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.annotation.PostConstruct;
 import java.io.IOException;
 
 @Slf4j
@@ -36,13 +35,18 @@ public class PaymentController {
     @Value("${iamport.secret}")
     private String restApiSecret;
 
-    @PostConstruct
-    public void init() {
+    public PaymentController() {
         this.iamportClient = new IamportClient(restApiKey, restApiSecret);
     }
 
+//    @PostConstruct
+//    public void init() {
+//        this.iamportClient = new IamportClient(restApiKey, restApiSecret);
+//    }
+
     @PostMapping("/")
-    @Operation(summary = "결제 승인 API", description = "포트원으로 요청된 결제 요청에 대한 응답입니다. \n\n")
+    @Operation(summary = "결제 승인 API", description = "포트원으로 요청된 결제 요청에 대한 응답입니다. \n\n" +
+            "파라메터로 imp_key와 imp_secret 값이 필요합니다. \n\n")
     @ApiResponses(value = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON404", description = "Fail, 결제에 실패하였습니다.")
