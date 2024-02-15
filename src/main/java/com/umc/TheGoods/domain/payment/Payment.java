@@ -34,7 +34,7 @@ public class Payment extends BaseDateTimeEntity {
     private Orders orders;
 
     @Column(nullable = false)
-    private Long price;
+    private Long amount;
 
     @Enumerated(EnumType.STRING)
     private PaymentStatus status;
@@ -82,12 +82,12 @@ public class Payment extends BaseDateTimeEntity {
         // 이 메서드는 결제 요청이 유효하면 true를 반환하고, 그렇지 않으면 false를 반환합니다.
 
         // 예시: 결제 금액이 주문 총액과 일치하는지 확인
-        return paymentRequest.getPaymentTotalPrice().equals(getTotalPrice());
+        return paymentRequest.getAmount().equals(getTotalPrice());
     }
 
     @Builder
-    public Payment(Long price, PaymentStatus status) {
-        this.price = price;
+    public Payment(Long amount, PaymentStatus status) {
+        this.amount = amount;
         this.status = status;
     }
 
