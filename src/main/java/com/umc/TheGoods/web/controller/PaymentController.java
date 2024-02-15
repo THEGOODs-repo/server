@@ -71,10 +71,6 @@ public class PaymentController {
     /*
     private final IamportClient iamportClient;
 
-    public PaymentController() {
-        this.iamportClient = new IamportClient("${iamport.api.key}", "${iamport.api.secret}");
-    }
-
     @PostMapping("/")
     public ResponseEntity<String> processPayment(@RequestBody PaymentRequestDTO requestDto) {
         PaymentRequestDTO paymentRequest = new PaymentRequestDTO().Builder()
