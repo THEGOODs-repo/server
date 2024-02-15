@@ -2,6 +2,7 @@ package com.umc.TheGoods.domain.order;
 
 import com.umc.TheGoods.domain.common.BaseDateTimeEntity;
 import com.umc.TheGoods.domain.member.Member;
+import com.umc.TheGoods.domain.payment.Payment;
 import com.umc.TheGoods.domain.types.PayType;
 import lombok.*;
 
@@ -20,6 +21,9 @@ public class Orders extends BaseDateTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "orders_id")
     private Long id;
+
+    @OneToOne(mappedBy = "orders", cascade = CascadeType.ALL)
+    private Payment payment;
 
     @Column(nullable = false, length = 30)
     private String name;

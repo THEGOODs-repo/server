@@ -1,6 +1,6 @@
 package com.umc.TheGoods.service.PostService;
 
-import com.umc.TheGoods.repository.PostRepository;
+import com.umc.TheGoods.repository.post.PostRepository;
 import com.umc.TheGoods.web.dto.post.PostResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

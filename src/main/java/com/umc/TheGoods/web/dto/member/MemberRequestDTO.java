@@ -89,7 +89,6 @@ public class MemberRequestDTO {
         private String code;
     }
 
-
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
@@ -97,5 +96,4 @@ public class MemberRequestDTO {
         private String password;
         private String checkPassword;
     }
-
 }

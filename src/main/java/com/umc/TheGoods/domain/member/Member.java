@@ -1,6 +1,5 @@
 package com.umc.TheGoods.domain.member;
 
-import com.umc.TheGoods.domain.Payment;
 import com.umc.TheGoods.domain.common.BaseDateTimeEntity;
 import com.umc.TheGoods.domain.community.Comment;
 import com.umc.TheGoods.domain.community.Inquiry;
@@ -23,6 +22,7 @@ import com.umc.TheGoods.domain.mapping.post.PostLike;
 import com.umc.TheGoods.domain.mypage.*;
 import com.umc.TheGoods.domain.order.Cart;
 import com.umc.TheGoods.domain.order.Orders;
+import com.umc.TheGoods.domain.payment.Payment;
 import com.umc.TheGoods.domain.types.SocialType;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
