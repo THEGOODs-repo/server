@@ -63,8 +63,13 @@ public class ItemConverter {
     }
 
     public static ItemResponseDTO.ItemPreviewDTO itemPreviewDTO(Item item) {
+//        List<ItemResponseDTO.ItemImgResponseDTO> itemImgResponseDTOList = item.getItemImgList().stream()
+//                .map(ItemConverter::getItemImgDTO).collect(Collectors.toList());
+
         List<ItemResponseDTO.ItemImgResponseDTO> itemImgResponseDTOList = item.getItemImgList().stream()
-                .map(ItemConverter::getItemImgDTO).collect(Collectors.toList());
+                .map(ItemConverter::getItemImgDTO)
+                .filter(ItemResponseDTO.ItemImgResponseDTO::getIsThumbNail).collect(Collectors.toList());
+
 
         return ItemResponseDTO.ItemPreviewDTO.builder()
                 .itemId(item.getId())

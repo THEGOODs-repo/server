@@ -32,7 +32,7 @@ public class Revenue extends BaseDateTimeEntity {
     @ColumnDefault("0")
     private Integer withdrawPredicted; //출금 예상
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
 }

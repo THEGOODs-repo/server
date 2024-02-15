@@ -36,7 +36,7 @@ public class MemberResponseDTO {
     @AllArgsConstructor
     public static class PhoneAuthSendResultDTO {
         String phone;
-        
+
     }
 
     @Builder
@@ -88,6 +88,15 @@ public class MemberResponseDTO {
     @AllArgsConstructor
     public static class EmailAuthConfirmResultDTO {
         Boolean checkEmail;
+        String jwt;
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class PasswordUpdateResultDTO {
+        boolean updatePassword;
     }
 
 
@@ -107,5 +116,23 @@ public class MemberResponseDTO {
         String phone;
         String email;
     }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ProfileModifyResultDTO {
+        String nickname;
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ProfileResultDTO {
+        String nickname;
+        String url;
+    }
+
 
 }

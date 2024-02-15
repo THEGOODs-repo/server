@@ -5,7 +5,6 @@ import com.umc.TheGoods.domain.member.Member;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 
-
 import javax.persistence.*;
 
 
@@ -30,12 +29,11 @@ public class WithdrawReason extends BaseDateTimeEntity {
     private Boolean caution; //주의 사항 체크
 
 
-
     @Column(nullable = false)
     private Integer reason; // 탈퇴 사유
 
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
 }

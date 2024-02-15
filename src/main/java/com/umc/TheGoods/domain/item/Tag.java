@@ -22,7 +22,7 @@ public class Tag extends BaseDateTimeEntity {
     @Column(name = "tag_id")
     private Long id;
 
-    @Column(nullable = false, length = 30)
+    @Column(nullable = false, length = 100)
     private String name;
 
     @OneToMany(mappedBy = "tag", cascade = CascadeType.ALL)

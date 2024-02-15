@@ -4,10 +4,29 @@ spring:
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
-
+  jpa:
+    hibernate:
+      ddl-auto: update
   mail:
     username: ${SPRING_MAIL_USERNAME}
     password: ${SPRING_MAIL_PASSWORD}
+
 jwt:
   token:
     secret: ${JWT_TOKEN_SECRET}
+
+cloud:
+  aws:
+    credentials:
+      accessKey: ${CLOUD_AWS_CREDENTIALS_ACCESSKEY}
+      secretKey: ${CLOUD_AWS_CREDENTIALS_SECRETKEY}
+
+social:
+  kakao:
+    client-id: ${KAKAO_CLIENT_ID}
+    redirect-uri: ${KAKAO_REDIRECT_URI}
+
+  naver:
+    client-id: ${NAVER_CLIENT_ID}
+    redirect-uri: ${NAVER_REDIRECT_URI}
+    client-secret: ${NAVER_CLIENT_SECRET}

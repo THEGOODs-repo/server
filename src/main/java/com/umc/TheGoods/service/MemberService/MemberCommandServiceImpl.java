@@ -6,16 +6,15 @@ import com.umc.TheGoods.apiPayload.code.status.ErrorStatus;
 import com.umc.TheGoods.apiPayload.exception.handler.MemberHandler;
 import com.umc.TheGoods.config.MailConfig;
 import com.umc.TheGoods.converter.member.MemberConverter;
+import com.umc.TheGoods.domain.images.ProfileImg;
 import com.umc.TheGoods.domain.item.Category;
 import com.umc.TheGoods.domain.mapping.member.MemberCategory;
 import com.umc.TheGoods.domain.mapping.member.MemberTerm;
 import com.umc.TheGoods.domain.member.Auth;
 import com.umc.TheGoods.domain.member.Member;
 import com.umc.TheGoods.domain.member.Term;
-import com.umc.TheGoods.repository.member.AuthRepository;
-import com.umc.TheGoods.repository.member.CategoryRepository;
-import com.umc.TheGoods.repository.member.MemberRepository;
-import com.umc.TheGoods.repository.member.TermRepository;
+import com.umc.TheGoods.repository.member.*;
+import com.umc.TheGoods.service.UtilService;
 import com.umc.TheGoods.web.dto.member.KakaoProfile;
 import com.umc.TheGoods.web.dto.member.MemberRequestDTO;
 import com.umc.TheGoods.web.dto.member.NaverProfile;
@@ -33,6 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -53,10 +53,28 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     private final TermRepository termRepository;
     private final AuthRepository authRepository;
     private final MailConfig mailConfig;
+    private final ProfileImgRepository profileImgRepository;
+    private final UtilService utilService;
 
     @Value("${jwt.token.secret}")
     private String key; // 토큰 만들어내는 key값
     private int expiredMs = 1000 * 60 * 60 * 24 * 5;// 토큰 만료 시간 1일
+
+    @Value("${social.kakao.client-id}")
+    private String kakao_client_id;
+
+    @Value("${social.kakao.redirect-uri}")
+    private String kakao_redirect_uri;
+
+    @Value("${social.naver.client-id}")
+    private String naver_client_id;
+
+    @Value("${social.naver.redirect-uri}")
+    private String naver_redirect_uri;
+
+    @Value("${social.naver.client-secret}")
+    private String naver_client_secret;
+
 
     /**
      * 회원가입 api
@@ -310,6 +328,30 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     }
 
     @Override
+    public String emailAuthCreateJWT(MemberRequestDTO.EmailAuthConfirmDTO request) {
+
+        Member member = memberRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        List<String> roles = new ArrayList<>();
+        roles.add("ROLE_USER");
+
+        return createJwt(member.getId(), member.getNickname(), expiredMs, key, roles);
+    }
+
+    @Override
+    @Transactional
+    public Boolean updatePassword(MemberRequestDTO.PasswordUpdateDTO request, Member member) {
+        boolean updatePassword = true;
+
+        Member update = MemberConverter.toUpdatePassword(member, encoder.encode(request.getPassword()));
+
+        memberRepository.save(update);
+
+        return updatePassword;
+    }
+
+    @Override
     @Transactional
     public String kakaoAuth(String code) {
 
@@ -325,8 +367,8 @@ public class MemberCommandServiceImpl implements MemberCommandService {
         //HttpBody 객체 생성
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("grant_type", "authorization_code");
-        params.add("client_id", "49ff7dc7f5309c49f75ac2a087ffe91e");
-        params.add("redirect_uri", "https://dev.the-goods.store/api/members/kakao/callback");
+        params.add("client_id", kakao_client_id);
+        params.add("redirect_uri", kakao_redirect_uri);
         params.add("code", code);
         //params.add("client_secret","");
 
@@ -413,9 +455,9 @@ public class MemberCommandServiceImpl implements MemberCommandService {
         //HttpBody 객체 생성
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("grant_type", "authorization_code");
-        params.add("client_id", "t6q4Bn70dY7Kli7hS58P");
-        params.add("redirect_uri", "https://dev.the-goods.store/api/members/naver/callback");
-        params.add("client_secret", "1uPpEHHTBF");
+        params.add("client_id", naver_client_id);
+        params.add("redirect_uri", naver_redirect_uri);
+        params.add("client_secret", naver_client_secret);
         params.add("code", code);
         params.add("state", state);
 
@@ -485,6 +527,27 @@ public class MemberCommandServiceImpl implements MemberCommandService {
         return phone + naverProfile.getResponse().email;
     }
 
+    @Override
+    @Transactional
+    public Member profileModify(MultipartFile profile, String nickname, String introduce, Member member) {
+
+        Optional<ProfileImg> older = profileImgRepository.findByMember_Id(member.getId());
+        if (older.isPresent()) {
+            profileImgRepository.delete(older.orElseThrow());
+        }
+
+        String profileUrl = utilService.uploadS3Img("member", profile);
+
+        ProfileImg profileImg = MemberConverter.toProfileImg(profileUrl, member);
+        profileImgRepository.save(profileImg);
+
+        Member update = MemberConverter.toUpdateProfile(member, profileImg, nickname, introduce);
+        memberRepository.save(update);
+
+
+        return member;
+    }
+
     /**
      * 카테고리 validator
      */
@@ -493,5 +556,9 @@ public class MemberCommandServiceImpl implements MemberCommandService {
         return categoryRepository.existsById(categoryId);
     }
 
+    @Override
+    public boolean existMemberById(Long memberId) {
+        return memberRepository.existsById(memberId);
+    }
 }
 
