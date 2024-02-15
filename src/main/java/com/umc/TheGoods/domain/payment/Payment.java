@@ -26,7 +26,7 @@ public class Payment extends BaseDateTimeEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
-    private Member buyer;
+    private Member member;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "orders_id")
