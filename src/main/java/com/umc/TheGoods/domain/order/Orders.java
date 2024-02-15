@@ -2,6 +2,7 @@ package com.umc.TheGoods.domain.order;
 
 import com.umc.TheGoods.domain.common.BaseDateTimeEntity;
 import com.umc.TheGoods.domain.member.Member;
+import com.umc.TheGoods.domain.payment.Payment;
 import com.umc.TheGoods.domain.types.PayType;
 import lombok.*;
 
@@ -21,7 +22,8 @@ public class Orders extends BaseDateTimeEntity {
     @Column(name = "orders_id")
     private Long id;
 
-    private String orderUid;    // 주문 고유 번호
+    @OneToOne(mappedBy = "orders", cascade = CascadeType.ALL)
+    private Payment payment;
 
     @Column(nullable = false, length = 30)
     private String name;
