@@ -5,6 +5,8 @@ import com.siot.IamportRestClient.exception.IamportResponseException;
 import com.siot.IamportRestClient.response.IamportResponse;
 import com.siot.IamportRestClient.response.Payment;
 import com.umc.TheGoods.web.dto.payment.PaymentRequest;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -40,6 +42,11 @@ public class PaymentController {
     }
 
     @PostMapping("/")
+    @Operation(summary = "결제 승인 API", description = "포트원으로 요청된 결제 요청에 대한 응답입니다. \n\n")
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON404", description = "Fail, 결제에 실패하였습니다.")
+    })
     public IamportResponse<Payment> paymentByImpUid(@RequestBody PaymentRequest request) throws
             IamportResponseException,
             IOException {
