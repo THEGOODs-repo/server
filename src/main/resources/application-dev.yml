@@ -32,6 +32,5 @@ social:
     client-secret: ${NAVER_CLIENT_SECRET}
 
 iamport:
-  api:
-    key: ${IAMPORT_KEY}
-    secret: ${IAMPORT_SECRET}
+  key: ${IAMPORT_KEY}
+  secret: ${IAMPORT_SECRET}
