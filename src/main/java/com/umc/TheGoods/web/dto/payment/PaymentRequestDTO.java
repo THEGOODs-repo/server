@@ -19,7 +19,7 @@ public class PaymentRequestDTO {
     private String orderUid;
     private String itemName;
     private String buyerName;
-    private Long paymentTotalPrice;
+    private Long amount;
     private String buyerEmail;
     private String buyerAddress;
 }
