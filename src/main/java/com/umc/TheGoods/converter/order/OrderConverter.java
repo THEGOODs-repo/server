@@ -179,7 +179,7 @@ public class OrderConverter {
 
     // optionString 생성 메소드
     public static String toOptionString(OrderItem orderItem) {
-        Boolean hasOption = (orderItem.getItem().getPrice() == null); // 옵션 유무
+        Boolean hasOption = (!orderItem.getItem().getItemOptionList().isEmpty()); // 옵션 유무
 
         Integer orderDetailCount = orderItem.getOrderDetailList().size();
 
