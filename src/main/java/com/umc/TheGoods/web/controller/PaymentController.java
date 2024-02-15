@@ -24,9 +24,7 @@ import java.io.IOException;
 @RestController
 @RequestMapping("/api/payment")
 public class PaymentController {
-
-//    private final PaymentServiceImpl paymentService;
-
+    
     private IamportClient iamportClient;
 
     @Value("${iamport.key}")
@@ -38,11 +36,6 @@ public class PaymentController {
     public PaymentController() {
         this.iamportClient = new IamportClient(restApiKey, restApiSecret);
     }
-
-//    @PostConstruct
-//    public void init() {
-//        this.iamportClient = new IamportClient(restApiKey, restApiSecret);
-//    }
 
     @PostMapping("/")
     @Operation(summary = "결제 승인 API", description = "포트원으로 요청된 결제 요청에 대한 응답입니다. \n\n" +
@@ -57,16 +50,6 @@ public class PaymentController {
         log.info("Payment Request : {}", request.toString());
         return iamportClient.paymentByImpUid(request.impUid());
     }
-
-//    @Autowired
-//    public PaymentController(PaymentServiceImpl paymentService) {
-//        this.paymentService = paymentService;
-//    }
-//
-//    @PostMapping("/")
-//    public ResponseEntity<String> processPayment(@RequestBody PaymentRequestDTO requestDto) {
-//        return paymentService.processPayment(requestDto);
-//    }
 
     /*
     private final IamportClient iamportClient;
