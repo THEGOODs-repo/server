@@ -38,6 +38,8 @@ jobs:
           social.naver.client-id: ${{ secrets.NAVER_CLIENT_ID }}
           social.naver.redirect-uri: ${{ secrets.NAVER_REDIRECT_URI }}
           social.naver.client-secret: ${{ secrets.NAVER_CLIENT_SECRET }}
+          iamport.api.key: ${{ secrets.IAMPORT_KEY }}
+          iamport.api.secret: ${{ secrets.IAMPORT_SECRET }}
 
 
 

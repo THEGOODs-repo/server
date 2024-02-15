@@ -30,3 +30,8 @@ social:
     client-id: ${NAVER_CLIENT_ID}
     redirect-uri: ${NAVER_REDIRECT_URI}
     client-secret: ${NAVER_CLIENT_SECRET}
+
+iamport:
+  api:
+    key: ${IAMPORT_KEY}
+    secret: ${IAMPORT_SECRET}

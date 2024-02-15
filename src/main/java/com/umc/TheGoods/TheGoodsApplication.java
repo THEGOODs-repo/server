@@ -11,5 +11,4 @@ public class TheGoodsApplication {
     public static void main(String[] args) {
         SpringApplication.run(com.umc.TheGoods.TheGoodsApplication.class, args);
     }
-
 }
