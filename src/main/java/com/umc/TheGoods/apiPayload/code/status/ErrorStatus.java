@@ -24,6 +24,7 @@ public enum ErrorStatus implements BaseErrorCode {
     ITEM_VIEW_ERROR(HttpStatus.BAD_REQUEST, "ITEM4005", "비회원 상품 조회 권한이 없습니다."),
     ITEM_SEARCH_ERROR(HttpStatus.BAD_REQUEST, "ITEM4006", "잘못된 검색어가 입력 되었습니다. 검색 조건은 하나만 가능합니다."),
     ITEM_NOT_SELLER(HttpStatus.BAD_REQUEST, "ITEM4007", "회원이 판매자가 아닙니다."),
+    MAIN_ITEM_SEARCH_TYPE_ERROR(HttpStatus.BAD_REQUEST, "ITEM4008", "잘못된 메인 상품 조회 타입 입니다."),
 
     // 주문 관련 에러
     LACK_OF_STOCK(HttpStatus.BAD_REQUEST, "ORDER4001", "재고가 부족합니다."),

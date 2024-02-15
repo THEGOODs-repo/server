@@ -160,4 +160,24 @@ public class ItemRestController {
 
         return ApiResponse.onSuccess(ItemConverter.itemPreviewListDTO(itemList));
     }
+
+
+    @GetMapping("/item/main")
+    @Operation(summary = "신상품/인기상품/마감임박상품 조회 API", description = "신상품/인기상품/마감임박상품 조회 API입니다. \n\n" +
+            "page : 상품 조회 페이지 번호 \n\n type : 조회 타입 (신상품/인기상품/마감임박상품)")
+    @Parameters(value = {
+            @Parameter(name = "page", description = "페이지 번호, 1 이상의 숫자를 입력해주세요."),
+            @Parameter(name = "type", description = "조회 타입으로, new, popular, last 중 하나의 값을 입력해주세요.")
+    })
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공")
+    })
+    public ApiResponse<ItemResponseDTO.ItemPreviewListDTO> getMainItem(
+            @RequestParam(name = "type") String type,
+            @CheckPage @RequestParam(name = "page") Integer page
+    ) {
+        Page<Item> itemList = itemQueryService.getMainItem(type, page - 1);
+
+        return ApiResponse.onSuccess(ItemConverter.itemPreviewListDTO(itemList));
+    }
 }

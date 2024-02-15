@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public interface ItemRepository extends JpaRepository<Item, Long> {
@@ -20,4 +21,6 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
     Page<Item> findAllByItemTagListTagIn(List<Tag> tags, PageRequest pageRequest);
 
     //Page<Item> findAllByItemTagListIn(List<ItemTag> itemTagList, PageRequest pageRequest);
+
+    Page<Item> findAllByEndDateGreaterThanEqual(LocalDate localDate, PageRequest pageRequest);
 }
