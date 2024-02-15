@@ -6,7 +6,6 @@ import com.umc.TheGoods.domain.order.OrderItem;
 import com.umc.TheGoods.domain.order.Orders;
 import com.umc.TheGoods.web.dto.payment.PaymentRequestDTO;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -83,29 +82,6 @@ public class Payment extends BaseDateTimeEntity {
 
         // 예시: 결제 금액이 주문 총액과 일치하는지 확인
         return paymentRequest.getAmount().equals(getTotalPrice());
-    }
-
-    @Builder
-    public Payment(Long amount, PaymentStatus status) {
-        this.amount = amount;
-        this.status = status;
-    }
-
-    public void changePaymentBySuccess(PaymentStatus status, String paymentUid) {
-        this.status = status;
-        this.paymentUid = paymentUid;
-    }
-
-    public void setBuyer(Member buyer) {
-        this.buyer = buyer;
-    }
-
-    public void setPaymentMethod(String paymentMethod) {
-        this.paymentMethod = paymentMethod;
-    }
-
-    public void setPgProvider(String pgProvider) {
-        this.pgProvider = pgProvider;
     }
 
 }
