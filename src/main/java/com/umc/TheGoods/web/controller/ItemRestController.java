@@ -106,7 +106,7 @@ public class ItemRestController {
         return ApiResponse.onSuccess(ItemConverter.toUpdateItemResultDTO(item));
     }
 
-    @GetMapping("/seller/item/")
+    @GetMapping("/seller/item")
     @Operation(summary = "나의 판매 상품 조회 API", description = "판매중인 상품 조회를 위한 API이며, request parameter로 입력 값을 받습니다. " +
             "page : 상품 조회 페이지 번호")
     @Parameters(value = {
@@ -128,8 +128,8 @@ public class ItemRestController {
         return ApiResponse.onSuccess(ItemConverter.itemPreviewListDTO(itemList));
     }
 
-    @GetMapping("/similar/item/")
-    @Operation(summary = "방금 본 상품과 유사한 상품 추천 API", description = "상품 검색을 위한 API이며, request parameter로 입력 값을 받습니다. \n\n" +
+    @GetMapping("/similar/item")
+    @Operation(summary = "방금 본 상품과 유사한 상품 추천 API", description = "직전에 조회한 상품과 동일한 카테고리를 가진 상품을 조회하는 API이며, request parameter로 입력 값을 받습니다. \n\n" +
             "page : 상품 조회 페이지 번호 \n\n itemId : 상품 id(Long)")
     @Parameters(value = {
             @Parameter(name = "page", description = "페이지 번호, 1 이상의 숫자를 입력해주세요."),
@@ -154,8 +154,23 @@ public class ItemRestController {
         return ApiResponse.onSuccess(ItemConverter.itemPreviewListDTO(itemPage));
     }
 
+    @GetMapping("/count/tags/item")
+    @Operation(summary = "태그가 많이 달려있는 상품 추천 API", description = "태그가 많이 달려있는 상품을 조회하는 API이며, request parameter로 입력 값을 받습니다. \n\n" +
+            "page : 상품 조회 페이지 번호")
+    @Parameters(value = {
+            @Parameter(name = "page", description = "페이지 번호, 1 이상의 숫자를 입력해주세요."),
+    })
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공")
+    })
+    public ApiResponse<ItemResponseDTO.ItemPreviewListDTO> tagCountItemList(@CheckPage @RequestParam Integer page) {
 
-    @GetMapping("/search/item/")
+        Page<Item> itemPage = itemQueryService.getItemByTagCount(page - 1);
+
+        return ApiResponse.onSuccess(ItemConverter.itemPreviewListDTO(itemPage));
+    }
+
+    @GetMapping("/search/item")
     @Operation(summary = "판매 상품 검색 API", description = "상품 검색을 위한 API이며, request parameter로 입력 값을 받습니다. \n\n" +
             "page : 상품 조회 페이지 번호 \n\n itemName : 상품 이름(String) \n\n category : 카테고리 이름(String) \n\n sellerName : 판매자 이름(String) \n\n tagNames : 태그 이름(List(String))")
     @Parameters(value = {
