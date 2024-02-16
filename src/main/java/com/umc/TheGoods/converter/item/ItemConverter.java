@@ -153,6 +153,7 @@ public class ItemConverter {
                 .dibsCount(0L)
                 .viewCount(0L)
                 .salesCount(0L)
+                .tagsCount(0)
                 .status(ItemStatus.ONSALE)
                 .price(request.getPrice())
                 .stock(request.getStock())
