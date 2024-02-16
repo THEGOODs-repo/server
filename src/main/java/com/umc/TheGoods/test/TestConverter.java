@@ -4,6 +4,7 @@ import com.umc.TheGoods.domain.enums.Gender;
 import com.umc.TheGoods.domain.enums.ItemStatus;
 import com.umc.TheGoods.domain.enums.MemberRole;
 import com.umc.TheGoods.domain.images.ItemImg;
+import com.umc.TheGoods.domain.images.ProfileImg;
 import com.umc.TheGoods.domain.item.Item;
 import com.umc.TheGoods.domain.item.Tag;
 import com.umc.TheGoods.domain.mapping.Tag.CategoryTag;
@@ -35,6 +36,12 @@ public class TestConverter {
                 .itemList(new ArrayList<>())
                 .build();
 
+    }
+
+    public static ProfileImg toProfileImg(String imgUrl) {
+        return ProfileImg.builder()
+                .url(imgUrl)
+                .build();
     }
 
     public static Item toTestItem(TestRequestDTO.setItemDTO request) {
@@ -80,6 +87,7 @@ public class TestConverter {
                 .dibsCount(request.dibsCount)
                 .viewCount(request.viewCount)
                 .salesCount(request.salesCount)
+                .tagsCount(0)
                 .status(ItemStatus.ONSALE)
                 .price(request.getPrice())
                 .stock(request.getStock())

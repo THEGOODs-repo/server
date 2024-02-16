@@ -5,6 +5,7 @@ import com.umc.TheGoods.apiPayload.exception.handler.MemberHandler;
 import com.umc.TheGoods.converter.item.ItemOptionConverter;
 import com.umc.TheGoods.converter.member.MemberConverter;
 import com.umc.TheGoods.domain.images.ItemImg;
+import com.umc.TheGoods.domain.images.ProfileImg;
 import com.umc.TheGoods.domain.item.Category;
 import com.umc.TheGoods.domain.item.Item;
 import com.umc.TheGoods.domain.item.ItemOption;
@@ -33,6 +34,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -57,11 +59,12 @@ public class TestCommandServiceImpl implements TestCommandService {
 
     @Override
     public Member addMember(TestRequestDTO.setMemberDTO request, MultipartFile multipartFile) {
-        // userNAme 중복 체크
+        // userName 중복 체크
         memberRepository.findByNickname(request.getNickname())
                 .ifPresent(user -> {
                     throw new MemberHandler(ErrorStatus.MEMBER_NICKNAME_DUPLICATED);
                 });
+
 
         //저장
         Member member = TestConverter.toTestMember(request, encoder);
@@ -91,6 +94,10 @@ public class TestCommandServiceImpl implements TestCommandService {
         });
 
         String profileUrl = utilService.uploadS3Img("member", multipartFile);
+        ProfileImg profileImg = TestConverter.toProfileImg(profileUrl);
+        profileImg.setMember(member);
+
+        profileImgRepository.save(profileImg);
 
         memberRepository.save(member);
         return member;
@@ -108,7 +115,6 @@ public class TestCommandServiceImpl implements TestCommandService {
         newItem.setCategory(category);
 
         Item savedItem = itemRepository.save(newItem);
-
 
         // 태그 생성 및 연관관계 매핑
         if (request.getItemTag() != null) {
@@ -130,20 +136,34 @@ public class TestCommandServiceImpl implements TestCommandService {
                     categoryTagRepository.save(categoryTag);
 
                 } else { // 기존에 존재하는 태그인 경우
+                    // itemTag 설정
                     Tag tag = tagRepository.findFirstByNameOrderByCreatedAtAsc(tagName).get();
                     ItemTag itemTag = TestConverter.toItemTag();
                     itemTag.setItem(savedItem);
                     itemTag.setTag(tag);
 
                     itemTagRepository.save(itemTag);
+
+                    // categoryTag 설정
+                    Optional<CategoryTag> categoryTag = categoryTagRepository.findByCategoryAndTag(category, tag);
+                    if (categoryTag.isEmpty()) {// 카테고리-태그 매핑 존재하지 않는 경우
+                        // 새로운 카테고리-태그 매핑 생성
+                        CategoryTag newCategoryTag = TestConverter.toCategoryTag();
+                        newCategoryTag.setTag(tag);
+                        newCategoryTag.setCategory(category);
+
+                        categoryTagRepository.save(newCategoryTag);
+                    }
                 }
             });
+
+            savedItem.updateTagCounts(request.getItemTag().size());
         }
 
         // 이미지 등록 및 연관관계 매핑
         // 썸네일 이미지
-        String thumnnailUil = utilService.uploadS3Img("item", itemThumbnail);
-        ItemImg thumbnailItemImg = TestConverter.toItemImg(thumnnailUil, true);
+        String thumbnailUrl = utilService.uploadS3Img("item", itemThumbnail);
+        ItemImg thumbnailItemImg = TestConverter.toItemImg(thumbnailUrl, true);
         thumbnailItemImg.setItem(savedItem);
         itemImgRepository.save(thumbnailItemImg);
 
