@@ -13,19 +13,18 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.PostConstruct;
 import java.io.IOException;
 
 @Slf4j
 @Tag(name = "Payment", description = "결제(포트원) 관련 API")
 @Validated
 @RestController
-@RequestMapping("/api/payment")
+//@RequestMapping("/api")
 public class PaymentController {
-    
-    private IamportClient iamportClient;
+
 
     @Value("${iamport.key}")
     private String restApiKey;
@@ -33,13 +32,20 @@ public class PaymentController {
     @Value("${iamport.secret}")
     private String restApiSecret;
 
-    public PaymentController() {
+    private IamportClient iamportClient;
+
+//    public PaymentController() {
+//        this.iamportClient = new IamportClient(restApiKey, restApiSecret);
+//    }
+
+    @PostConstruct
+    public void init() {
         this.iamportClient = new IamportClient(restApiKey, restApiSecret);
     }
 
-    @PostMapping("/")
-    @Operation(summary = "결제 승인 API", description = "포트원으로 요청된 결제 요청에 대한 응답입니다. \n\n" +
-            "파라메터로 imp_key와 imp_secret 값이 필요합니다. \n\n")
+    @PostMapping("/api/v1/payments")
+    @Operation(summary = "결제 승인 API", description = "요청된 결제 요청에 대한 포트원 결제 응답입니다. \n\n" +
+            "요청 본문에는 결제에 필요한 객체 정보가 JSON 형식으로 포함되어야 합니다. \n\n")
     @ApiResponses(value = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON404", description = "Fail, 결제에 실패하였습니다.")
