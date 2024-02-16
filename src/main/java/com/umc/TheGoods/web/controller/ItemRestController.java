@@ -128,6 +128,33 @@ public class ItemRestController {
         return ApiResponse.onSuccess(ItemConverter.itemPreviewListDTO(itemList));
     }
 
+    @GetMapping("/similar/item/")
+    @Operation(summary = "방금 본 상품과 유사한 상품 추천 API", description = "상품 검색을 위한 API이며, request parameter로 입력 값을 받습니다. \n\n" +
+            "page : 상품 조회 페이지 번호 \n\n itemId : 상품 id(Long)")
+    @Parameters(value = {
+            @Parameter(name = "page", description = "페이지 번호, 1 이상의 숫자를 입력해주세요."),
+            @Parameter(name = "itemId", description = "상품 아이디, 회원인 경우 입력할 필요가 없으며, 비회원인 경우 필수로 입력해주세요.")
+    })
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공")
+    })
+    public ApiResponse<ItemResponseDTO.ItemPreviewListDTO> similarItemList(@CheckPage @RequestParam Integer page,
+                                                                           @RequestParam(name = "itemId", required = false) Long itemId,
+                                                                           Authentication authentication) {
+        Member member;
+
+        if (authentication == null) {
+            member = memberQueryService.findMemberByNickname("no_login_user").orElseThrow(() -> new ItemHandler(ErrorStatus.ITEM_VIEW_ERROR));
+        } else {
+            MemberDetail memberDetail = (MemberDetail) authentication.getPrincipal();
+            member = memberQueryService.findMemberById(memberDetail.getMemberId()).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        }
+        Page<Item> itemPage = itemQueryService.getSimilarItemList(itemId, member, page - 1);
+
+        return ApiResponse.onSuccess(ItemConverter.itemPreviewListDTO(itemPage));
+    }
+
+
     @GetMapping("/search/item/")
     @Operation(summary = "판매 상품 검색 API", description = "상품 검색을 위한 API이며, request parameter로 입력 값을 받습니다. \n\n" +
             "page : 상품 조회 페이지 번호 \n\n itemName : 상품 이름(String) \n\n category : 카테고리 이름(String) \n\n sellerName : 판매자 이름(String) \n\n tagNames : 태그 이름(List(String))")
