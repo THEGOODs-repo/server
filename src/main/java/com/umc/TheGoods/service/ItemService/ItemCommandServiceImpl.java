@@ -62,6 +62,8 @@ public class ItemCommandServiceImpl implements ItemCommandService {
                     return tagRepository.findById(tag).orElseThrow(() -> new TagHandler(ErrorStatus.TAG_NOT_FOUND));
                 }).collect(Collectors.toList());
 
+        newItem.updateTagCounts(tagList.size());
+
         List<ItemTag> itemTagList = ItemTagConverter.toItemTagList(tagList);
 
         itemTagList.forEach(itemTag -> {
@@ -133,6 +135,8 @@ public class ItemCommandServiceImpl implements ItemCommandService {
                 .map(tag -> {
                     return tagRepository.findById(tag).orElseThrow(() -> new TagHandler(ErrorStatus.TAG_NOT_FOUND));
                 }).collect(Collectors.toList());
+
+        item.updateTagCounts(newTagList.size());
 
         List<ItemTag> newItemTagList = ItemTagConverter.toItemTagList(newTagList);
 
