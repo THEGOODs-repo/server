@@ -10,12 +10,14 @@ import com.umc.TheGoods.domain.item.Category;
 import com.umc.TheGoods.domain.item.Item;
 import com.umc.TheGoods.domain.item.ItemOption;
 import com.umc.TheGoods.domain.item.Tag;
+import com.umc.TheGoods.domain.mapping.ViewSearch.ItemView;
 import com.umc.TheGoods.domain.mapping.ViewSearch.TagSearch;
 import com.umc.TheGoods.domain.member.Member;
 import com.umc.TheGoods.repository.TagRepository;
 import com.umc.TheGoods.repository.TagSearchRepository;
 import com.umc.TheGoods.repository.item.ItemOptionRepository;
 import com.umc.TheGoods.repository.item.ItemRepository;
+import com.umc.TheGoods.repository.item.ItemViewRepository;
 import com.umc.TheGoods.repository.member.CategoryRepository;
 import com.umc.TheGoods.repository.member.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -39,6 +41,7 @@ public class ItemQueryServiceImpl implements ItemQueryService {
 
     private final ItemRepository itemRepository;
     private final ItemOptionRepository itemOptionRepository;
+    private final ItemViewRepository itemViewRepository;
     private final TagSearchRepository tagSearchRepository;
     private final MemberRepository memberRepository;
     private final TagRepository tagRepository;
@@ -73,6 +76,30 @@ public class ItemQueryServiceImpl implements ItemQueryService {
 
     @Override
     @Transactional
+    public Page<Item> getSimilarItemList(Long itemId, Member member, Integer page) {
+        Page<Item> similarItemList = null;
+
+        if (!member.getNickname().equals("no_login_user")) {
+            List<ItemView> lastView = itemViewRepository.findAllByMemberIdOrderByCreatedAtDesc(member.getId());
+            if (!lastView.isEmpty()) {
+                Item viewedItem = itemRepository.findById(lastView.get(0).getItem().getId()).orElseThrow(() -> new ItemHandler(ErrorStatus.ITEM_NOT_FOUND));
+                Category category = viewedItem.getCategory();
+                similarItemList = itemRepository.findAllByCategoryName(category.getName(), PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "viewCount")));
+            } else {
+                //추후 수정
+                similarItemList = itemRepository.findAllByCategoryName("창작", PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "viewCount")));
+            }
+        } else {
+            Item viewedItem = itemRepository.findById(itemId).orElseThrow(() -> new ItemHandler(ErrorStatus.ITEM_NOT_FOUND));
+            Category category = viewedItem.getCategory();
+            similarItemList = itemRepository.findAllByCategoryName(category.getName(), PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "viewCount")));
+        }
+
+        return similarItemList;
+    }
+
+    @Override
+    @Transactional
     public Page<Item> searchItem(Member member, String itemName, String categoryName, String sellerName, List<String> tagName, Integer page) {
         Page<Item> itemPage = null;
         Integer searchCondition = 0;
@@ -83,7 +110,7 @@ public class ItemQueryServiceImpl implements ItemQueryService {
         }
         if (categoryName != null) {
             Category category = categoryRepository.findByName(categoryName).orElseThrow(() -> new CategoryHandler(ErrorStatus.CATEGORY_NOT_FOUND));
-            itemPage = itemRepository.findAllByCategoryName(categoryName, PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "createdAt")));
+            itemPage = itemRepository.findAllByCategoryName(category.getName(), PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "createdAt")));
             searchCondition++;
         }
         if (sellerName != null) {
