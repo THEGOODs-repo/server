@@ -27,6 +27,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -43,6 +44,8 @@ public class ItemQueryServiceImpl implements ItemQueryService {
     private final MemberRepository memberRepository;
     private final TagRepository tagRepository;
     private final CategoryRepository categoryRepository;
+
+    Integer pageSize = 10;
 
     @Override
     public Optional<Item> findItemById(Long id) {
@@ -126,6 +129,22 @@ public class ItemQueryServiceImpl implements ItemQueryService {
         }
         if (searchCondition > 1) {
             throw new ItemHandler(ErrorStatus.ITEM_SEARCH_ERROR);
+        }
+
+        return itemPage;
+    }
+
+    @Override
+    public Page<Item> getMainItem(String type, Integer pageIdx) {
+        Page<Item> itemPage = null;
+        if (type.equals("new")) {
+            itemPage = itemRepository.findAll(PageRequest.of(pageIdx, pageSize, Sort.by(Sort.Direction.DESC, "createdAt")));
+        } else if (type.equals("popular")) {
+            itemPage = itemRepository.findAll(PageRequest.of(pageIdx, pageSize, Sort.by(Sort.Direction.DESC, "viewCount")));
+        } else if (type.equals("last")) {
+            itemPage = itemRepository.findAllByEndDateGreaterThanEqual(LocalDate.now(), PageRequest.of(pageIdx, pageSize, Sort.by(Sort.Direction.ASC, "endDate")));
+        } else {
+            throw new ItemHandler(ErrorStatus.MAIN_ITEM_SEARCH_TYPE_ERROR);
         }
 
         return itemPage;
