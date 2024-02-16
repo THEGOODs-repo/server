@@ -17,6 +17,7 @@ import com.umc.TheGoods.repository.TagRepository;
 import com.umc.TheGoods.repository.TagSearchRepository;
 import com.umc.TheGoods.repository.item.ItemOptionRepository;
 import com.umc.TheGoods.repository.item.ItemRepository;
+import com.umc.TheGoods.repository.item.ItemTagRepository;
 import com.umc.TheGoods.repository.item.ItemViewRepository;
 import com.umc.TheGoods.repository.member.CategoryRepository;
 import com.umc.TheGoods.repository.member.MemberRepository;
@@ -43,6 +44,7 @@ public class ItemQueryServiceImpl implements ItemQueryService {
     private final ItemRepository itemRepository;
     private final ItemOptionRepository itemOptionRepository;
     private final ItemViewRepository itemViewRepository;
+    private final ItemTagRepository itemTagRepository;
     private final TagSearchRepository tagSearchRepository;
     private final MemberRepository memberRepository;
     private final TagRepository tagRepository;
@@ -99,6 +101,26 @@ public class ItemQueryServiceImpl implements ItemQueryService {
         }
 
         return similarItemList;
+    }
+
+    @Override
+    @Transactional
+    public Page<Item> getItemByTagCount(Integer page) {
+//        List<ConsultResultDTO> consultResults = itemTagRepository.countTagsByTagId();
+//
+//        List<Item> itemList = consultResults.stream()
+//                .map(consultResult -> itemRepository.findById(consultResult.getItemId()).orElseThrow(() -> new ItemHandler(ErrorStatus.ITEM_NOT_FOUND)))
+//                .collect(Collectors.toList());
+//
+//        PageRequest pageRequest = PageRequest.of(page, 10);
+//        int start = (int) pageRequest.getOffset();
+//        int end = Math.min((start + pageRequest.getPageSize()), itemList.size());
+//        Page<Item> itemPage = new PageImpl<>(itemList.subList(start, end), pageRequest, itemList.size());
+
+        Page<Item> itemPage = null;
+        itemPage = itemRepository.findAll(PageRequest.of(page, pageSize, Sort.by(Sort.Direction.DESC, "tagsCount")));
+
+        return itemPage;
     }
 
     @Override

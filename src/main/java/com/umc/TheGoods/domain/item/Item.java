@@ -74,6 +74,9 @@ public class Item extends BaseDateTimeEntity {
     @Column(nullable = false)
     private Long salesCount;
 
+    @Column
+    private Integer tagsCount;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
@@ -122,6 +125,11 @@ public class Item extends BaseDateTimeEntity {
 
     public Item updateViewCounts() {
         this.viewCount += 1;
+        return this;
+    }
+
+    public Item updateTagCounts(int value) {
+        this.tagsCount = value;
         return this;
     }
 
