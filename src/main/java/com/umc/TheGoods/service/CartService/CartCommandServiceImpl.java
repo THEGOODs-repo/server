@@ -17,7 +17,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -136,27 +138,32 @@ public class CartCommandServiceImpl implements CartCommandService {
     }
 
     @Override
-    public CartDetail updateCart(CartRequestDTO.cartUpdateDTO request, Member member) {
+    public List<CartDetail> updateCart(CartRequestDTO.cartUpdateDTOList request, Member member) {
         // cartDetail 존재 여부 검증은 annotation에서 진행
-        CartDetail cartDetail = cartDetailRepository.findById(request.getCartDetailId()).get();
 
-        // 해당 cart 내역을 수정할 권한 있는지 검증
-        if (!cartDetail.getCart().getMember().equals(member)) {
-            throw new OrderHandler(ErrorStatus.NOT_CART_OWNER);
-        }
+        List<CartDetail> cartDetailList = request.getCartUpdateDTOList().stream().map(cartUpdateDTO -> {
+            CartDetail cartDetail = cartDetailRepository.findById(cartUpdateDTO.getCartDetailId()).get();
 
-        // 재고 수량과 비교
-        if (!cartDetail.getCart().getItem().getItemOptionList().isEmpty()) { // 상품 옵션이 있는 경우
-            if (request.getAmount() > cartDetail.getItemOption().getStock()) {
-                throw new OrderHandler(ErrorStatus.LACK_OF_STOCK);
+            // 해당 cart 내역을 수정할 권한 있는지 검증
+            if (!cartDetail.getCart().getMember().equals(member)) {
+                throw new OrderHandler(ErrorStatus.NOT_CART_OWNER);
             }
-        } else {
-            if (request.getAmount() > cartDetail.getCart().getItem().getStock()) {
-                throw new OrderHandler(ErrorStatus.LACK_OF_STOCK);
-            }
-        }
 
-        return cartDetail.updateAmount(request.getAmount());
+            // 재고 수량과 비교
+            if (!cartDetail.getCart().getItem().getItemOptionList().isEmpty()) { // 상품 옵션이 있는 경우
+                if (cartUpdateDTO.getAmount() > cartDetail.getItemOption().getStock()) {
+                    throw new OrderHandler(ErrorStatus.LACK_OF_STOCK);
+                }
+            } else {
+                if (cartUpdateDTO.getAmount() > cartDetail.getCart().getItem().getStock()) {
+                    throw new OrderHandler(ErrorStatus.LACK_OF_STOCK);
+                }
+            }
+
+            return cartDetail.updateAmount(cartUpdateDTO.getAmount());
+
+        }).collect(Collectors.toList());
+
+        return cartDetailList;
     }
-
 }

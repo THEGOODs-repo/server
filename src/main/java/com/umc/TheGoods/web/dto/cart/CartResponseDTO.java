@@ -35,6 +35,7 @@ public class CartResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class cartDetailViewDTO {
+        Long cartDetailId;
         Long optionId;
         String optionName;
         Long price;

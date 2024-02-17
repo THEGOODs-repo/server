@@ -41,6 +41,13 @@ public class CartRequestDTO {
     }
 
     @Getter
+    public static class cartUpdateDTOList {
+        @NotNull
+        @Valid
+        List<cartUpdateDTO> cartUpdateDTOList;
+    }
+
+    @Getter
     public static class cartUpdateDTO {
         @NotNull
         @ExistCartDetail

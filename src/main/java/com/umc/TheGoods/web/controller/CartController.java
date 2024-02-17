@@ -84,7 +84,7 @@ public class CartController {
     @ApiResponses(value = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
     })
-    public ApiResponse<String> update(@RequestBody @Valid CartRequestDTO.cartUpdateDTO request,
+    public ApiResponse<String> update(@RequestBody @Valid CartRequestDTO.cartUpdateDTOList request,
                                       Authentication authentication) {
         // 비회원인 경우 처리 불가
         if (authentication == null) {
