@@ -11,6 +11,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 
 //configure 함수를 오버라이드 해서 설정할 수 있습니다
@@ -24,6 +25,8 @@ public class SpringSecurityConfig {
     @Value("${jwt.token.secret}")
     private String secretKey;
 
+    private final UrlBasedCorsConfigurationSource corsConfigurationSource;
+
     //SpringSecurity 5.5이상부터는 SecurityFilterChain을 Bean으로 등록해서 사용
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
@@ -31,7 +34,8 @@ public class SpringSecurityConfig {
         return httpSecurity
                 .httpBasic().disable()//토큰 인증 방식으로 하기 위해서 HTTP 기본 인증 비활성화
                 .csrf().disable()//CSRF 공격 방어 기능 비활성화
-                .cors().and()
+                .cors()
+                .configurationSource(corsConfigurationSource).and()
                 .authorizeRequests()
                 .antMatchers("/**").permitAll()//모든 접근 허용
                 //.antMatchers(HttpMethod.POST, "/api/members/jwt/test").authenticated()//인증 필요로 접근 막기

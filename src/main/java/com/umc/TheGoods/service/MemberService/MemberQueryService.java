@@ -11,4 +11,6 @@ public interface MemberQueryService {
     Optional<Member> findMemberByNickname(String name);
 
     Optional<ProfileImg> findProfileImgByMember(Long id);
+
+    Optional<Member> findMemberByEmail(String email);
 }

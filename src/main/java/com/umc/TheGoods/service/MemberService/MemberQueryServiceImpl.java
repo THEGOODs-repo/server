@@ -33,4 +33,9 @@ public class MemberQueryServiceImpl implements MemberQueryService {
         Optional<ProfileImg> profileImg = profileImgRepository.findByMember_Id(id);
         return profileImg;
     }
+
+    @Override
+    public Optional<Member> findMemberByEmail(String email) {
+        return memberRepository.findByEmail(email);
+    }
 }

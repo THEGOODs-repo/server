@@ -5,6 +5,7 @@ import com.umc.TheGoods.apiPayload.ApiResponse;
 import com.umc.TheGoods.apiPayload.code.status.ErrorStatus;
 import com.umc.TheGoods.apiPayload.exception.handler.MemberHandler;
 import com.umc.TheGoods.converter.member.MemberConverter;
+import com.umc.TheGoods.domain.enums.MemberRole;
 import com.umc.TheGoods.domain.images.ProfileImg;
 import com.umc.TheGoods.domain.member.Auth;
 import com.umc.TheGoods.domain.member.Member;
@@ -109,7 +110,12 @@ public class MemberController {
     public ApiResponse<MemberResponseDTO.PhoneAuthConfirmFindEmailResultDTO> phoneAuthFindEmail(@RequestBody MemberRequestDTO.PhoneAuthConfirmFindEmailDTO request) {
         String email = memberCommandService.confirmPhoneAuthFindEmail(request);
 
-        return ApiResponse.onSuccess(MemberConverter.toPhoneAuthConfirmFindEmailDTO(email));
+        Member member = memberQueryService.findMemberByEmail(email).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        ProfileImg profileImg = memberQueryService.findProfileImgByMember(member.getId()).orElseThrow(() -> new MemberHandler(ErrorStatus.PROFILEIMG_NOT_FOUND));
+
+
+        return ApiResponse.onSuccess(MemberConverter.toPhoneAuthConfirmFindEmailDTO(email,profileImg.getUrl()));
     }
 
     @PostMapping("email/auth")
@@ -214,6 +220,20 @@ public class MemberController {
 
 
         return ApiResponse.onSuccess(MemberConverter.toProfile(member.getNickname(), profileImg.getUrl()));
+    }
+
+    @PutMapping(value = "/role/update")
+    @Operation(summary = "사용자 역할 전환 api", description = "BUYER은 SELLER로 SELLER는 BUYER로 역할 변경")
+    public ApiResponse<MemberResponseDTO.RoleUpdateResultDTO> updateRole(Authentication authentication) {
+
+        MemberDetail memberDetail = (MemberDetail) authentication.getPrincipal();
+        Member member = memberQueryService.findMemberById(memberDetail.getMemberId()).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        Member update = memberCommandService.updateRole(member);
+
+
+
+        return ApiResponse.onSuccess(MemberConverter.toUpdateRole(update));
     }
 
 }

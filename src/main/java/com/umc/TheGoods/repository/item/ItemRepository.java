@@ -26,6 +26,8 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
 
     Page<Item> findAllByEndDateGreaterThanEqual(LocalDate localDate, PageRequest pageRequest);
 
+    Page<Item> findAllByStartDateLessThanEqual(LocalDate localDate, PageRequest pageRequest);
+
     @Query("SELECT i FROM Item i LEFT JOIN i.reviewList r WHERE i.category.name = :categoryName GROUP BY i.id ORDER BY COUNT(r) DESC")
     Page<Item> findAllByCategoryNameOrderByReviewListSizeDesc(@Param("categoryName") String categoryName, PageRequest pageRequest);
 

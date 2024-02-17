@@ -42,5 +42,5 @@ public interface MemberCommandService {
 
     Member profileModify(MultipartFile profile, String nickname, String introduce, Member member);
 
-
+    Member updateRole(Member member);
 }
