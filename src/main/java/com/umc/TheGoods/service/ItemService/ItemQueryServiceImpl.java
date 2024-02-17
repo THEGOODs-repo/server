@@ -111,6 +111,12 @@ public class ItemQueryServiceImpl implements ItemQueryService {
     }
 
     @Override
+    public Page<Item> getSteadySaleItemList(Integer pageIdx) {
+        LocalDate date = LocalDate.now().minusMonths(6);
+        return itemRepository.findAllByStartDateLessThanEqual(date, PageRequest.of(pageIdx, pageSize, Sort.by(Sort.Direction.DESC, "viewCount")));
+    }
+
+    @Override
     @Transactional
     public Page<Item> getItemByTagCount(Integer page) {
 //        List<ConsultResultDTO> consultResults = itemTagRepository.countTagsByTagId();

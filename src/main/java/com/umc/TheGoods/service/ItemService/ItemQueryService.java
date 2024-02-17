@@ -24,6 +24,8 @@ public interface ItemQueryService {
 
     Page<Item> getTopSaleItemList(Integer page);
 
+    Page<Item> getSteadySaleItemList(Integer page);
+
     public Page<Item> getItemByTagCount(Integer page);
 
     public Page<Item> getItemByDeliveryDate(Integer page);
