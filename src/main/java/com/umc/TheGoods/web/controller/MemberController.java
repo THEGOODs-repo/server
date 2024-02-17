@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.util.Optional;
 
 @RestController
 @Slf4j
@@ -112,10 +113,14 @@ public class MemberController {
 
         Member member = memberQueryService.findMemberByEmail(email).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
-        ProfileImg profileImg = memberQueryService.findProfileImgByMember(member.getId()).orElseThrow(() -> new MemberHandler(ErrorStatus.PROFILEIMG_NOT_FOUND));
+        Optional<ProfileImg> profileImg = memberQueryService.findProfileImgByMember(member.getId());
 
-
-        return ApiResponse.onSuccess(MemberConverter.toPhoneAuthConfirmFindEmailDTO(email,profileImg.getUrl()));
+        if(profileImg.isEmpty()){
+            return ApiResponse.onSuccess(MemberConverter.toPhoneAuthConfirmFindEmailDTO(email, null));
+        }
+        else {
+            return ApiResponse.onSuccess(MemberConverter.toPhoneAuthConfirmFindEmailDTO(email, profileImg.get().getUrl()));
+        }
     }
 
     @PostMapping("email/auth")
