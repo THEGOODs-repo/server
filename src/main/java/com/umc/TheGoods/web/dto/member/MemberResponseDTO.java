@@ -1,5 +1,6 @@
 package com.umc.TheGoods.web.dto.member;
 
+import com.umc.TheGoods.domain.enums.MemberRole;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -70,6 +71,7 @@ public class MemberResponseDTO {
     @AllArgsConstructor
     public static class PhoneAuthConfirmFindEmailResultDTO {
         String email;
+        String url;
     }
 
     @Builder
@@ -132,6 +134,14 @@ public class MemberResponseDTO {
     public static class ProfileResultDTO {
         String nickname;
         String url;
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class RoleUpdateResultDTO {
+        MemberRole role;
     }
 
 
