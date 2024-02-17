@@ -214,7 +214,7 @@ public class ItemRestController {
 
     @GetMapping("/search/item")
     @Operation(summary = "판매 상품 검색 API", description = "상품 검색을 위한 API이며, request parameter로 입력 값을 받습니다. \n\n" +
-            "page : 상품 조회 페이지 번호 \n\n itemName : 상품 이름(String) \n\n category : 카테고리 이름(String) \n\n sellerName : 판매자 이름(String) \n\n tagNames : 태그 이름(List(String))")
+            "page : 상품 조회 페이지 번호 \n\n itemName : 상품 이름(String) \n\n category : 카테고리 이름(String) \n\n sellerName : 판매자 이름(String) \n\n tagNames : 태그 이름(List(String)) \n\n type: 조회 타입으로, new, popular, dibsCount, salesCount, lowPrice, highPrice, reviewCount 중 하나의 값을 입력해주세요.")
     @Parameters(value = {
             @Parameter(name = "page", description = "페이지 번호, 1 이상의 숫자를 입력해주세요."),
             @Parameter(name = "itemName", description = "상품 이름, 상품 검색이 아닐시 빈칸을 입력해주세요."),
