@@ -32,6 +32,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.Comparator;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -78,6 +80,20 @@ public class ItemQueryServiceImpl implements ItemQueryService {
     public Page<Item> getMyItemList(Member member, Integer page) {
         Page<Item> itemPage = itemRepository.findAllByMember(member, PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "createdAt")));
         return itemPage;
+    }
+
+    @Override
+    public Page<Item> getTodayItemList(Integer page) {
+
+        Long[] idArray = {4L, 8L, 10L, 11L, 14L, 15L, 18L, 19L, 21L, 24L, 25L, 26L, 29L, 30L, 33L, 38L, 39L, 41L, 42L, 53L,
+                55L, 71L, 76L, 79L, 80L, 85L, 91L, 92L, 94L, 95L, 96L, 97L, 98L, 99L, 105L, 107L, 120L, 132L, 139L, 143L,
+                158L, 161L, 165L, 170L, 171L, 174L, 177L, 178L, 198L, 201L, 204L, 205L, 236L, 238L, 249L, 266L, 269L, 271L,
+                272L, 275L, 293L, 299L, 301L, 303L, 310L, 313L, 316L, 317L, 322L, 328L, 329L, 331L, 333L, 334L, 337L, 341L,
+                343L, 346L, 347L, 348L, 349L, 352L, 360L, 366L, 367L, 379L, 381L, 387L, 392L, 393L, 397L, 399L, 401L, 405L,
+                406L, 408L};
+
+        ArrayList<Long> itemIdList = new ArrayList<>(Arrays.asList(idArray));
+        return itemRepository.findAllByIdIn(itemIdList, PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "viewCount")));
     }
 
     @Override
@@ -268,8 +284,6 @@ public class ItemQueryServiceImpl implements ItemQueryService {
                 int start = (int) pageRequest.getOffset();
                 int end = Math.min((start + pageRequest.getPageSize()), distinctItems.size());
                 itemPage = new PageImpl<>(distinctItems.subList(start, end), pageRequest, distinctItems.size());
-
-                System.out.println("Final pageRequest: " + pageRequest);
                 //itemPage = new PageImpl<>(distinctItems, itemPage.getPageable(), distinctItems.size());
             }
             List<TagSearch> tagSearchList = TagSearchConverter.toTagSearchList(tags, member);

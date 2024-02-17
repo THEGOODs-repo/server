@@ -48,4 +48,6 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
             "GROUP BY i.id " +
             "ORDER BY COUNT(r) DESC")
     List<Item> findAllByItemTagListTagInOrderByReviewListSizeDesc(@Param("tags") List<Tag> tags);
+
+    Page<Item> findAllByIdIn(List<Long> itemId, PageRequest pageRequest);
 }
