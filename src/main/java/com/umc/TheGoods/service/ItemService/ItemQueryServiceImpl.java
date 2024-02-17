@@ -125,6 +125,13 @@ public class ItemQueryServiceImpl implements ItemQueryService {
 
     @Override
     @Transactional
+    public Page<Item> getItemByDeliveryDate(Integer page) {
+        Page<Item> itemPage = itemRepository.findAll(PageRequest.of(page, pageSize, Sort.by(Sort.Direction.ASC, "deliveryDate")));
+        return itemPage;
+    }
+
+    @Override
+    @Transactional
     public Page<Item> searchItem(Member member, String itemName, String categoryName, String sellerName, List<String> tagName, Integer page) {
         Page<Item> itemPage = null;
         Integer searchCondition = 0;

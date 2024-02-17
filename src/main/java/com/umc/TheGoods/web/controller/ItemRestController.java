@@ -170,6 +170,22 @@ public class ItemRestController {
         return ApiResponse.onSuccess(ItemConverter.itemPreviewListDTO(itemPage));
     }
 
+    @GetMapping("/delivery-date/item")
+    @Operation(summary = "배송기간이 빠른 상품 추천 API", description = "배송기간이 빠른 상품을 조회하는 API이며, request parameter로 입력 값을 받습니다. \n\n" +
+            "page : 상품 조회 페이지 번호")
+    @Parameters(value = {
+            @Parameter(name = "page", description = "페이지 번호, 1 이상의 숫자를 입력해주세요."),
+    })
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공")
+    })
+    public ApiResponse<ItemResponseDTO.ItemPreviewListDTO> deliveryDateItemList(@CheckPage @RequestParam Integer page) {
+
+        Page<Item> itemPage = itemQueryService.getItemByDeliveryDate(page - 1);
+
+        return ApiResponse.onSuccess(ItemConverter.itemPreviewListDTO(itemPage));
+    }
+
     @GetMapping("/search/item")
     @Operation(summary = "판매 상품 검색 API", description = "상품 검색을 위한 API이며, request parameter로 입력 값을 받습니다. \n\n" +
             "page : 상품 조회 페이지 번호 \n\n itemName : 상품 이름(String) \n\n category : 카테고리 이름(String) \n\n sellerName : 판매자 이름(String) \n\n tagNames : 태그 이름(List(String))")
