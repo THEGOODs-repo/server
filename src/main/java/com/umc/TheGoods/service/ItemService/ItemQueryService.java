@@ -20,6 +20,8 @@ public interface ItemQueryService {
 
     public Page<Item> getMyItemList(Member member, Integer page);
 
+    Page<Item> getTodayItemList(Integer page);
+
     public Page<Item> getSimilarItemList(Long itemId, Member member, Integer page);
 
     Page<Item> getTopSaleItemList(Integer page);
