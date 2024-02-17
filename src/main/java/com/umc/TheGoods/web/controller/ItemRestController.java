@@ -129,6 +129,11 @@ public class ItemRestController {
     }
 
     @GetMapping("/item/today")
+    @Operation(summary = "오늘의 상품 추천 API", description = "오늘의 상품으로 선정된 상품들을 조회하는 API 입니다. \n\n" +
+            "page : 상품 조회 페이지 번호")
+    @Parameters(value = {
+            @Parameter(name = "page", description = "페이지 번호, 1 이상의 숫자를 입력해주세요."),
+    })
     public ApiResponse<ItemResponseDTO.ItemPreviewListDTO> getTodayItemList(@CheckPage @RequestParam Integer page) {
 
         Page<Item> itemPage = itemQueryService.getTodayItemList(page - 1);
