@@ -100,4 +100,20 @@ public class CartController {
         return ApiResponse.onSuccess("장바구니 옵션 수정 성공");
     }
 
+    @DeleteMapping("/detail/delete")
+    public ApiResponse<String> deleteCartDetail(@RequestBody CartRequestDTO.cartDetailDeleteDTO request,
+                                                Authentication authentication) {
+        // 비회원인 경우 처리 불가
+        if (authentication == null) {
+            throw new MemberHandler(ErrorStatus._UNAUTHORIZED);
+        }
+
+        // request에서 member id 추출해 Member 엔티티 찾기
+        MemberDetail memberDetail = (MemberDetail) authentication.getPrincipal();
+        Member member = memberQueryService.findMemberById(memberDetail.getMemberId()).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        cartCommandService.deleteCartDetail(request, member);
+
+        return ApiResponse.onSuccess("장바구니 옵션 삭제 성공");
+    }
 }

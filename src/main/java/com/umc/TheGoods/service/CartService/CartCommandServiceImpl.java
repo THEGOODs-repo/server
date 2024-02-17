@@ -166,4 +166,29 @@ public class CartCommandServiceImpl implements CartCommandService {
 
         return cartDetailList;
     }
+
+    @Override
+    public void deleteCartDetail(CartRequestDTO.cartDetailDeleteDTO request, Member member) {
+
+
+        request.getCartDetailIdList().forEach(cartDetailId -> {
+
+            CartDetail cartDetail = cartDetailRepository.findById(cartDetailId).orElseThrow(() -> new OrderHandler(ErrorStatus.CART_DETAIL_NOT_FOUND));
+
+            Cart cart = cartDetail.getCart();
+
+            // 해당 cart 내역을 수정할 권한 있는지 검증
+            if (!cartDetail.getCart().getMember().equals(member)) {
+                throw new OrderHandler(ErrorStatus.NOT_CART_OWNER);
+            }
+
+            cartDetailRepository.deleteById(cartDetail.getId());
+
+            // 장바구니 상품의 마지막 옵션 내역을 삭제한 경: 장바구니 상품 내역도 삭제
+            if (cart.getCartDetailList().isEmpty()) {
+                cartRepository.delete(cart);
+            }
+        });
+
+    }
 }

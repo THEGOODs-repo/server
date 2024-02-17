@@ -59,4 +59,10 @@ public class CartRequestDTO {
         Integer amount;
     }
 
+    @Getter
+    public static class cartDetailDeleteDTO {
+        @NotNull
+        List<Long> cartDetailIdList;
+    }
+
 }

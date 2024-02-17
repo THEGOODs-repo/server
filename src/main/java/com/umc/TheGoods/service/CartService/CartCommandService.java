@@ -12,4 +12,6 @@ public interface CartCommandService {
 
     List<CartDetail> updateCart(CartRequestDTO.cartUpdateDTOList request, Member member);
 
+    void deleteCartDetail(CartRequestDTO.cartDetailDeleteDTO request, Member member);
+
 }
