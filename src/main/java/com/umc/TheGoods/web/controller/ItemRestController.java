@@ -167,6 +167,19 @@ public class ItemRestController {
         return ApiResponse.onSuccess(ItemConverter.itemPreviewListDTO(itemPage));
     }
 
+    @GetMapping("/item/steady")
+    @Operation(summary = "꾸준히 사랑받는 상품 추천 API", description = "판매 시작일이 6개월 이전인 상품을 조회수 순으로 정렬해 조회하는 API 입니다. \n\n" +
+            "page : 상품 조회 페이지 번호")
+    @Parameters(value = {
+            @Parameter(name = "page", description = "페이지 번호, 1 이상의 숫자를 입력해주세요."),
+    })
+    public ApiResponse<ItemResponseDTO.ItemPreviewListDTO> getSteadySaleItemList(@CheckPage @RequestParam Integer page,
+                                                                                 Authentication authentication) {
+        Page<Item> itemPage = itemQueryService.getSteadySaleItemList(page - 1);
+
+        return ApiResponse.onSuccess(ItemConverter.itemPreviewListDTO(itemPage));
+    }
+
     @GetMapping("/count/tags/item")
     @Operation(summary = "태그가 많이 달려있는 상품 추천 API", description = "태그가 많이 달려있는 상품을 조회하는 API이며, request parameter로 입력 값을 받습니다. \n\n" +
             "page : 상품 조회 페이지 번호")
