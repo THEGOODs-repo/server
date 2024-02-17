@@ -23,6 +23,7 @@ public class CartResponseDTO {
     @AllArgsConstructor
     public static class cartViewDTO {
         String sellerName;
+        Long itemId;
         String itemName;
         String itemImg;
         Integer deliveryFee;
@@ -34,6 +35,7 @@ public class CartResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class cartDetailViewDTO {
+        Long optionId;
         String optionName;
         Long price;
         Integer amount;
