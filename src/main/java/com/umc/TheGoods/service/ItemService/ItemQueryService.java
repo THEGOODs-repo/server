@@ -28,7 +28,7 @@ public interface ItemQueryService {
 
     public Page<Item> getItemByDeliveryDate(Integer page);
 
-    public Page<Item> searchItem(Member member, String itemName, String categoryName, String sellerName, List<String> tagName, Integer page);
+    public Page<Item> searchItem(Member member, String itemName, String categoryName, String sellerName, List<String> tagName, String type, Integer page);
 
     Page<Item> getMainItem(String type, Integer page);
 
