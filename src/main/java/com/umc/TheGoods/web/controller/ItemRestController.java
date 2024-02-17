@@ -277,4 +277,15 @@ public class ItemRestController {
 
         return ApiResponse.onSuccess(ItemConverter.itemPreviewListDTO(itemList));
     }
+
+    @GetMapping("/item/{itemId}/related")
+    public ApiResponse<ItemResponseDTO.ItemPreviewListDTO> getRelatedItem(
+            @ExistItem @PathVariable(name = "itemId") Long itemId,
+            @CheckPage @RequestParam(name = "page") Integer page
+    ) {
+
+        Page<Item> itemList = itemQueryService.getRelatedItem(itemId, page);
+
+        return ApiResponse.onSuccess(ItemConverter.itemPreviewListDTO(itemList));
+    }
 }

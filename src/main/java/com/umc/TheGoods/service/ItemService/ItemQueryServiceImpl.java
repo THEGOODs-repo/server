@@ -240,4 +240,16 @@ public class ItemQueryServiceImpl implements ItemQueryService {
 
         return itemPage;
     }
+
+    @Override
+    public Page<Item> getRelatedItem(Long itemId, Integer pageIdx) {
+
+        Item item = itemRepository.findById(itemId).orElseThrow(() -> new ItemHandler(ErrorStatus.ITEM_NOT_FOUND));
+
+        Category category = item.getCategory();
+
+        Page<Item> itemPage = itemRepository.findAllByCategory(category, PageRequest.of(pageIdx, pageSize, Sort.by(Sort.Direction.DESC, "viewCount")));
+
+        return itemPage;
+    }
 }
