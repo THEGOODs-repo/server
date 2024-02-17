@@ -155,18 +155,24 @@ public class ItemQueryServiceImpl implements ItemQueryService {
 
             if (!tags.isEmpty()) {
                 // 아이템을 검색하는 메소드 호출
-                itemPage = itemRepository.findAllByItemTagListTagIn(tags, PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "createdAt")));
+                List<Item> itemList = itemRepository.findAllByItemTagListTagIn(tags);
                 searchCondition++;
 
                 // 중복된 아이템을 아이디를 기준으로 제거
-                List<Item> distinctItems = itemPage.stream()
+                List<Item> distinctItems = itemList.stream()
                         .collect(Collectors.toMap(Item::getId, item -> item, (existing, replacement) -> existing))
                         .values()
                         .stream()
                         .collect(Collectors.toList());
 
+                System.out.println("test size : " + distinctItems.size());
+
                 // 중복이 제거된 아이템으로 새로운 Page 생성
-                itemPage = new PageImpl<>(distinctItems, itemPage.getPageable(), distinctItems.size());
+                PageRequest pageRequest = PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "createdAt"));
+                int start = (int) pageRequest.getOffset();
+                int end = Math.min((start + pageRequest.getPageSize()), distinctItems.size());
+                itemPage = new PageImpl<>(distinctItems.subList(start, end), pageRequest, distinctItems.size());
+                //itemPage = new PageImpl<>(distinctItems, itemPage.getPageable(), distinctItems.size());
             }
             List<TagSearch> tagSearchList = TagSearchConverter.toTagSearchList(tags, member);
 
