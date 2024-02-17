@@ -1,6 +1,6 @@
 # TheGoods<img src="https://github.com/THEGOODs-repo/server/assets/87745916/a7d5901c-ed8f-4b5d-b6ba-506b6767c611" align=left width=100>
 
-> 의미 없는 ‘a’가 아닌 나에게 있어 특별한 ‘the’ 굿즈, 우리는 **_특별한 굿즈_**를 거래합니다.
+> _의미 없는 ‘a’가 아닌 나에게 있어 특별한 ‘the’ 굿즈, 우리는 특별한 굿즈를 거래합니다._
 
 ---
 
@@ -31,9 +31,23 @@
 </div>
 <br/>
 
+## 🏢 협업 방식
+
+| Tag Type     | content                       |
+|--------------|-------------------------------|
+| `✨feat`      | 기능(feature)                   |
+| `📝docs`     | 문서 작업 (documentation)         |
+| `🐛fix`      | 버그 수정                         |
+| `🚑hotfix`   | 긴급 버그 수정                      |
+| `♻️refactor` | 코드 리팩터링(가독성 향상)               |
+| `👷ci`       | ci 파이프라인 구축 관련                |
+| `💚ci/cd `   | ci 빌드 수정 및 deployment         |
+| `chore`      | 관리(maintain), 핵심 내용은 아닌 기타 변경 |
+| `test`       | 테스트                           |
+| `style`      | 포맷팅, 세미콜론 누락 등                |
+
 ## 🛠️ 개발 과정
 
 ## 📂 프로젝트 아키텍처
 
-## 🏢 협업 방식
 
