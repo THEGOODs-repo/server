@@ -149,66 +149,55 @@ public class ItemQueryServiceImpl implements ItemQueryService {
     public Page<Item> searchItem(Member member, String itemName, String categoryName, String sellerName, List<String> tagName, String type, Integer page) {
         Page<Item> itemPage = null;
         Integer searchCondition = 0;
+        String searchType = "temp";
+        if (type.equals("new")) {
+            searchType = "createdAt";
+        } else if (type.equals("popular")) {
+            searchType = "viewCount";
+        } else if (type.equals("dibsCount")) {
+            searchType = "dibsCount";
+        } else if (type.equals("salesCount")) {
+            searchType = "salesCount";
+        } else if (type.equals("highPrice")) {
+            searchType = "price";
+        } else if (type.equals("lowPrice")) {
+            searchType = "lowPrice";
+        } else if (type.equals("reviewCount")) {
+            searchType = "reviewCount";
+        } else {
+            throw new ItemHandler(ErrorStatus.MAIN_ITEM_SEARCH_TYPE_ERROR);
+        }
 
         if (itemName != null) {
-            if (type.equals("new")) {
-                itemPage = itemRepository.findAllByNameContaining(itemName, PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "createdAt")));
-            } else if (type.equals("popular")) {
-                itemPage = itemRepository.findAllByNameContaining(itemName, PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "viewCount")));
-            } else if (type.equals("dibsCount")) {
-                itemPage = itemRepository.findAllByNameContaining(itemName, PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "dibsCount")));
-            } else if (type.equals("salesCount")) {
-                itemPage = itemRepository.findAllByNameContaining(itemName, PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "salesCount")));
-            } else if (type.equals("lowPrice")) {
+            if (searchType.equals("lowPrice")) {
                 itemPage = itemRepository.findAllByNameContaining(itemName, PageRequest.of(page, 10, Sort.by(Sort.Direction.ASC, "price")));
-            } else if (type.equals("highPrice")) {
-                itemPage = itemRepository.findAllByNameContaining(itemName, PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "price")));
-            } else if (type.equals("reviewCount")) {
+            } else if (searchType.equals("reviewCount")) {
                 itemPage = itemRepository.findAllByItemNameContainingOrdOrderByReviewListSizeDesc(itemName, PageRequest.of(page, 10));
             } else {
-                throw new ItemHandler(ErrorStatus.MAIN_ITEM_SEARCH_TYPE_ERROR);
+                itemPage = itemRepository.findAllByNameContaining(itemName, PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, searchType)));
             }
             searchCondition++;
         }
         if (categoryName != null) {
             Category category = categoryRepository.findByName(categoryName).orElseThrow(() -> new CategoryHandler(ErrorStatus.CATEGORY_NOT_FOUND));
-            if (type.equals("new")) {
-                itemPage = itemRepository.findAllByCategoryName(category.getName(), PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "createdAt")));
-            } else if (type.equals("popular")) {
-                itemPage = itemRepository.findAllByCategoryName(category.getName(), PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "viewCount")));
-            } else if (type.equals("dibsCount")) {
-                itemPage = itemRepository.findAllByCategoryName(category.getName(), PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "dibsCount")));
-            } else if (type.equals("salesCount")) {
-                itemPage = itemRepository.findAllByCategoryName(category.getName(), PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "salesCount")));
-            } else if (type.equals("lowPrice")) {
+            if (searchType.equals("lowPrice")) {
                 itemPage = itemRepository.findAllByCategoryName(category.getName(), PageRequest.of(page, 10, Sort.by(Sort.Direction.ASC, "price")));
-            } else if (type.equals("highPrice")) {
-                itemPage = itemRepository.findAllByCategoryName(category.getName(), PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "price")));
-            } else if (type.equals("reviewCount")) {
+            } else if (searchType.equals("reviewCount")) {
                 itemPage = itemRepository.findAllByCategoryNameOrderByReviewListSizeDesc(category.getName(), PageRequest.of(page, 10));
             } else {
-                throw new ItemHandler(ErrorStatus.MAIN_ITEM_SEARCH_TYPE_ERROR);
+                itemPage = itemRepository.findAllByCategoryName(category.getName(), PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, searchType)));
             }
             searchCondition++;
         }
         if (sellerName != null) {
             Member seller = memberRepository.findByNickname(sellerName).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
-            if (type.equals("new")) {
-                itemPage = itemRepository.findAllByMember(seller, PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "createdAt")));
-            } else if (type.equals("popular")) {
-                itemPage = itemRepository.findAllByMember(seller, PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "viewCount")));
-            } else if (type.equals("dibsCount")) {
-                itemPage = itemRepository.findAllByMember(seller, PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "dibsCount")));
-            } else if (type.equals("salesCount")) {
-                itemPage = itemRepository.findAllByMember(seller, PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "salesCount")));
-            } else if (type.equals("lowPrice")) {
+
+            if (searchType.equals("lowPrice")) {
                 itemPage = itemRepository.findAllByMember(seller, PageRequest.of(page, 10, Sort.by(Sort.Direction.ASC, "price")));
-            } else if (type.equals("highPrice")) {
-                itemPage = itemRepository.findAllByMember(seller, PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "price")));
-            } else if (type.equals("reviewCount")) {
+            } else if (searchType.equals("reviewCount")) {
                 itemPage = itemRepository.findAllBySellerNameOrderByReviewListSizeDesc(seller.getNickname(), PageRequest.of(page, 10));
             } else {
-                throw new ItemHandler(ErrorStatus.MAIN_ITEM_SEARCH_TYPE_ERROR);
+                itemPage = itemRepository.findAllByMember(seller, PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, searchType)));
             }
             searchCondition++;
         }
@@ -240,27 +229,29 @@ public class ItemQueryServiceImpl implements ItemQueryService {
                 if (type.equals("new")) {
                     distinctItems.sort(Comparator.comparing(Item::getCreatedAt).reversed());
 
-                    pageRequest = PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "createdAt"));
+                    //pageRequest = PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "createdAt"));
                 } else if (type.equals("popular")) {
                     distinctItems.sort(Comparator.comparing(Item::getViewCount).reversed());
 
-                    pageRequest = PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "viewCount"));
+                    //pageRequest = PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "viewCount"));
                 } else if (type.equals("dibsCount")) {
                     distinctItems.sort(Comparator.comparing(Item::getDibsCount).reversed());
 
-                    pageRequest = PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "dibsCount"));
+                    //pageRequest = PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "dibsCount"));
                 } else if (type.equals("salesCount")) {
                     distinctItems.sort(Comparator.comparing(Item::getSalesCount).reversed());
 
-                    pageRequest = PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "salesCount"));
-                } else if (type.equals("lowPrice")) {
-                    distinctItems.sort(Comparator.comparing(Item::getPrice));
-
-                    pageRequest = PageRequest.of(page, 10, Sort.by(Sort.Direction.ASC, "price"));
+                    //pageRequest = PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "salesCount"));
                 } else if (type.equals("highPrice")) {
                     distinctItems.sort(Comparator.comparing(Item::getPrice).reversed());
 
-                    pageRequest = PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "price"));
+                    //pageRequest = PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "price"));
+                }
+                pageRequest = PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, searchType));
+                if (type.equals("lowPrice")) {
+                    distinctItems.sort(Comparator.comparing(Item::getPrice));
+
+                    pageRequest = PageRequest.of(page, 10, Sort.by(Sort.Direction.ASC, "price"));
                 } else if (type.equals("reviewCount")) {
                     List<Item> itemListReviewCount = itemRepository.findAllByItemTagListTagInOrderByReviewListSizeDesc(tags);
 
@@ -270,8 +261,8 @@ public class ItemQueryServiceImpl implements ItemQueryService {
                             .values()
                             .stream()
                             .collect(Collectors.toList());
-                } else {
-                    throw new ItemHandler(ErrorStatus.MAIN_ITEM_SEARCH_TYPE_ERROR);
+
+                    pageRequest = PageRequest.of(page, 10);
                 }
 
                 int start = (int) pageRequest.getOffset();
