@@ -140,9 +140,10 @@ public class MemberConverter {
     }
 
 
-    public static MemberResponseDTO.PhoneAuthConfirmFindEmailResultDTO toPhoneAuthConfirmFindEmailDTO(String email) {
+    public static MemberResponseDTO.PhoneAuthConfirmFindEmailResultDTO toPhoneAuthConfirmFindEmailDTO(String email,String url) {
         return MemberResponseDTO.PhoneAuthConfirmFindEmailResultDTO.builder()
                 .email(email)
+                .url(url)
                 .build();
     }
 
@@ -245,5 +246,11 @@ public class MemberConverter {
                 .build();
     }
 
+    public static MemberResponseDTO.RoleUpdateResultDTO toUpdateRole(Member member) {
+
+        return MemberResponseDTO.RoleUpdateResultDTO.builder()
+                .role(member.getMemberRole())
+                .build();
+    }
 
 }
