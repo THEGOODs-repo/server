@@ -104,6 +104,13 @@ public class ItemQueryServiceImpl implements ItemQueryService {
     }
 
     @Override
+    public Page<Item> getTopSaleItemList(Integer page) {
+
+        return itemRepository.findAll(PageRequest.of(page, pageSize, Sort.by(Sort.Direction.DESC, "salesCount")));
+
+    }
+
+    @Override
     @Transactional
     public Page<Item> getItemByTagCount(Integer page) {
 //        List<ConsultResultDTO> consultResults = itemTagRepository.countTagsByTagId();

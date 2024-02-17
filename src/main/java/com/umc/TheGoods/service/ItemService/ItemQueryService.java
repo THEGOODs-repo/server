@@ -22,6 +22,8 @@ public interface ItemQueryService {
 
     public Page<Item> getSimilarItemList(Long itemId, Member member, Integer page);
 
+    Page<Item> getTopSaleItemList(Integer page);
+
     public Page<Item> getItemByTagCount(Integer page);
 
     public Page<Item> getItemByDeliveryDate(Integer page);
