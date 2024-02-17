@@ -36,4 +36,6 @@ public interface ItemQueryService {
 
     Page<Item> getMainItem(String type, Integer page);
 
+    Page<Item> getRelatedItem(Long itemId, Integer page);
+
 }

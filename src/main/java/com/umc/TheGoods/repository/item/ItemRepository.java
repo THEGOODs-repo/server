@@ -1,5 +1,6 @@
 package com.umc.TheGoods.repository.item;
 
+import com.umc.TheGoods.domain.item.Category;
 import com.umc.TheGoods.domain.item.Item;
 import com.umc.TheGoods.domain.item.Tag;
 import com.umc.TheGoods.domain.member.Member;
@@ -50,4 +51,6 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
     List<Item> findAllByItemTagListTagInOrderByReviewListSizeDesc(@Param("tags") List<Tag> tags);
 
     Page<Item> findAllByIdIn(List<Long> itemId, PageRequest pageRequest);
+
+    Page<Item> findAllByCategory(Category category, PageRequest pageRequest);
 }
