@@ -18,7 +18,7 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
 
     Page<Item> findAllByCategoryName(String name, PageRequest pageRequest);
 
-    Page<Item> findAllByItemTagListTagIn(List<Tag> tags, PageRequest pageRequest);
+    List<Item> findAllByItemTagListTagIn(List<Tag> tags);
 
     //Page<Item> findAllByItemTagListIn(List<ItemTag> itemTagList, PageRequest pageRequest);
 
