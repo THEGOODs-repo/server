@@ -279,6 +279,13 @@ public class ItemRestController {
     }
 
     @GetMapping("/item/{itemId}/related")
+    @Operation(summary = "관련 상품 조회 API", description = "해당 상품과 같은 카테고리를 갖는 상품을 조회하는 API 입니다. \n\n" +
+            "page : 상품 조회 페이지 번호 \n\n" +
+            "itemId : 상품 아이디")
+    @Parameters(value = {
+            @Parameter(name = "itemId", description = "상품 id"),
+            @Parameter(name = "page", description = "페이지 번호, 1 이상의 숫자를 입력해주세요."),
+    })
     public ApiResponse<ItemResponseDTO.ItemPreviewListDTO> getRelatedItem(
             @ExistItem @PathVariable(name = "itemId") Long itemId,
             @CheckPage @RequestParam(name = "page") Integer page
