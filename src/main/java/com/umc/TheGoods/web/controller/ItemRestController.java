@@ -128,6 +128,14 @@ public class ItemRestController {
         return ApiResponse.onSuccess(ItemConverter.itemPreviewListDTO(itemList));
     }
 
+    @GetMapping("/item/today")
+    public ApiResponse<ItemResponseDTO.ItemPreviewListDTO> getTodayItemList(@CheckPage @RequestParam Integer page) {
+
+        Page<Item> itemPage = itemQueryService.getTodayItemList(page - 1);
+
+        return ApiResponse.onSuccess(ItemConverter.itemPreviewListDTO(itemPage));
+    }
+
     @GetMapping("/similar/item")
     @Operation(summary = "방금 본 상품과 유사한 상품 추천 API", description = "직전에 조회한 상품과 동일한 카테고리를 가진 상품을 조회하는 API이며, request parameter로 입력 값을 받습니다. \n\n" +
             "page : 상품 조회 페이지 번호 \n\n itemId : 상품 id(Long)")

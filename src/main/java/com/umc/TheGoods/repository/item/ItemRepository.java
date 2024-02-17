@@ -25,4 +25,6 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
     Page<Item> findAllByEndDateGreaterThanEqual(LocalDate localDate, PageRequest pageRequest);
 
     Page<Item> findAllByStartDateLessThanEqual(LocalDate localDate, PageRequest pageRequest);
+
+    Page<Item> findAllByIdIn(List<Long> itemId, PageRequest pageRequest);
 }
