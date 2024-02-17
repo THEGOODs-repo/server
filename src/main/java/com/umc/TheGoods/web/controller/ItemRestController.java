@@ -293,7 +293,7 @@ public class ItemRestController {
             @CheckPage @RequestParam(name = "page") Integer page
     ) {
 
-        Page<Item> itemList = itemQueryService.getRelatedItem(itemId, page);
+        Page<Item> itemList = itemQueryService.getRelatedItem(itemId, page - 1);
 
         return ApiResponse.onSuccess(ItemConverter.itemPreviewListDTO(itemList));
     }
