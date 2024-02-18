@@ -122,6 +122,11 @@ public class CartController {
     }
 
     @DeleteMapping("/delete")
+    @Operation(summary = "장바구니 상품 삭제 API", description = "해당 장바구니 내역을 삭제하는 API 입니다. \n\n" +
+            "장바구니 내역 id 리스트를 보내주세요.")
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
+    })
     public ApiResponse<String> deleteCart(@RequestBody CartRequestDTO.cartDeleteDTO request,
                                           Authentication authentication) {
 
