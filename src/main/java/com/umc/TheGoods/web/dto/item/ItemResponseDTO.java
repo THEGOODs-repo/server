@@ -38,6 +38,8 @@ public class ItemResponseDTO {
     public static class ItemContentDTO {
         Long itemId;
         String name;
+        String memberName;
+        String memberProfileImgUrl;
         ItemStatus status;
         Integer stock;
         Long price;
@@ -78,6 +80,10 @@ public class ItemResponseDTO {
         Long itemId;
         String name;
         ItemStatus status;
+        LocalDate endDate;
+        Long viewCount;
+        String memberName;
+        String memberProfileImgUrl;
         List<ItemImgResponseDTO> itemImgUrlList;
         LocalDateTime createdAt;
     }
