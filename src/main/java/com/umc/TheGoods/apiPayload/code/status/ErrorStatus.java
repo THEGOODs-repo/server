@@ -54,6 +54,8 @@ public enum ErrorStatus implements BaseErrorCode {
     MEMBER_PHONE_AUTH_ERROR(HttpStatus.BAD_REQUEST, "MEMBER4005", "유효하지 않는 번호입니다."),
     MEMBER_EMAIL_AUTH_ERROR(HttpStatus.BAD_REQUEST, "MEMBER4006", "유효하지 않는 이메일입니다."),
     MEMBER_PASSWORD_NOT_EQUAL(HttpStatus.BAD_REQUEST, "MEMBER4007", "비밀번호가 일치하지 않습니다."),
+    MEMBER_ACCOUNT_NOT_FOUND(HttpStatus.BAD_REQUEST, "MEMBER4008", "계좌가 존재하지 않습니다"),
+    MEMBER_ADDRESS_NOT_FOUND(HttpStatus.BAD_REQUEST, "MEMBER4009", "주소가 존재하지 않습니다"),
 
 
     //Category

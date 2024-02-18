@@ -132,8 +132,17 @@ public class MemberResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class ProfileResultDTO {
-        String nickname;
+        String name;
         String url;
+        String phone;
+        String zipcode;
+        String address;
+        String addressDetail;
+        String deliveryMemo;
+        String refundBank;
+        String refundAccount;
+        String refundOwner;
+
     }
 
     @Builder
@@ -142,6 +151,31 @@ public class MemberResponseDTO {
     @AllArgsConstructor
     public static class RoleUpdateResultDTO {
         MemberRole role;
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class PhoneNameUpdateResultDTO {
+        String name;
+        String phone;
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class AddressResultDTO {
+        String name;
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class AccountResultDTO {
+        String name;
     }
 
 

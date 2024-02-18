@@ -24,6 +24,12 @@ public class Address extends BaseDateTimeEntity {
     @Column(columnDefinition = "VARCHAR(20)")
     private String addressSpec;
 
+    @Column(columnDefinition = "VARCHAR(50)", nullable = false)
+    private String deliveryMemo;
+
+    @Column(columnDefinition = "VARCHAR(10)", nullable = false)
+    private String zipcode;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;

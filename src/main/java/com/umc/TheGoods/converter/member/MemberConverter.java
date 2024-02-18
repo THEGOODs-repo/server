@@ -9,6 +9,8 @@ import com.umc.TheGoods.domain.mapping.member.MemberTerm;
 import com.umc.TheGoods.domain.member.Auth;
 import com.umc.TheGoods.domain.member.Member;
 import com.umc.TheGoods.domain.member.Term;
+import com.umc.TheGoods.domain.mypage.Account;
+import com.umc.TheGoods.domain.mypage.Address;
 import com.umc.TheGoods.web.dto.member.MemberRequestDTO;
 import com.umc.TheGoods.web.dto.member.MemberResponseDTO;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -17,6 +19,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -201,10 +204,62 @@ public class MemberConverter {
                 .build();
     }
 
-    public static MemberResponseDTO.ProfileResultDTO toProfile(String nickname, String url) {
+    public static MemberResponseDTO.ProfileResultDTO toProfile(Member member, String url, Optional<Account> account, Optional<Address> address) {
+
+        if (address.isEmpty() && account.isEmpty()){
+            return MemberResponseDTO.ProfileResultDTO.builder()
+                    .name(member.getName())
+                    .phone(member.getPhone())
+                    .url(url)
+                    .address(null)
+                    .deliveryMemo(null)
+                    .addressDetail(null)
+                    .zipcode(null)
+                    .refundAccount(null)
+                    .refundBank(null)
+                    .refundOwner(null)
+                    .build();
+        }
+        if (account.isEmpty()){
+            return MemberResponseDTO.ProfileResultDTO.builder()
+                    .name(member.getName())
+                    .phone(member.getPhone())
+                    .url(url)
+                    .address(address.get().getAddressName())
+                    .deliveryMemo(address.get().getDeliveryMemo())
+                    .addressDetail(address.get().getAddressSpec())
+                    .zipcode(address.get().getZipcode())
+                    .refundAccount(null)
+                    .refundBank(null)
+                    .refundOwner(null)
+                    .build();
+        }
+        if(address.isEmpty()){
+            return MemberResponseDTO.ProfileResultDTO.builder()
+                    .name(member.getName())
+                    .phone(member.getPhone())
+                    .url(url)
+                    .address(null)
+                    .deliveryMemo(null)
+                    .addressDetail(null)
+                    .zipcode(null)
+                    .refundAccount(account.get().getAccountNum())
+                    .refundBank(account.get().getBankName())
+                    .refundOwner(account.get().getOwner())
+                    .build();
+        }
+
         return MemberResponseDTO.ProfileResultDTO.builder()
-                .nickname(nickname)
+                .name(member.getName())
+                .phone(member.getPhone())
                 .url(url)
+                .address(address.get().getAddressName())
+                .deliveryMemo(address.get().getDeliveryMemo())
+                .addressDetail(address.get().getAddressSpec())
+                .zipcode(address.get().getZipcode())
+                .refundAccount(account.get().getAccountNum())
+                .refundBank(account.get().getBankName())
+                .refundOwner(account.get().getOwner())
                 .build();
     }
 
@@ -251,6 +306,67 @@ public class MemberConverter {
         return MemberResponseDTO.RoleUpdateResultDTO.builder()
                 .role(member.getMemberRole())
                 .build();
+    }
+
+    public static MemberResponseDTO.PhoneNameUpdateResultDTO toUpdatePhoneName(Member member) {
+
+        return MemberResponseDTO.PhoneNameUpdateResultDTO.builder()
+                .name(member.getName())
+                .phone(member.getPhone())
+                .build();
+    }
+
+    public static Address toAddress(MemberRequestDTO.AddressDTO request,Member member){
+        return Address.builder()
+                .addressName(request.getAddressName())
+                .addressSpec(request.getAddressSpec())
+                .deliveryMemo(request.getDeliveryMemo())
+                .zipcode(request.getZipcode())
+                .member(member)
+                .build();
+    }
+
+
+    public static Account toAccount(MemberRequestDTO.AccountDTO request, Member member){
+            return Account.builder()
+                    .accountNum(request.getAccountNum())
+                    .bankName(request.getBankName())
+                    .owner(request.getOwner())
+                    .member(member)
+                    .build();
+    }
+
+
+    public static MemberResponseDTO.AddressResultDTO toPostAddressDTO(String address){
+
+        return MemberResponseDTO.AddressResultDTO.builder()
+                .name(address)
+                .build();
+
+    }
+
+    public static MemberResponseDTO.AccountResultDTO toPostAccountDTO(String account){
+
+        return MemberResponseDTO.AccountResultDTO.builder()
+                .name(account)
+                .build();
+
+    }
+
+    public static MemberResponseDTO.AddressResultDTO toUpdateAddressDTO(String address){
+
+        return MemberResponseDTO.AddressResultDTO.builder()
+                .name(address)
+                .build();
+
+    }
+
+    public static MemberResponseDTO.AccountResultDTO toUpdateAccountDTO(String account){
+
+        return MemberResponseDTO.AccountResultDTO.builder()
+                .name(account)
+                .build();
+
     }
 
 }

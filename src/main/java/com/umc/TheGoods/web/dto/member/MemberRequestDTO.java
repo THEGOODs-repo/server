@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.Column;
 import java.util.Date;
 import java.util.List;
 
@@ -95,5 +96,35 @@ public class MemberRequestDTO {
     public static class PasswordUpdateDTO {
         private String password;
         private String checkPassword;
+    }
+
+
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class PhoneNameUpdateDTO {
+        private String name;
+        private String phone;
+    }
+
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class AddressDTO {
+
+        private String addressName;
+        private String addressSpec;
+        private String deliveryMemo;
+        private String zipcode;
+    }
+
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class AccountDTO {
+
+        private String owner;
+        private String bankName;
+        private String accountNum;
     }
 }

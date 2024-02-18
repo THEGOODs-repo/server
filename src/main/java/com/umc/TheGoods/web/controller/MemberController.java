@@ -9,6 +9,8 @@ import com.umc.TheGoods.domain.enums.MemberRole;
 import com.umc.TheGoods.domain.images.ProfileImg;
 import com.umc.TheGoods.domain.member.Auth;
 import com.umc.TheGoods.domain.member.Member;
+import com.umc.TheGoods.domain.mypage.Account;
+import com.umc.TheGoods.domain.mypage.Address;
 import com.umc.TheGoods.service.MemberService.MemberCommandService;
 import com.umc.TheGoods.service.MemberService.MemberQueryService;
 import com.umc.TheGoods.web.dto.member.MemberDetail;
@@ -37,6 +39,7 @@ public class MemberController {
 
     private final MemberCommandService memberCommandService;
     private final MemberQueryService memberQueryService;
+
 
     @PostMapping("/join")
     @Operation(summary = "회원가입 API", description = "request 파라미터 : 닉네임, 비밀번호(String), 이메일, 생일(yyyymmdd), 성별(MALE, FEMALE, NO_SELECET), 폰번호(010xxxxxxxx),이용약관(Boolean 배열), 카테고리(Long 배열)")
@@ -201,7 +204,7 @@ public class MemberController {
      */
 
     @PutMapping(value = "/profile/modify", consumes = "multipart/form-data")
-    @Operation(summary = "프로필 수정 api", description = "request : 프로필 이미지, 닉네임, 자기소개 ")
+    @Operation(summary = "마이페이지 프로필 수정(닉네임, 프로필 사진, 소개) api", description = "request : 프로필 이미지, 닉네임, 자기소개 ")
     public ApiResponse<MemberResponseDTO.ProfileModifyResultDTO> profileModify(@RequestParam("profile") MultipartFile profile,
                                                                                @RequestParam("nickname") String nickname,
                                                                                @RequestParam("introduce") String introduce,
@@ -221,10 +224,18 @@ public class MemberController {
 
         MemberDetail memberDetail = (MemberDetail) authentication.getPrincipal();
         Member member = memberQueryService.findMemberById(memberDetail.getMemberId()).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
-        ProfileImg profileImg = memberQueryService.findProfileImgByMember(member.getId()).orElseThrow(() -> new MemberHandler(ErrorStatus.PROFILEIMG_NOT_FOUND));
+        Optional<ProfileImg> profileImg = memberQueryService.findProfileImgByMember(member.getId());
+        Optional<Address> address = memberQueryService.findAddressById(member.getId());
+        Optional<Account> account = memberQueryService.findAccountById(member.getId());
+
+        if(profileImg.isEmpty()){
+            return ApiResponse.onSuccess(MemberConverter.toProfile(member, null, account, address));
+        }
+        else {
+            return ApiResponse.onSuccess(MemberConverter.toProfile(member, profileImg.get().getUrl(),account, address));
+        }
 
 
-        return ApiResponse.onSuccess(MemberConverter.toProfile(member.getNickname(), profileImg.getUrl()));
     }
 
     @PutMapping(value = "/role/update")
@@ -240,6 +251,73 @@ public class MemberController {
 
         return ApiResponse.onSuccess(MemberConverter.toUpdateRole(update));
     }
+
+    @PutMapping(value = "/phone/name/update")
+    @Operation(summary = "주문시 고객 정보 수정(이름, 번호) api", description = "이름과 번호 수정할 수 있는 기능")
+    public ApiResponse<MemberResponseDTO.PhoneNameUpdateResultDTO> updateRole(@RequestBody MemberRequestDTO.PhoneNameUpdateDTO request, Authentication authentication) {
+
+        MemberDetail memberDetail = (MemberDetail) authentication.getPrincipal();
+        Member member = memberQueryService.findMemberById(memberDetail.getMemberId()).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        memberCommandService.updatePhoneName(request, member);
+
+
+
+        return ApiResponse.onSuccess(null);
+    }
+
+    @PostMapping(value = "/address")
+    @Operation(summary = "회원 배송지 추가 api", description = "request: 우편번호, 배송지명, 배송지, 배송메모")
+    public ApiResponse<MemberResponseDTO.AddressResultDTO> postAddress(@RequestBody MemberRequestDTO.AddressDTO request, Authentication authentication) {
+
+        MemberDetail memberDetail = (MemberDetail) authentication.getPrincipal();
+        Member member = memberQueryService.findMemberById(memberDetail.getMemberId()).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        Address address = memberCommandService.postAddress(request,member);
+
+        return ApiResponse.onSuccess(MemberConverter.toPostAddressDTO(address.getAddressName()));
+    }
+
+    @PostMapping(value = "/account")
+    @Operation(summary = "회원 계좌 추가 api", description = "request: 소유주 이름, 은행 이름, 계좌번호")
+    public ApiResponse<MemberResponseDTO.AccountResultDTO> postAccount(@RequestBody MemberRequestDTO.AccountDTO request, Authentication authentication) {
+
+        MemberDetail memberDetail = (MemberDetail) authentication.getPrincipal();
+        Member member = memberQueryService.findMemberById(memberDetail.getMemberId()).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        Account account = memberCommandService.postAccount(request,member);
+
+        return ApiResponse.onSuccess(MemberConverter.toPostAccountDTO(account.getOwner()));
+    }
+
+    @PutMapping(value = "/address/update/{addressId}")
+    @Operation(summary = "회원 주소 수정 api", description = "request: 우편번호, 배송지명, 배송지, 배송메모")
+    public ApiResponse<MemberResponseDTO.AddressResultDTO> updateAddress(@RequestBody MemberRequestDTO.AddressDTO request,
+                                                                         @PathVariable (name = "addressId") Long addressId,
+                                                                         Authentication authentication) {
+
+        MemberDetail memberDetail = (MemberDetail) authentication.getPrincipal();
+        Member member = memberQueryService.findMemberById(memberDetail.getMemberId()).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        memberCommandService.updateAddress(request, addressId);
+
+        return ApiResponse.onSuccess(null);
+    }
+
+    @PutMapping(value = "/account/update/{accountId}")
+    @Operation(summary = "회원 계좌 수정 api", description = "request: 소유주 이름, 은행 이름, 계좌번호")
+    public ApiResponse<MemberResponseDTO.AccountResultDTO> updateAccount(@RequestBody MemberRequestDTO.AccountDTO request,
+                                                                         @PathVariable (name = "accountId") Long accountId,
+                                                                         Authentication authentication) {
+
+        MemberDetail memberDetail = (MemberDetail) authentication.getPrincipal();
+        Member member = memberQueryService.findMemberById(memberDetail.getMemberId()).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        memberCommandService.updateAccount(request,accountId);
+
+        return ApiResponse.onSuccess(null);
+    }
+
 
 }
 

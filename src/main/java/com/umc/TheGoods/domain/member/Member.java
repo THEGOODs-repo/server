@@ -51,6 +51,9 @@ public class Member extends BaseDateTimeEntity {
     @Column(columnDefinition = "VARCHAR(50)")
     private String nickname;
 
+    @Column(columnDefinition = "VARCHAR(20)")
+    private String name;
+
     @Column(nullable = false, columnDefinition = "VARCHAR(30)")
     private String email;
 
