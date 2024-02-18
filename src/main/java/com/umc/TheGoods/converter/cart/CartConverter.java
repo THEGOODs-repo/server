@@ -49,7 +49,7 @@ public class CartConverter {
                 .cartDetailViewDTOList(cartDetailViewDTOList)
                 .build();
     }
-    
+
     public static CartResponseDTO.cartDetailViewDTO toCartDetailViewDTO(CartDetail cartDetail) {
         return CartResponseDTO.cartDetailViewDTO.builder()
                 .cartDetailId(cartDetail.getId())
@@ -59,4 +59,25 @@ public class CartConverter {
                 .amount(cartDetail.getAmount())
                 .build();
     }
+
+    public static CartResponseDTO.cartStockDTO toCartStockDTO(Cart cart) {
+
+        List<CartResponseDTO.cartDetailStockDTO> cartDetailStockDTOList = cart.getCartDetailList().stream()
+                .map(CartConverter::toCartDetailStockDTO).collect(Collectors.toList());
+
+        return CartResponseDTO.cartStockDTO.builder()
+                .itemId(cart.getItem().getId())
+                .cartDetailStockDTOList(cartDetailStockDTOList)
+                .build();
+
+    }
+
+    public static CartResponseDTO.cartDetailStockDTO toCartDetailStockDTO(CartDetail cartDetail) {
+        return CartResponseDTO.cartDetailStockDTO.builder()
+                .itemOptionId(cartDetail.getItemOption() == null ? null : cartDetail.getItemOption().getId())
+                .stock(cartDetail.getItemOption() == null ? cartDetail.getCart().getItem().getStock() : cartDetail.getItemOption().getStock())
+                .build();
+    }
+
+
 }
