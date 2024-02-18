@@ -42,4 +42,23 @@ public class CartResponseDTO {
         Long price;
         Integer amount;
     }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class cartStockDTO {
+        Long itemId;
+        List<cartDetailStockDTO> cartDetailStockDTOList;
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class cartDetailStockDTO {
+        Long itemOptionId;
+        Integer stock;
+    }
+
 }
