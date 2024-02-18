@@ -22,6 +22,7 @@ public class CartResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class cartViewDTO {
+        Long cartId;
         String sellerName;
         Long itemId;
         String itemName;

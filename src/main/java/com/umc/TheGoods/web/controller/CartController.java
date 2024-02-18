@@ -101,6 +101,10 @@ public class CartController {
     }
 
     @DeleteMapping("/detail/delete")
+    @Operation(summary = "장바구니 옵션 삭제 API", description = "해당 장바구니 내역의 담은 옵션을 삭제하는 API 입니다.")
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
+    })
     public ApiResponse<String> deleteCartDetail(@RequestBody CartRequestDTO.cartDetailDeleteDTO request,
                                                 Authentication authentication) {
         // 비회원인 경우 처리 불가
@@ -115,5 +119,23 @@ public class CartController {
         cartCommandService.deleteCartDetail(request, member);
 
         return ApiResponse.onSuccess("장바구니 옵션 삭제 성공");
+    }
+
+    @DeleteMapping("/delete")
+    public ApiResponse<String> deleteCart(@RequestBody CartRequestDTO.cartDeleteDTO request,
+                                          Authentication authentication) {
+
+        // 비회원인 경우 처리 불가
+        if (authentication == null) {
+            throw new MemberHandler(ErrorStatus._UNAUTHORIZED);
+        }
+
+        // request에서 member id 추출해 Member 엔티티 찾기
+        MemberDetail memberDetail = (MemberDetail) authentication.getPrincipal();
+        Member member = memberQueryService.findMemberById(memberDetail.getMemberId()).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        cartCommandService.deleteCart(request, member);
+
+        return ApiResponse.onSuccess("장바구니 상품 삭제 성공");
     }
 }

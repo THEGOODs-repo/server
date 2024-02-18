@@ -14,4 +14,6 @@ public interface CartCommandService {
 
     void deleteCartDetail(CartRequestDTO.cartDetailDeleteDTO request, Member member);
 
+    void deleteCart(CartRequestDTO.cartDeleteDTO request, Member member);
+
 }

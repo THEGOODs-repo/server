@@ -172,7 +172,6 @@ public class CartCommandServiceImpl implements CartCommandService {
     @Override
     public void deleteCartDetail(CartRequestDTO.cartDetailDeleteDTO request, Member member) {
 
-
         request.getCartDetailIdList().forEach(cartDetailId -> {
 
             CartDetail cartDetail = cartDetailRepository.findById(cartDetailId).orElseThrow(() -> new OrderHandler(ErrorStatus.CART_DETAIL_NOT_FOUND));
@@ -196,6 +195,42 @@ public class CartCommandServiceImpl implements CartCommandService {
                 cart.detachItem();
                 cartRepository.deleteCartById(cart.getId());
             }
+        });
+
+    }
+
+    @Override
+    public void deleteCart(CartRequestDTO.cartDeleteDTO request, Member member) {
+        request.getCartIdList().forEach(cartId -> {
+            Cart cart = cartRepository.findById(cartId).orElseThrow(() -> new OrderHandler(ErrorStatus.CART_NOT_FOUND));
+
+            // 해당 cart 내역을 수정할 권한 있는지 검증
+            if (!cart.getMember().equals(member)) {
+                throw new OrderHandler(ErrorStatus.NOT_CART_OWNER);
+            }
+
+            List<CartDetail> cartDetailList = cartDetailRepository.findAllByCart(cart);
+            cartDetailList.forEach(cartDetail -> {
+                log.info("===== cartDetailId: {}", cartDetail.getId());
+                cartDetail.detachCart();
+                cartDetail.detachItemOption();
+
+                cartDetailRepository.deleteById(cartDetail.getId());
+            });
+
+//            cart.getCartDetailList().forEach(cartDetail -> {
+//                log.info("===== cartDetailId: {}", cartDetail.getId());
+//                cartDetail.detachCart();
+//                cartDetail.detachItemOption();
+//
+//                cartDetailRepository.deleteById(cartDetail.getId());
+//            });
+
+            cartDetailRepository.flush();
+
+            cart.detachMember();
+            cart.detachItem();
+            cartRepository.deleteCartById(cart.getId());
         });
 
     }

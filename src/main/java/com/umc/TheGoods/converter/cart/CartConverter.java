@@ -40,6 +40,7 @@ public class CartConverter {
         String itemImgUrl = itemImgResponseDTOList.get(0).getItemImgUrl();
 
         return CartResponseDTO.cartViewDTO.builder()
+                .cartId(cart.getId())
                 .sellerName(cart.getItem().getMember().getNickname())
                 .itemId(cart.getItem().getId())
                 .itemName(cart.getItem().getName())
@@ -48,7 +49,7 @@ public class CartConverter {
                 .cartDetailViewDTOList(cartDetailViewDTOList)
                 .build();
     }
-
+    
     public static CartResponseDTO.cartDetailViewDTO toCartDetailViewDTO(CartDetail cartDetail) {
         return CartResponseDTO.cartDetailViewDTO.builder()
                 .cartDetailId(cartDetail.getId())

@@ -65,4 +65,10 @@ public class CartRequestDTO {
         List<Long> cartDetailIdList;
     }
 
+    @Getter
+    public static class cartDeleteDTO {
+        @NotNull
+        List<Long> cartIdList;
+    }
+
 }
