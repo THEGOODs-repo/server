@@ -14,6 +14,7 @@ import com.umc.TheGoods.repository.cart.CartRepository;
 import com.umc.TheGoods.service.ItemService.ItemQueryService;
 import com.umc.TheGoods.web.dto.cart.CartRequestDTO;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +22,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -181,12 +183,18 @@ public class CartCommandServiceImpl implements CartCommandService {
             if (!cartDetail.getCart().getMember().equals(member)) {
                 throw new OrderHandler(ErrorStatus.NOT_CART_OWNER);
             }
+            cartDetail.detachCart();
+            cartDetail.detachItemOption();
 
             cartDetailRepository.deleteById(cartDetail.getId());
+            cartDetailRepository.flush();
 
             // 장바구니 상품의 마지막 옵션 내역을 삭제한 경: 장바구니 상품 내역도 삭제
             if (cart.getCartDetailList().isEmpty()) {
-                cartRepository.delete(cart);
+                log.info(" ===================== 마지막 옵션 삭제 ========================");
+                cart.detachMember();
+                cart.detachItem();
+                cartRepository.deleteCartById(cart.getId());
             }
         });
 
