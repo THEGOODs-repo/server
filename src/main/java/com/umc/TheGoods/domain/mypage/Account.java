@@ -20,6 +20,9 @@ public class Account extends BaseDateTimeEntity {
     private Long id;
 
     @Column(columnDefinition = "VARCHAR(20)", nullable = false)
+    private String owner;
+
+    @Column(columnDefinition = "VARCHAR(20)", nullable = false)
     private String bankName;
 
 

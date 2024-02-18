@@ -4,6 +4,8 @@ package com.umc.TheGoods.service.MemberService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.umc.TheGoods.domain.member.Auth;
 import com.umc.TheGoods.domain.member.Member;
+import com.umc.TheGoods.domain.mypage.Account;
+import com.umc.TheGoods.domain.mypage.Address;
 import com.umc.TheGoods.web.dto.member.MemberRequestDTO;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -43,4 +45,17 @@ public interface MemberCommandService {
     Member profileModify(MultipartFile profile, String nickname, String introduce, Member member);
 
     Member updateRole(Member member);
+
+    void updatePhoneName(MemberRequestDTO.PhoneNameUpdateDTO request, Member member);
+
+    Address postAddress(MemberRequestDTO.AddressDTO request,Member member);
+
+    Account postAccount(MemberRequestDTO.AccountDTO request, Member member);
+
+    void updateAddress(MemberRequestDTO.AddressDTO request,Long addressId);
+
+    void updateAccount(MemberRequestDTO.AccountDTO request, Long accountId);
+
+
+
 }

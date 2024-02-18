@@ -14,6 +14,8 @@ import com.umc.TheGoods.domain.mapping.member.MemberTerm;
 import com.umc.TheGoods.domain.member.Auth;
 import com.umc.TheGoods.domain.member.Member;
 import com.umc.TheGoods.domain.member.Term;
+import com.umc.TheGoods.domain.mypage.Account;
+import com.umc.TheGoods.domain.mypage.Address;
 import com.umc.TheGoods.repository.member.*;
 import com.umc.TheGoods.service.UtilService;
 import com.umc.TheGoods.web.dto.member.KakaoProfile;
@@ -56,6 +58,8 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     private final MailConfig mailConfig;
     private final ProfileImgRepository profileImgRepository;
     private final UtilService utilService;
+    private final AddressRepository addressRepository;
+    private final AccountRepository accountRepository;
 
     @Value("${jwt.token.secret}")
     private String key; // 토큰 만들어내는 key값
@@ -561,6 +565,49 @@ public class MemberCommandServiceImpl implements MemberCommandService {
             memberRepository.changeMemberRole(member.getId(), MemberRole.BUYER);
             return member;
         }
+
+    }
+
+    @Override
+    public void updatePhoneName(MemberRequestDTO.PhoneNameUpdateDTO request, Member member) {
+
+        memberRepository.changeMemberName(member.getId(),request.getName());
+
+        memberRepository.changeMemberPhone(member.getId(),request.getPhone());
+
+    }
+
+    @Override
+    public Address postAddress(MemberRequestDTO.AddressDTO request, Member member) {
+
+        Address address =MemberConverter.toAddress(request,member);
+        addressRepository.save(address);
+        return address;
+    }
+
+    @Override
+    public Account postAccount(MemberRequestDTO.AccountDTO request, Member member) {
+
+        Account account =MemberConverter.toAccount(request,member);
+        accountRepository.save(account);
+        return account;
+    }
+
+    @Override
+    public void updateAddress(MemberRequestDTO.AddressDTO request, Long addressId) {
+
+        Address address = addressRepository.findById(addressId).orElseThrow(()-> new MemberHandler(ErrorStatus.MEMBER_ADDRESS_NOT_FOUND));
+        addressRepository.changeAddress(addressId, request.getAddressName(),request.getAddressSpec(), request.getDeliveryMemo(), request.getZipcode());
+
+
+    }
+
+    @Override
+    public void updateAccount(MemberRequestDTO.AccountDTO request, Long accountId) {
+
+        Account account = accountRepository.findById(accountId).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_ACCOUNT_NOT_FOUND));
+        accountRepository.changeAccount(accountId, request.getAccountNum(),request.getBankName(),request.getOwner());
+
 
     }
 
