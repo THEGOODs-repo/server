@@ -188,7 +188,7 @@ public class CartCommandServiceImpl implements CartCommandService {
             cartDetailRepository.deleteById(cartDetail.getId());
             cartDetailRepository.flush();
 
-            // 장바구니 상품의 마지막 옵션 내역을 삭제한 경: 장바구니 상품 내역도 삭제
+            // 장바구니 상품의 마지막 옵션 내역을 삭제한 경우: 장바구니 상품 내역도 삭제
             if (cart.getCartDetailList().isEmpty()) {
                 log.info(" ===================== 마지막 옵션 삭제 ========================");
                 cart.detachMember();
