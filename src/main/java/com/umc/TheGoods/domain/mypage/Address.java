@@ -3,6 +3,7 @@ package com.umc.TheGoods.domain.mypage;
 import com.umc.TheGoods.domain.common.BaseDateTimeEntity;
 import com.umc.TheGoods.domain.member.Member;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 
@@ -29,6 +30,17 @@ public class Address extends BaseDateTimeEntity {
 
     @Column(columnDefinition = "VARCHAR(10)", nullable = false)
     private String zipcode;
+
+    @Column(columnDefinition = "BOOLEAN")
+    @ColumnDefault("false")
+    private Boolean defaultCheck;
+
+    @Column(columnDefinition = "VARCHAR(20)")
+    private String recipientPhone;
+
+    @Column(columnDefinition = "VARCHAR(10)")
+    private String recipientName;
+
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")

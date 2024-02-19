@@ -5,6 +5,7 @@ import com.umc.TheGoods.domain.member.Member;
 import com.umc.TheGoods.domain.mypage.Account;
 import com.umc.TheGoods.domain.mypage.Address;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface MemberQueryService {
@@ -16,7 +17,7 @@ public interface MemberQueryService {
 
     Optional<Member> findMemberByEmail(String email);
 
-    Optional<Address> findAddressById(Long id);
+    List<Address> findAllAddressById(Long id);
 
-    Optional<Account> findAccountById(Long id);
+    List<Account> findAllAccountById(Long id);
 }

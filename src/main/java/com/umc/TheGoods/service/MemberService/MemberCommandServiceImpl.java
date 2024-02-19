@@ -597,7 +597,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     public void updateAddress(MemberRequestDTO.AddressDTO request, Long addressId) {
 
         Address address = addressRepository.findById(addressId).orElseThrow(()-> new MemberHandler(ErrorStatus.MEMBER_ADDRESS_NOT_FOUND));
-        addressRepository.changeAddress(addressId, request.getAddressName(),request.getAddressSpec(), request.getDeliveryMemo(), request.getZipcode());
+        addressRepository.changeAddress(addressId, request.getAddressName(),request.getAddressSpec(), request.getDeliveryMemo(), request.getZipcode(), request.getDefaultCheck(),request.getRecipientName(),request.getRecipientPhone());
 
 
     }
@@ -606,8 +606,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     public void updateAccount(MemberRequestDTO.AccountDTO request, Long accountId) {
 
         Account account = accountRepository.findById(accountId).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_ACCOUNT_NOT_FOUND));
-        accountRepository.changeAccount(accountId, request.getAccountNum(),request.getBankName(),request.getOwner());
-
+        accountRepository.changeAccount(accountId, request.getAccountNum(),request.getBankName(),request.getOwner(),request.getDefaultCheck());
 
     }
 

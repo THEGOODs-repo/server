@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -225,8 +226,10 @@ public class MemberController {
         MemberDetail memberDetail = (MemberDetail) authentication.getPrincipal();
         Member member = memberQueryService.findMemberById(memberDetail.getMemberId()).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
         Optional<ProfileImg> profileImg = memberQueryService.findProfileImgByMember(member.getId());
-        Optional<Address> address = memberQueryService.findAddressById(member.getId());
-        Optional<Account> account = memberQueryService.findAccountById(member.getId());
+        List<Address> address = memberQueryService.findAllAddressById(member.getId());
+        List<Account> account = memberQueryService.findAllAccountById(member.getId());
+
+
 
         if(profileImg.isEmpty()){
             return ApiResponse.onSuccess(MemberConverter.toProfile(member, null, account, address));
