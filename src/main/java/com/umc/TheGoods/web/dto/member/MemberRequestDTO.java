@@ -116,6 +116,9 @@ public class MemberRequestDTO {
         private String addressSpec;
         private String deliveryMemo;
         private String zipcode;
+        private String recipientName;
+        private String recipientPhone;
+        private Boolean defaultCheck;
     }
 
     @Getter
@@ -126,5 +129,6 @@ public class MemberRequestDTO {
         private String owner;
         private String bankName;
         private String accountNum;
+        private Boolean defaultCheck;
     }
 }

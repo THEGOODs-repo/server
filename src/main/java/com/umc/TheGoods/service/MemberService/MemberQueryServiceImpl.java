@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -48,16 +49,16 @@ public class MemberQueryServiceImpl implements MemberQueryService {
     }
 
     @Override
-    public Optional<Address> findAddressById(Long id) {
+    public List<Address> findAllAddressById(Long id) {
 
-        Optional<Address> address = addressRepository.findByMember_Id(id);
+        List<Address> address = addressRepository.findAllByMember_Id(id);
         return address;
     }
 
     @Override
-    public Optional<Account> findAccountById(Long id) {
+    public List<Account> findAllAccountById(Long id) {
 
-        Optional<Account> account = accountRepository.findByMember_Id(id);
+        List<Account> account = accountRepository.findAllByMember_Id(id);
         return account;
     }
 }

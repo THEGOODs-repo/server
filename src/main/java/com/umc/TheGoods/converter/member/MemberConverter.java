@@ -204,20 +204,32 @@ public class MemberConverter {
                 .build();
     }
 
-    public static MemberResponseDTO.ProfileResultDTO toProfile(Member member, String url, Optional<Account> account, Optional<Address> address) {
+    public static MemberResponseDTO.ProfileResultDTO toProfile(Member member, String url, List<Account> account, List<Address> address) {
+
+        List<MemberResponseDTO.AccountDTO> accountList = account.stream().map(a -> MemberResponseDTO.AccountDTO.builder()
+                .id(a.getId())
+                .accountNum(a.getAccountNum())
+                .bankName(a.getBankName())
+                .owner(a.getOwner())
+                .defaultCheck(a.getDefaultCheck())
+                .build()).collect(Collectors.toList());
+        List<MemberResponseDTO.AddressDTO> addressList = address.stream().map(a -> MemberResponseDTO.AddressDTO.builder()
+                .addressName(a.getAddressName())
+                .addressSpec(a.getAddressSpec())
+                .deliveryMemo(a.getDeliveryMemo())
+                .defaultCheck(a.getDefaultCheck())
+                .recipientName(a.getRecipientName())
+                .recipientPhone(a.getRecipientPhone())
+                .id(a.getId())
+                .zipcode(a.getZipcode()).build()).collect(Collectors.toList());
 
         if (address.isEmpty() && account.isEmpty()){
             return MemberResponseDTO.ProfileResultDTO.builder()
                     .name(member.getName())
                     .phone(member.getPhone())
                     .url(url)
-                    .address(null)
-                    .deliveryMemo(null)
-                    .addressDetail(null)
-                    .zipcode(null)
-                    .refundAccount(null)
-                    .refundBank(null)
-                    .refundOwner(null)
+                    .accountList(null)
+                    .addressList(null)
                     .build();
         }
         if (account.isEmpty()){
@@ -225,13 +237,8 @@ public class MemberConverter {
                     .name(member.getName())
                     .phone(member.getPhone())
                     .url(url)
-                    .address(address.get().getAddressName())
-                    .deliveryMemo(address.get().getDeliveryMemo())
-                    .addressDetail(address.get().getAddressSpec())
-                    .zipcode(address.get().getZipcode())
-                    .refundAccount(null)
-                    .refundBank(null)
-                    .refundOwner(null)
+                    .addressList(addressList)
+                    .accountList(accountList)
                     .build();
         }
         if(address.isEmpty()){
@@ -239,13 +246,8 @@ public class MemberConverter {
                     .name(member.getName())
                     .phone(member.getPhone())
                     .url(url)
-                    .address(null)
-                    .deliveryMemo(null)
-                    .addressDetail(null)
-                    .zipcode(null)
-                    .refundAccount(account.get().getAccountNum())
-                    .refundBank(account.get().getBankName())
-                    .refundOwner(account.get().getOwner())
+                    .addressList(null)
+                    .accountList(accountList)
                     .build();
         }
 
@@ -253,13 +255,8 @@ public class MemberConverter {
                 .name(member.getName())
                 .phone(member.getPhone())
                 .url(url)
-                .address(address.get().getAddressName())
-                .deliveryMemo(address.get().getDeliveryMemo())
-                .addressDetail(address.get().getAddressSpec())
-                .zipcode(address.get().getZipcode())
-                .refundAccount(account.get().getAccountNum())
-                .refundBank(account.get().getBankName())
-                .refundOwner(account.get().getOwner())
+                .addressList(addressList)
+                .accountList(accountList)
                 .build();
     }
 
@@ -322,6 +319,9 @@ public class MemberConverter {
                 .addressSpec(request.getAddressSpec())
                 .deliveryMemo(request.getDeliveryMemo())
                 .zipcode(request.getZipcode())
+                .recipientName(request.getRecipientName())
+                .recipientPhone(request.getRecipientPhone())
+                .defaultCheck(request.getDefaultCheck())
                 .member(member)
                 .build();
     }
@@ -332,6 +332,7 @@ public class MemberConverter {
                     .accountNum(request.getAccountNum())
                     .bankName(request.getBankName())
                     .owner(request.getOwner())
+                    .defaultCheck(request.getDefaultCheck())
                     .member(member)
                     .build();
     }

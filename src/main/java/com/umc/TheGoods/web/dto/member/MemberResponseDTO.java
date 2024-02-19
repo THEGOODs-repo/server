@@ -1,12 +1,20 @@
 package com.umc.TheGoods.web.dto.member;
 
 import com.umc.TheGoods.domain.enums.MemberRole;
+import com.umc.TheGoods.domain.mypage.Account;
+import com.umc.TheGoods.domain.mypage.Address;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 
+import javax.persistence.Column;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class MemberResponseDTO {
 
@@ -135,13 +143,8 @@ public class MemberResponseDTO {
         String name;
         String url;
         String phone;
-        String zipcode;
-        String address;
-        String addressDetail;
-        String deliveryMemo;
-        String refundBank;
-        String refundAccount;
-        String refundOwner;
+        List<MemberResponseDTO.AddressDTO> addressList;
+        List<MemberResponseDTO.AccountDTO> accountList;
 
     }
 
@@ -174,8 +177,37 @@ public class MemberResponseDTO {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
+    public static class AddressDTO {
+
+        Long id;
+        String addressName;
+        String addressSpec;
+        String deliveryMemo;
+        String zipcode;
+        Boolean defaultCheck;
+        String recipientPhone;
+        String recipientName;
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class AccountResultDTO {
         String name;
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class AccountDTO {
+
+        Long id;
+        String owner;
+        String bankName;
+        String accountNum;
+        Boolean defaultCheck;
     }
 
 
