@@ -48,7 +48,7 @@ public class OrderConverter {
         return OrderItem.builder()
                 .totalPrice(0L)
                 .deliveryFee(deliveryFee)
-                .status(OrderStatus.PAY_PREV)
+                .status(OrderStatus.PAY_COMP)
                 .receiverName(request.getReceiverName())
                 .receiverPhone(request.getReceiverPhone())
                 .zipcode(request.getZipcode())
