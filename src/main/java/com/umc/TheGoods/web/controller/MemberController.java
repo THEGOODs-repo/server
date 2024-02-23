@@ -59,7 +59,7 @@ public class MemberController {
     public ApiResponse<MemberResponseDTO.LoginResultDTO> login(@RequestBody MemberRequestDTO.LoginDTO request) {
 
 
-        return ApiResponse.onSuccess(MemberConverter.toLoginResultDTO(memberCommandService.login(request)));
+        return ApiResponse.onSuccess(memberCommandService.login(request));
     }
 
 
@@ -223,8 +223,9 @@ public class MemberController {
     @Operation(summary = "프로필 조회 api", description = "프로필이미지, 닉네임을 조회할 수 있습니다.")
     public ApiResponse<MemberResponseDTO.ProfileResultDTO> getProfile(Authentication authentication) {
 
-        MemberDetail memberDetail = (MemberDetail) authentication.getPrincipal();
-        Member member = memberQueryService.findMemberById(memberDetail.getMemberId()).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+
+        Member member = memberQueryService.findMemberById(Long.valueOf(authentication.getName().toString())).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
         Optional<ProfileImg> profileImg = memberQueryService.findProfileImgByMember(member.getId());
         List<Address> address = memberQueryService.findAllAddressById(member.getId());
         List<Account> account = memberQueryService.findAllAccountById(member.getId());

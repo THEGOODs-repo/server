@@ -34,11 +34,6 @@ public class MemberConverter {
                 .build();
     }
 
-    public static MemberResponseDTO.LoginResultDTO toLoginResultDTO(String jwt) {
-        return MemberResponseDTO.LoginResultDTO.builder()
-                .jwt(jwt)
-                .build();
-    }
 
     public static Member toMember(MemberRequestDTO.JoinDTO request, BCryptPasswordEncoder encoder) {
         return Member.builder()
