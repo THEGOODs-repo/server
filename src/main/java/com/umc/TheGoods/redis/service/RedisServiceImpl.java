@@ -14,11 +14,13 @@ import com.umc.TheGoods.web.dto.member.MemberRequestDTO;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -41,12 +43,12 @@ public class RedisServiceImpl implements RedisService {
     @Transactional
     public RefreshToken generateRefreshToken(String email) {
         Member member = memberRepository.findByEmail(email).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
-        String token = UUID.randomUUID().toString();
+        String token = tokenProvider.createRefreshToken(Arrays.asList(new SimpleGrantedAuthority("USER")));
         Long memberId = member.getId();
 
         LocalDateTime currentTime = LocalDateTime.now();
 
-        LocalDateTime expireTime = currentTime.plus(1000, ChronoUnit.MINUTES);
+        LocalDateTime expireTime = currentTime.plusMonths(1);
 
         RefreshToken refreshToken = RefreshToken.builder()
                 .memberId(memberId)
@@ -58,10 +60,11 @@ public class RedisServiceImpl implements RedisService {
 
     @Override
     @Transactional
-    public RefreshToken reGenerateRefreshToken(MemberRequestDTO.IssueTokenDTO request) {
+    public RefreshToken reGenerateRefreshToken(MemberRequestDTO.RefreshTokenDTO request) {
         if (request.getRefreshToken() == null)
             throw new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND);
         RefreshToken findRefreshToken = refreshTokenRepository.findById(request.getRefreshToken()).orElseThrow(() -> new JwtHandler(ErrorStatus.JWT_REFRESH_TOKEN_EXPIRED));
+        System.out.println(findRefreshToken.getToken());
         LocalDateTime expireTime = findRefreshToken.getExpireTime();
         LocalDateTime current = LocalDateTime.now();
         LocalDateTime expireDeadLine = current.plusSeconds(20);
@@ -73,7 +76,6 @@ public class RedisServiceImpl implements RedisService {
             throw new JwtHandler(ErrorStatus.JWT_REFRESH_TOKEN_EXPIRED);
         }
 
-        // 새로 발급할 accessToken보다 refreshToken이 먼저 만료 될 경우인가?
         if (expireTime.isAfter(expireDeadLine)) {
             logger.info("기존 리프레시 토큰 발급");
             return findRefreshToken;
@@ -114,8 +116,7 @@ public class RedisServiceImpl implements RedisService {
     @Override
     public Boolean validateLoginToken(String accessToken) {
         Long aLong = tokenProvider.validateAndReturnSubject(accessToken);
-        if (aLong == 0L)
-            return true;
+
         return loginStatusRepository.findById(accessToken).isPresent();
     }
 }

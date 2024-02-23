@@ -51,6 +51,20 @@ public class MemberConverter {
 
     }
 
+    public static MemberResponseDTO.LogoutResultDTO toLogoutResultDTO(Member member){
+        return MemberResponseDTO.LogoutResultDTO.builder()
+                .memberId(member.getId())
+                .memberStatus(member.getMemberStatus())
+                .build();
+    }
+
+    public static MemberResponseDTO.NewTokenDTO toNewTokenDTO(String accessToken, String refreshToken) {
+        return MemberResponseDTO.NewTokenDTO.builder()
+                .refreshToken(refreshToken)
+                .accessToken(accessToken)
+                .build();
+    }
+
     public static Member toUpdatePassword(Member member, String password) {
         List<MemberTerm> memberTermList = member.getMemberTermList();
         List<MemberCategory> memberCategoryList = member.getMemberCategoryList();

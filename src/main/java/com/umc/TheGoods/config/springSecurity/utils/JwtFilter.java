@@ -4,16 +4,10 @@ import com.umc.TheGoods.apiPayload.code.status.ErrorStatus;
 import com.umc.TheGoods.apiPayload.exception.handler.JwtHandler;
 import com.umc.TheGoods.config.springSecurity.provider.TokenProvider;
 import com.umc.TheGoods.redis.service.RedisService;
-import com.umc.TheGoods.service.MemberService.MemberCommandServiceImpl;
-import com.umc.TheGoods.web.dto.member.MemberDetail;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpHeaders;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -22,7 +16,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.List;
+
 
 //토큰이 있는지 매번 체크해야함
 @RequiredArgsConstructor

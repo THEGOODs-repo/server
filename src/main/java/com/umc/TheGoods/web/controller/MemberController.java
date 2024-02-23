@@ -11,6 +11,8 @@ import com.umc.TheGoods.domain.member.Auth;
 import com.umc.TheGoods.domain.member.Member;
 import com.umc.TheGoods.domain.mypage.Account;
 import com.umc.TheGoods.domain.mypage.Address;
+import com.umc.TheGoods.redis.domain.RefreshToken;
+import com.umc.TheGoods.redis.service.RedisService;
 import com.umc.TheGoods.service.MemberService.MemberCommandService;
 import com.umc.TheGoods.service.MemberService.MemberQueryService;
 import com.umc.TheGoods.web.dto.member.MemberDetail;
@@ -26,6 +28,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
@@ -40,6 +43,7 @@ public class MemberController {
 
     private final MemberCommandService memberCommandService;
     private final MemberQueryService memberQueryService;
+    private final RedisService redisService;
 
 
     @PostMapping("/join")
@@ -62,6 +66,23 @@ public class MemberController {
         return ApiResponse.onSuccess(memberCommandService.login(request));
     }
 
+    @Operation(summary = "로그아웃 API", description = "로그아웃 API 입니다.")
+    @PostMapping("/logout")
+    public ApiResponse<MemberResponseDTO.LogoutResultDTO> logout(Authentication authentication,
+                                                                 HttpServletRequest authorizationHeader) {
+        String token = authorizationHeader.getHeader("Authorization").substring(7);
+        Member member = memberQueryService.findMemberById(Long.valueOf(authentication.getName().toString())).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        memberCommandService.logout(token, member);
+        return ApiResponse.onSuccess(MemberConverter.toLogoutResultDTO(member));
+    }
+
+    @Operation(summary = "리프레쉬 토큰을 이용해 accessToken 재발급 API ️", description = "리프레쉬 토큰으로 accessToken 재발급하는 API입니다.")
+    @PostMapping("/token/regenerate")
+    public ApiResponse<MemberResponseDTO.NewTokenDTO> getNewToken(@RequestBody MemberRequestDTO.RefreshTokenDTO request) {
+        RefreshToken newRefreshToken = redisService.reGenerateRefreshToken(request);
+        String accessToken = memberCommandService.regenerateAccessToken(newRefreshToken);
+        return ApiResponse.onSuccess(MemberConverter.toNewTokenDTO(accessToken, newRefreshToken.getToken()));
+    }
 
     @PostMapping("/jwt/test")
     @Operation(summary = "jwt test API", description = "테스트 용도 api")

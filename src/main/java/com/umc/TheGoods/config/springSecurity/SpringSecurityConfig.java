@@ -6,7 +6,6 @@ import com.umc.TheGoods.config.springSecurity.handler.JwtAuthenticationException
 import com.umc.TheGoods.config.springSecurity.provider.TokenProvider;
 import com.umc.TheGoods.config.springSecurity.utils.JwtFilter;
 import com.umc.TheGoods.redis.service.RedisService;
-import com.umc.TheGoods.service.MemberService.MemberCommandServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -48,7 +47,8 @@ public class SpringSecurityConfig {
                         "/swagger-ui/**",
                         "/swagger-resources/**",
                         "/v3/api-docs/**",
-                        "/api/members/login"
+                        "/api/members/login",
+                        "api/members/token/regenerate"
                 );
     }
     @Bean

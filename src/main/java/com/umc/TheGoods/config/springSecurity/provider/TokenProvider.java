@@ -70,6 +70,7 @@ public class TokenProvider implements InitializingBean {
                 .claim(AUTHORITIES_KEY, authorities)
                 .claim("memberRole", memberRole)
                 .claim("email", email)
+                .claim("type",TokenType.ACCESS)
                 .signWith(key, SignatureAlgorithm.HS512)
                 .setExpiration(validity)
                 .compact();
@@ -87,6 +88,7 @@ public class TokenProvider implements InitializingBean {
 
         return Jwts.builder()
                 .claim(AUTHORITIES_KEY, authorities)
+                .claim("type", TokenType.REFRESH)
                 .signWith(key, SignatureAlgorithm.HS512)
                 .setExpiration(validity)
                 .compact();

@@ -19,6 +19,7 @@ import com.umc.TheGoods.domain.member.Term;
 import com.umc.TheGoods.domain.mypage.Account;
 import com.umc.TheGoods.domain.mypage.Address;
 import com.umc.TheGoods.domain.types.SocialType;
+import com.umc.TheGoods.redis.domain.RefreshToken;
 import com.umc.TheGoods.redis.service.RedisService;
 import com.umc.TheGoods.repository.member.*;
 import com.umc.TheGoods.service.UtilService;
@@ -154,6 +155,18 @@ public class MemberCommandServiceImpl implements MemberCommandService {
                 .refreshToken(redisService.generateRefreshToken(request.getEmail()))
                 .build();
 
+    }
+
+    @Override
+    public String regenerateAccessToken(RefreshToken refreshToken) {
+        Member member = memberRepository.findById(refreshToken.getMemberId()).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        return redisService.saveLoginStatus(member.getId(), tokenProvider.createAccessToken(member.getId(), member.getMemberRole().toString(),member.getEmail(),Arrays.asList(new SimpleGrantedAuthority("USER"))));
+    }
+
+    @Override
+    @Transactional
+    public void logout(String accessToken, Member member) {
+        redisService.resolveLogout(accessToken);
     }
 
     /**

@@ -135,7 +135,7 @@ public class MemberRequestDTO {
 
     @Getter
     @Setter
-    public static class IssueTokenDTO {
+    public static class RefreshTokenDTO {
         String refreshToken;
     }
 }

@@ -10,7 +10,7 @@ public interface RedisService {
     RefreshToken generateRefreshToken(String email);
 
     // accessToken 만료 시 발급 혹은 그대로 반환
-    RefreshToken reGenerateRefreshToken(MemberRequestDTO.IssueTokenDTO request);
+    RefreshToken reGenerateRefreshToken(MemberRequestDTO.RefreshTokenDTO request);
 
     // 로그아웃을 위해 로그인 되었다고 저장
     String saveLoginStatus(Long memberId, String accessToken);
