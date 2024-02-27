@@ -1,4 +1,4 @@
-# TheGoods<img src="https://github.com/THEGOODs-repo/server/assets/87745916/a7d5901c-ed8f-4b5d-b6ba-506b6767c611" align=left width=100>
+# 더 굿즈<img src="https://github.com/THEGOODs-repo/server/assets/87745916/a7d5901c-ed8f-4b5d-b6ba-506b6767c611" align=left width=100>
 
 > _의미 없는 ‘a’가 아닌 나에게 있어 특별한 ‘the’ 굿즈, 우리는 특별한 굿즈를 거래합니다._
 
