@@ -53,8 +53,7 @@ public class ItemRestController {
                                                                    @RequestPart(value = "itemImgList", required = false) List<MultipartFile> itemImgList,
                                                                    Authentication authentication) {
 
-        MemberDetail memberDetail = (MemberDetail) authentication.getPrincipal();
-        Member member = memberQueryService.findMemberById(memberDetail.getMemberId()).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        Member member = memberQueryService.findMemberById(Long.valueOf(authentication.getName().toString())).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
         Item item = itemCommandService.uploadItem(member, request, itemThumbnail, itemImgList);
         return ApiResponse.onSuccess(ItemConverter.toUploadItemResultDTO(item));
@@ -75,8 +74,7 @@ public class ItemRestController {
         if (authentication == null) {
             member = memberQueryService.findMemberByNickname("no_login_user").orElseThrow(() -> new ItemHandler(ErrorStatus.ITEM_VIEW_ERROR));
         } else {
-            MemberDetail memberDetail = (MemberDetail) authentication.getPrincipal();
-            member = memberQueryService.findMemberById(memberDetail.getMemberId()).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+            member = memberQueryService.findMemberById(Long.valueOf(authentication.getName().toString())).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
         }
 
         Item itemContent = itemCommandService.getItemContent(itemId, member);
@@ -97,10 +95,8 @@ public class ItemRestController {
                                                                        @RequestPart(value = "itemThumbnail") MultipartFile itemThumbnail,
                                                                        @RequestPart(value = "itemImgList", required = false) List<MultipartFile> itemImgList,
                                                                        Authentication authentication) {
-        Member member;
 
-        MemberDetail memberDetail = (MemberDetail) authentication.getPrincipal();
-        member = memberQueryService.findMemberById(memberDetail.getMemberId()).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        Member member = memberQueryService.findMemberById(Long.valueOf(authentication.getName().toString())).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
         Item item = itemCommandService.updateItem(itemId, member, request, itemThumbnail, itemImgList);
         return ApiResponse.onSuccess(ItemConverter.toUpdateItemResultDTO(item));
@@ -121,8 +117,7 @@ public class ItemRestController {
             throw new MemberHandler(ErrorStatus._UNAUTHORIZED);
         }
 
-        MemberDetail memberDetail = (MemberDetail) authentication.getPrincipal();
-        Member member = memberQueryService.findMemberById(memberDetail.getMemberId()).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        Member member = memberQueryService.findMemberById(Long.valueOf(authentication.getName().toString())).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
         Page<Item> itemList = itemQueryService.getMyItemList(member, page - 1);
         return ApiResponse.onSuccess(ItemConverter.itemPreviewListDTO(itemList));
@@ -159,8 +154,7 @@ public class ItemRestController {
         if (authentication == null) {
             member = memberQueryService.findMemberByNickname("no_login_user").orElseThrow(() -> new ItemHandler(ErrorStatus.ITEM_VIEW_ERROR));
         } else {
-            MemberDetail memberDetail = (MemberDetail) authentication.getPrincipal();
-            member = memberQueryService.findMemberById(memberDetail.getMemberId()).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+            member = memberQueryService.findMemberById(Long.valueOf(authentication.getName().toString())).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
         }
         Page<Item> itemPage = itemQueryService.getSimilarItemList(itemId, member, page - 1);
 
@@ -251,8 +245,7 @@ public class ItemRestController {
         if (authentication == null) {
             member = memberQueryService.findMemberByNickname("no_login_user").orElseThrow(() -> new ItemHandler(ErrorStatus.ITEM_VIEW_ERROR));
         } else {
-            MemberDetail memberDetail = (MemberDetail) authentication.getPrincipal();
-            member = memberQueryService.findMemberById(memberDetail.getMemberId()).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+            member = memberQueryService.findMemberById(Long.valueOf(authentication.getName().toString())).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
         }
 
         Page<Item> itemList = itemQueryService.searchItem(member, itemName, categoryName, sellerName, tagName, type, page - 1);
