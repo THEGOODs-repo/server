@@ -3,9 +3,11 @@ package com.umc.TheGoods.web.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.umc.TheGoods.apiPayload.ApiResponse;
 import com.umc.TheGoods.apiPayload.code.status.ErrorStatus;
+import com.umc.TheGoods.apiPayload.code.status.SuccessStatus;
 import com.umc.TheGoods.apiPayload.exception.handler.MemberHandler;
 import com.umc.TheGoods.converter.member.MemberConverter;
 import com.umc.TheGoods.domain.enums.MemberRole;
+import com.umc.TheGoods.domain.enums.MemberStatus;
 import com.umc.TheGoods.domain.images.ProfileImg;
 import com.umc.TheGoods.domain.member.Auth;
 import com.umc.TheGoods.domain.member.Member;
@@ -330,6 +332,16 @@ public class MemberController {
         memberCommandService.updateAccount(request,accountId);
 
         return ApiResponse.onSuccess(null);
+    }
+
+    @DeleteMapping(value = "/delete")
+    @Operation(summary = "회원 탈퇴 api", description = "request: 회원 탈퇴 사유 번호로 주시면 됩니다")
+    public ApiResponse<?> deleteMember(@RequestBody MemberRequestDTO.WithdrawReasonDTO request,
+                                       Authentication authentication){
+
+        Member member = memberQueryService.findMemberById(Long.valueOf(authentication.getName().toString())).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        memberCommandService.deleteMember(request, member);
+        return ApiResponse.of(SuccessStatus.MEMBER_DELETE_SUCCESS, null);
     }
 
 

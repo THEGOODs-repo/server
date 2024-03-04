@@ -60,6 +60,6 @@ public interface MemberCommandService {
 
     void updateAccount(MemberRequestDTO.AccountDTO request, Long accountId);
 
-
+    void deleteMember(MemberRequestDTO.WithdrawReasonDTO request, Member member);
 
 }

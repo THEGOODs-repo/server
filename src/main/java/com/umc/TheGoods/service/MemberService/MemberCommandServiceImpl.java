@@ -9,6 +9,7 @@ import com.umc.TheGoods.config.MailConfig;
 import com.umc.TheGoods.config.springSecurity.provider.TokenProvider;
 import com.umc.TheGoods.converter.member.MemberConverter;
 import com.umc.TheGoods.domain.enums.MemberRole;
+import com.umc.TheGoods.domain.enums.MemberStatus;
 import com.umc.TheGoods.domain.images.ProfileImg;
 import com.umc.TheGoods.domain.item.Category;
 import com.umc.TheGoods.domain.mapping.member.MemberCategory;
@@ -18,6 +19,7 @@ import com.umc.TheGoods.domain.member.Member;
 import com.umc.TheGoods.domain.member.Term;
 import com.umc.TheGoods.domain.mypage.Account;
 import com.umc.TheGoods.domain.mypage.Address;
+import com.umc.TheGoods.domain.mypage.WithdrawReason;
 import com.umc.TheGoods.domain.types.SocialType;
 import com.umc.TheGoods.redis.domain.RefreshToken;
 import com.umc.TheGoods.redis.service.RedisService;
@@ -64,6 +66,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     private final AccountRepository accountRepository;
     private final TokenProvider tokenProvider;
     private final RedisService redisService;
+    private final WithdrawReasonRepository withdrawReasonRepository;
 
     @Value("${jwt.token.secret}")
     private String key; // 토큰 만들어내는 key값
@@ -143,7 +146,9 @@ public class MemberCommandServiceImpl implements MemberCommandService {
         Member selectedMember = memberRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_EMAIL_NOT_FOUND));
 
-
+        if(!this.checkDeregister(selectedMember)){
+            throw new MemberHandler(ErrorStatus.MEMBER_INACTIVATE);
+        }
         //password 틀림
         if (!encoder.matches(request.getPassword(), selectedMember.getPassword())) {
             throw new MemberHandler(ErrorStatus.MEMBER_PASSWORD_ERROR);
@@ -455,7 +460,9 @@ public class MemberCommandServiceImpl implements MemberCommandService {
 
         if (member.isPresent()) {
 
-
+            if(!this.checkDeregister(member.orElseThrow())){
+                throw new MemberHandler(ErrorStatus.MEMBER_INACTIVATE);
+            }
             return tokenProvider.createAccessToken(member.get().getId(), member.get().getMemberRole().toString() , member.get().getEmail(), Arrays.asList(new SimpleGrantedAuthority("USER")));
 
         }
@@ -537,6 +544,10 @@ public class MemberCommandServiceImpl implements MemberCommandService {
         Optional<Member> member = memberRepository.findByPhone(phone);
 
         if (member.isPresent()) {
+
+            if(!this.checkDeregister(member.orElseThrow())){
+                throw new MemberHandler(ErrorStatus.MEMBER_INACTIVATE);
+            }
 
             return tokenProvider.createAccessToken(member.get().getId(), member.get().getMemberRole().toString() , member.get().getEmail(), Arrays.asList(new SimpleGrantedAuthority("USER")));
 
@@ -634,6 +645,32 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     @Override
     public boolean existMemberById(Long memberId) {
         return memberRepository.existsById(memberId);
+    }
+
+    @Override
+    public void deleteMember(MemberRequestDTO.WithdrawReasonDTO request, Member member) {
+
+        WithdrawReason withdrawReason = WithdrawReason.builder()
+                .reason(request.getReason())
+                .caution(request.getCaution())
+                .member(member)
+                .build();
+        withdrawReasonRepository.save(withdrawReason);
+        member.inactivateStatus();
+        memberRepository.save(member);
+
+        return;
+    }
+
+    public boolean checkDeregister(Member member){
+
+        if(member.getMemberStatus() == MemberStatus.INACTIVE){
+            return false;
+        }
+        else{
+            return true;
+        }
+
     }
 }
 

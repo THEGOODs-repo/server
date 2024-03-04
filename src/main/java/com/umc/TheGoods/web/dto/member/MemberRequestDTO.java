@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.Column;
+import javax.persistence.criteria.CriteriaBuilder;
 import java.util.Date;
 import java.util.List;
 
@@ -137,5 +138,12 @@ public class MemberRequestDTO {
     @Setter
     public static class RefreshTokenDTO {
         String refreshToken;
+    }
+
+    @Getter
+    @Setter
+    public static class WithdrawReasonDTO {
+        Integer reason;
+        Boolean caution;
     }
 }
