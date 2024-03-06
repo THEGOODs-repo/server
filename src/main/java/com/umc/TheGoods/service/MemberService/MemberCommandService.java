@@ -6,7 +6,9 @@ import com.umc.TheGoods.domain.member.Auth;
 import com.umc.TheGoods.domain.member.Member;
 import com.umc.TheGoods.domain.mypage.Account;
 import com.umc.TheGoods.domain.mypage.Address;
+import com.umc.TheGoods.redis.domain.RefreshToken;
 import com.umc.TheGoods.web.dto.member.MemberRequestDTO;
+import com.umc.TheGoods.web.dto.member.MemberResponseDTO;
 import org.springframework.web.multipart.MultipartFile;
 
 
@@ -18,7 +20,9 @@ public interface MemberCommandService {
 
     Member join(MemberRequestDTO.JoinDTO request);
 
-    String login(MemberRequestDTO.LoginDTO request);
+    MemberResponseDTO.LoginResultDTO login(MemberRequestDTO.LoginDTO request);
+    void logout(String accessToken, Member member);
+    String regenerateAccessToken(RefreshToken refreshToken);
 
     Auth sendPhoneAuth(String phone) throws JsonProcessingException;
 
@@ -56,6 +60,6 @@ public interface MemberCommandService {
 
     void updateAccount(MemberRequestDTO.AccountDTO request, Long accountId);
 
-
+    void deleteMember(MemberRequestDTO.WithdrawReasonDTO request, Member member);
 
 }

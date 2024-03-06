@@ -1,12 +1,15 @@
 package com.umc.TheGoods.service.MemberService;
 
+import antlr.Token;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.umc.TheGoods.apiPayload.code.status.ErrorStatus;
 import com.umc.TheGoods.apiPayload.exception.handler.MemberHandler;
 import com.umc.TheGoods.config.MailConfig;
+import com.umc.TheGoods.config.springSecurity.provider.TokenProvider;
 import com.umc.TheGoods.converter.member.MemberConverter;
 import com.umc.TheGoods.domain.enums.MemberRole;
+import com.umc.TheGoods.domain.enums.MemberStatus;
 import com.umc.TheGoods.domain.images.ProfileImg;
 import com.umc.TheGoods.domain.item.Category;
 import com.umc.TheGoods.domain.mapping.member.MemberCategory;
@@ -16,12 +19,13 @@ import com.umc.TheGoods.domain.member.Member;
 import com.umc.TheGoods.domain.member.Term;
 import com.umc.TheGoods.domain.mypage.Account;
 import com.umc.TheGoods.domain.mypage.Address;
+import com.umc.TheGoods.domain.mypage.WithdrawReason;
+import com.umc.TheGoods.domain.types.SocialType;
+import com.umc.TheGoods.redis.domain.RefreshToken;
+import com.umc.TheGoods.redis.service.RedisService;
 import com.umc.TheGoods.repository.member.*;
 import com.umc.TheGoods.service.UtilService;
-import com.umc.TheGoods.web.dto.member.KakaoProfile;
-import com.umc.TheGoods.web.dto.member.MemberRequestDTO;
-import com.umc.TheGoods.web.dto.member.NaverProfile;
-import com.umc.TheGoods.web.dto.member.OAuthToken;
+import com.umc.TheGoods.web.dto.member.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,6 +33,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,7 +46,6 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.umc.TheGoods.config.springSecurity.utils.JwtUtil.createJwt;
 
 
 @Service
@@ -60,6 +64,9 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     private final UtilService utilService;
     private final AddressRepository addressRepository;
     private final AccountRepository accountRepository;
+    private final TokenProvider tokenProvider;
+    private final RedisService redisService;
+    private final WithdrawReasonRepository withdrawReasonRepository;
 
     @Value("${jwt.token.secret}")
     private String key; // 토큰 만들어내는 key값
@@ -133,24 +140,38 @@ public class MemberCommandServiceImpl implements MemberCommandService {
      * @return
      */
     @Override
-    public String login(MemberRequestDTO.LoginDTO request) {
+    public MemberResponseDTO.LoginResultDTO login(MemberRequestDTO.LoginDTO request) {
 
         //email 없음
         Member selectedMember = memberRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_EMAIL_NOT_FOUND));
 
-
+        if(!this.checkDeregister(selectedMember)){
+            throw new MemberHandler(ErrorStatus.MEMBER_INACTIVATE);
+        }
         //password 틀림
         if (!encoder.matches(request.getPassword(), selectedMember.getPassword())) {
             throw new MemberHandler(ErrorStatus.MEMBER_PASSWORD_ERROR);
         }
 
-        //사용자 권한
-        List<String> roles = new ArrayList<>();
-        roles.add("ROLE_USER");
 
-        return createJwt(selectedMember.getId(), selectedMember.getNickname(), expiredMs, key, roles);
+        return MemberResponseDTO.LoginResultDTO.builder()
+                .accessToken(redisService.saveLoginStatus(selectedMember.getId(), tokenProvider.createAccessToken(selectedMember.getId(), selectedMember.getMemberRole().toString() , request.getEmail(), Arrays.asList(new SimpleGrantedAuthority("USER")))))
+                .refreshToken(redisService.generateRefreshToken(request.getEmail()))
+                .build();
 
+    }
+
+    @Override
+    public String regenerateAccessToken(RefreshToken refreshToken) {
+        Member member = memberRepository.findById(refreshToken.getMemberId()).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        return redisService.saveLoginStatus(member.getId(), tokenProvider.createAccessToken(member.getId(), member.getMemberRole().toString(),member.getEmail(),Arrays.asList(new SimpleGrantedAuthority("USER"))));
+    }
+
+    @Override
+    @Transactional
+    public void logout(String accessToken, Member member) {
+        redisService.resolveLogout(accessToken);
     }
 
     /**
@@ -341,7 +362,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
         List<String> roles = new ArrayList<>();
         roles.add("ROLE_USER");
 
-        return createJwt(member.getId(), member.getNickname(), expiredMs, key, roles);
+        return tokenProvider.createAccessToken(member.getId(), member.getMemberRole().toString() , member.getEmail(), Arrays.asList(new SimpleGrantedAuthority("USER")));
     }
 
     @Override
@@ -438,10 +459,11 @@ public class MemberCommandServiceImpl implements MemberCommandService {
         Optional<Member> member = memberRepository.findByPhone(phone);
 
         if (member.isPresent()) {
-            List<String> roles = new ArrayList<>();
-            roles.add("ROLE_USER");
 
-            return createJwt(member.get().getId(), member.get().getNickname(), expiredMs, key, roles);
+            if(!this.checkDeregister(member.orElseThrow())){
+                throw new MemberHandler(ErrorStatus.MEMBER_INACTIVATE);
+            }
+            return tokenProvider.createAccessToken(member.get().getId(), member.get().getMemberRole().toString() , member.get().getEmail(), Arrays.asList(new SimpleGrantedAuthority("USER")));
 
         }
 
@@ -522,10 +544,12 @@ public class MemberCommandServiceImpl implements MemberCommandService {
         Optional<Member> member = memberRepository.findByPhone(phone);
 
         if (member.isPresent()) {
-            List<String> roles = new ArrayList<>();
-            roles.add("ROLE_USER");
 
-            return createJwt(member.get().getId(), member.get().getNickname(), expiredMs, key, roles);
+            if(!this.checkDeregister(member.orElseThrow())){
+                throw new MemberHandler(ErrorStatus.MEMBER_INACTIVATE);
+            }
+
+            return tokenProvider.createAccessToken(member.get().getId(), member.get().getMemberRole().toString() , member.get().getEmail(), Arrays.asList(new SimpleGrantedAuthority("USER")));
 
         }
 
@@ -621,6 +645,32 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     @Override
     public boolean existMemberById(Long memberId) {
         return memberRepository.existsById(memberId);
+    }
+
+    @Override
+    public void deleteMember(MemberRequestDTO.WithdrawReasonDTO request, Member member) {
+
+        WithdrawReason withdrawReason = WithdrawReason.builder()
+                .reason(request.getReason())
+                .caution(request.getCaution())
+                .member(member)
+                .build();
+        withdrawReasonRepository.save(withdrawReason);
+        member.inactivateStatus();
+        memberRepository.save(member);
+
+        return;
+    }
+
+    public boolean checkDeregister(Member member){
+
+        if(member.getMemberStatus() == MemberStatus.INACTIVE){
+            return false;
+        }
+        else{
+            return true;
+        }
+
     }
 }
 

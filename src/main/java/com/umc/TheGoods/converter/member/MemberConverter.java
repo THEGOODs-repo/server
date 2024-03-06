@@ -34,11 +34,6 @@ public class MemberConverter {
                 .build();
     }
 
-    public static MemberResponseDTO.LoginResultDTO toLoginResultDTO(String jwt) {
-        return MemberResponseDTO.LoginResultDTO.builder()
-                .jwt(jwt)
-                .build();
-    }
 
     public static Member toMember(MemberRequestDTO.JoinDTO request, BCryptPasswordEncoder encoder) {
         return Member.builder()
@@ -54,6 +49,20 @@ public class MemberConverter {
                 .itemList(new ArrayList<>())
                 .build();
 
+    }
+
+    public static MemberResponseDTO.LogoutResultDTO toLogoutResultDTO(Member member){
+        return MemberResponseDTO.LogoutResultDTO.builder()
+                .memberId(member.getId())
+                .memberStatus(member.getMemberStatus())
+                .build();
+    }
+
+    public static MemberResponseDTO.NewTokenDTO toNewTokenDTO(String accessToken, String refreshToken) {
+        return MemberResponseDTO.NewTokenDTO.builder()
+                .refreshToken(refreshToken)
+                .accessToken(accessToken)
+                .build();
     }
 
     public static Member toUpdatePassword(Member member, String password) {

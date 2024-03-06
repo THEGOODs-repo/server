@@ -1,6 +1,8 @@
 package com.umc.TheGoods.web.dto.member;
 
 import com.umc.TheGoods.domain.enums.MemberRole;
+import com.umc.TheGoods.domain.enums.MemberStatus;
+import com.umc.TheGoods.redis.domain.RefreshToken;
 import com.umc.TheGoods.domain.mypage.Account;
 import com.umc.TheGoods.domain.mypage.Address;
 import lombok.AllArgsConstructor;
@@ -35,8 +37,20 @@ public class MemberResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class LoginResultDTO {
-        String jwt;
+        String accessToken;
+        RefreshToken refreshToken;
     }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class LogoutResultDTO {
+        Long memberId;
+        MemberStatus memberStatus;
+    }
+
+
 
 
     @Builder
@@ -208,6 +222,17 @@ public class MemberResponseDTO {
         String bankName;
         String accountNum;
         Boolean defaultCheck;
+    }
+
+
+
+    @Builder
+    @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class NewTokenDTO{
+        private String accessToken;
+        private String refreshToken;
     }
 
 

@@ -5,8 +5,10 @@ import com.umc.TheGoods.validation.annotation.ExistCategory;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.Column;
+import javax.persistence.criteria.CriteriaBuilder;
 import java.util.Date;
 import java.util.List;
 
@@ -130,5 +132,18 @@ public class MemberRequestDTO {
         private String bankName;
         private String accountNum;
         private Boolean defaultCheck;
+    }
+
+    @Getter
+    @Setter
+    public static class RefreshTokenDTO {
+        String refreshToken;
+    }
+
+    @Getter
+    @Setter
+    public static class WithdrawReasonDTO {
+        Integer reason;
+        Boolean caution;
     }
 }

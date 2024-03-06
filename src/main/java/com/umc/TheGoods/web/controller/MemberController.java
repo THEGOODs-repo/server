@@ -3,14 +3,18 @@ package com.umc.TheGoods.web.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.umc.TheGoods.apiPayload.ApiResponse;
 import com.umc.TheGoods.apiPayload.code.status.ErrorStatus;
+import com.umc.TheGoods.apiPayload.code.status.SuccessStatus;
 import com.umc.TheGoods.apiPayload.exception.handler.MemberHandler;
 import com.umc.TheGoods.converter.member.MemberConverter;
 import com.umc.TheGoods.domain.enums.MemberRole;
+import com.umc.TheGoods.domain.enums.MemberStatus;
 import com.umc.TheGoods.domain.images.ProfileImg;
 import com.umc.TheGoods.domain.member.Auth;
 import com.umc.TheGoods.domain.member.Member;
 import com.umc.TheGoods.domain.mypage.Account;
 import com.umc.TheGoods.domain.mypage.Address;
+import com.umc.TheGoods.redis.domain.RefreshToken;
+import com.umc.TheGoods.redis.service.RedisService;
 import com.umc.TheGoods.service.MemberService.MemberCommandService;
 import com.umc.TheGoods.service.MemberService.MemberQueryService;
 import com.umc.TheGoods.web.dto.member.MemberDetail;
@@ -26,6 +30,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
@@ -40,6 +45,7 @@ public class MemberController {
 
     private final MemberCommandService memberCommandService;
     private final MemberQueryService memberQueryService;
+    private final RedisService redisService;
 
 
     @PostMapping("/join")
@@ -59,20 +65,35 @@ public class MemberController {
     public ApiResponse<MemberResponseDTO.LoginResultDTO> login(@RequestBody MemberRequestDTO.LoginDTO request) {
 
 
-        return ApiResponse.onSuccess(MemberConverter.toLoginResultDTO(memberCommandService.login(request)));
+        return ApiResponse.onSuccess(memberCommandService.login(request));
     }
 
+    @Operation(summary = "로그아웃 API", description = "로그아웃 API 입니다.")
+    @PostMapping("/logout")
+    public ApiResponse<MemberResponseDTO.LogoutResultDTO> logout(Authentication authentication,
+                                                                 HttpServletRequest authorizationHeader) {
+        String token = authorizationHeader.getHeader("Authorization").substring(7);
+        Member member = memberQueryService.findMemberById(Long.valueOf(authentication.getName().toString())).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        memberCommandService.logout(token, member);
+        return ApiResponse.onSuccess(MemberConverter.toLogoutResultDTO(member));
+    }
+
+    @Operation(summary = "리프레쉬 토큰을 이용해 accessToken 재발급 API ️", description = "리프레쉬 토큰으로 accessToken 재발급하는 API입니다.")
+    @PostMapping("/token/regenerate")
+    public ApiResponse<MemberResponseDTO.NewTokenDTO> getNewToken(@RequestBody MemberRequestDTO.RefreshTokenDTO request) {
+        RefreshToken newRefreshToken = redisService.reGenerateRefreshToken(request);
+        String accessToken = memberCommandService.regenerateAccessToken(newRefreshToken);
+        return ApiResponse.onSuccess(MemberConverter.toNewTokenDTO(accessToken, newRefreshToken.getToken()));
+    }
 
     @PostMapping("/jwt/test")
     @Operation(summary = "jwt test API", description = "테스트 용도 api")
     public ResponseEntity<?> jwtTest(Authentication authentication) {
         //request값으로 Bearer {jwt} 값을 넘겨주면 jwt를 해석해서 Authentication에 정보가 담기고 담긴 정보를 가공해서 사용
         //jwt 토큰은 회원가입하고 로그인하면 발급받을 수 있습니다.
-        MemberDetail memberDetail = (MemberDetail) authentication.getPrincipal();
+        Member member = memberQueryService.findMemberById(Long.valueOf(authentication.getName().toString())).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
-        return ResponseEntity.ok().body("memberId: " + memberDetail.getMemberId() +
-                " memberName: " + memberDetail.getMemberName() +
-                " memberRole: " + memberDetail.getMemberRole());
+        return ResponseEntity.ok().body(member.getEmail());
     }
 
 
@@ -158,8 +179,7 @@ public class MemberController {
             new MemberHandler(ErrorStatus.MEMBER_PASSWORD_NOT_EQUAL);
         }
 
-        MemberDetail memberDetail = (MemberDetail) authentication.getPrincipal();
-        Member member = memberQueryService.findMemberById(memberDetail.getMemberId()).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        Member member = memberQueryService.findMemberById(Long.valueOf(authentication.getName().toString())).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
         Boolean updatePassword = memberCommandService.updatePassword(request, member);
 
@@ -210,8 +230,7 @@ public class MemberController {
                                                                                @RequestParam("nickname") String nickname,
                                                                                @RequestParam("introduce") String introduce,
                                                                                Authentication authentication) {
-        MemberDetail memberDetail = (MemberDetail) authentication.getPrincipal();
-        Member member = memberQueryService.findMemberById(memberDetail.getMemberId()).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        Member member = memberQueryService.findMemberById(Long.valueOf(authentication.getName().toString())).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
 
         Member modifyMember = memberCommandService.profileModify(profile, nickname, introduce, member);
@@ -223,8 +242,9 @@ public class MemberController {
     @Operation(summary = "프로필 조회 api", description = "프로필이미지, 닉네임을 조회할 수 있습니다.")
     public ApiResponse<MemberResponseDTO.ProfileResultDTO> getProfile(Authentication authentication) {
 
-        MemberDetail memberDetail = (MemberDetail) authentication.getPrincipal();
-        Member member = memberQueryService.findMemberById(memberDetail.getMemberId()).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+
+        Member member = memberQueryService.findMemberById(Long.valueOf(authentication.getName().toString())).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
         Optional<ProfileImg> profileImg = memberQueryService.findProfileImgByMember(member.getId());
         List<Address> address = memberQueryService.findAllAddressById(member.getId());
         List<Account> account = memberQueryService.findAllAccountById(member.getId());
@@ -245,8 +265,7 @@ public class MemberController {
     @Operation(summary = "사용자 역할 전환 api", description = "BUYER은 SELLER로 SELLER는 BUYER로 역할 변경")
     public ApiResponse<MemberResponseDTO.RoleUpdateResultDTO> updateRole(Authentication authentication) {
 
-        MemberDetail memberDetail = (MemberDetail) authentication.getPrincipal();
-        Member member = memberQueryService.findMemberById(memberDetail.getMemberId()).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        Member member = memberQueryService.findMemberById(Long.valueOf(authentication.getName().toString())).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
         Member update = memberCommandService.updateRole(member);
 
@@ -259,8 +278,7 @@ public class MemberController {
     @Operation(summary = "주문시 고객 정보 수정(이름, 번호) api", description = "이름과 번호 수정할 수 있는 기능")
     public ApiResponse<MemberResponseDTO.PhoneNameUpdateResultDTO> updateRole(@RequestBody MemberRequestDTO.PhoneNameUpdateDTO request, Authentication authentication) {
 
-        MemberDetail memberDetail = (MemberDetail) authentication.getPrincipal();
-        Member member = memberQueryService.findMemberById(memberDetail.getMemberId()).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        Member member = memberQueryService.findMemberById(Long.valueOf(authentication.getName().toString())).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
         memberCommandService.updatePhoneName(request, member);
 
@@ -273,8 +291,7 @@ public class MemberController {
     @Operation(summary = "회원 배송지 추가 api", description = "request: 우편번호, 배송지명, 배송지, 배송메모")
     public ApiResponse<MemberResponseDTO.AddressResultDTO> postAddress(@RequestBody MemberRequestDTO.AddressDTO request, Authentication authentication) {
 
-        MemberDetail memberDetail = (MemberDetail) authentication.getPrincipal();
-        Member member = memberQueryService.findMemberById(memberDetail.getMemberId()).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        Member member = memberQueryService.findMemberById(Long.valueOf(authentication.getName().toString())).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
         Address address = memberCommandService.postAddress(request,member);
 
@@ -285,8 +302,7 @@ public class MemberController {
     @Operation(summary = "회원 계좌 추가 api", description = "request: 소유주 이름, 은행 이름, 계좌번호")
     public ApiResponse<MemberResponseDTO.AccountResultDTO> postAccount(@RequestBody MemberRequestDTO.AccountDTO request, Authentication authentication) {
 
-        MemberDetail memberDetail = (MemberDetail) authentication.getPrincipal();
-        Member member = memberQueryService.findMemberById(memberDetail.getMemberId()).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        Member member = memberQueryService.findMemberById(Long.valueOf(authentication.getName().toString())).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
         Account account = memberCommandService.postAccount(request,member);
 
@@ -299,9 +315,7 @@ public class MemberController {
                                                                          @PathVariable (name = "addressId") Long addressId,
                                                                          Authentication authentication) {
 
-        MemberDetail memberDetail = (MemberDetail) authentication.getPrincipal();
-        Member member = memberQueryService.findMemberById(memberDetail.getMemberId()).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
-
+        Member member = memberQueryService.findMemberById(Long.valueOf(authentication.getName().toString())).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
         memberCommandService.updateAddress(request, addressId);
 
         return ApiResponse.onSuccess(null);
@@ -313,12 +327,21 @@ public class MemberController {
                                                                          @PathVariable (name = "accountId") Long accountId,
                                                                          Authentication authentication) {
 
-        MemberDetail memberDetail = (MemberDetail) authentication.getPrincipal();
-        Member member = memberQueryService.findMemberById(memberDetail.getMemberId()).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        Member member = memberQueryService.findMemberById(Long.valueOf(authentication.getName().toString())).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
         memberCommandService.updateAccount(request,accountId);
 
         return ApiResponse.onSuccess(null);
+    }
+
+    @DeleteMapping(value = "/delete")
+    @Operation(summary = "회원 탈퇴 api", description = "request: 회원 탈퇴 사유 번호로 주시면 됩니다")
+    public ApiResponse<?> deleteMember(@RequestBody MemberRequestDTO.WithdrawReasonDTO request,
+                                       Authentication authentication){
+
+        Member member = memberQueryService.findMemberById(Long.valueOf(authentication.getName().toString())).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        memberCommandService.deleteMember(request, member);
+        return ApiResponse.of(SuccessStatus.MEMBER_DELETE_SUCCESS, null);
     }
 
 

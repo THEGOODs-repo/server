@@ -40,6 +40,9 @@ jobs:
           social.naver.client-secret: ${{ secrets.NAVER_CLIENT_SECRET }}
           iamport.key: ${{ secrets.IAMPORT_KEY }}
           iamport.secret: ${{ secrets.IAMPORT_SECRET }}
+          spring.redis.host: ${{ secrets.REDIS_HOST }}
+          spring.redis.port: ${{ secrets.REDIS_PORT }}
+          spring.redis.password: ${{ secrets.REDIS_PASSWORD }}
 
 
 
