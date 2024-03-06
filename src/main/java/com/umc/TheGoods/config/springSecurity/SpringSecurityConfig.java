@@ -47,8 +47,10 @@ public class SpringSecurityConfig {
                         "/swagger-ui/**",
                         "/swagger-resources/**",
                         "/v3/api-docs/**",
-                        "/api/members/login",
-                        "api/members/token/regenerate"
+                        "/api/members/login", "/api/members/token/regenerate", "/api/members/join",
+                        "/api/members/email/auth","/api/members/email/auth/verify","/api/members/email/duplicate",
+                        "/api/members/kakao/callback","/api/members/naver/callback", "/api/members/nickname/duplicate",
+                        "/api/members/password/update","/api/members/phone/auth","/api/members/phone/auth/*"
                 );
     }
     @Bean
