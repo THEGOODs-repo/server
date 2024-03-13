@@ -66,7 +66,7 @@ jwt:
 cloud:
   aws:
     s3:
-      bucket: thegoods-bucket
+      bucket: thegoods-dev
       path:
         item: item
         member: member
