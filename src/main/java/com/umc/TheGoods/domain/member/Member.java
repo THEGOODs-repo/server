@@ -103,6 +103,10 @@ public class Member extends BaseDateTimeEntity {
     @ColumnDefault("false")
     private Boolean marketingNotice;
 
+    @Column(columnDefinition = "BOOLEAN")
+    @ColumnDefault("false")
+    private Boolean postNotice;
+
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<MemberCategory> memberCategoryList = new ArrayList<>();
 

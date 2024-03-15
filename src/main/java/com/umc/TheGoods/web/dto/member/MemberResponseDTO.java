@@ -2,9 +2,12 @@ package com.umc.TheGoods.web.dto.member;
 
 import com.umc.TheGoods.domain.enums.MemberRole;
 import com.umc.TheGoods.domain.enums.MemberStatus;
+import com.umc.TheGoods.domain.enums.OrderStatus;
+import com.umc.TheGoods.domain.item.ItemOption;
 import com.umc.TheGoods.redis.domain.RefreshToken;
 import com.umc.TheGoods.domain.mypage.Account;
 import com.umc.TheGoods.domain.mypage.Address;
+import com.umc.TheGoods.web.dto.item.ItemResponseDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -15,6 +18,7 @@ import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -234,6 +238,35 @@ public class MemberResponseDTO {
         private String accessToken;
         private String refreshToken;
     }
+
+
+    @Builder
+    @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class MyPageOrderItemDTO{
+        private String imageUrl;
+        private Long price;
+        private OrderStatus orderStatus;
+        private String name;
+        private LocalDateTime time;
+        private List<String> option;
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class MyPageOrderItemListDTO {
+        List<MemberResponseDTO.MyPageOrderItemDTO> itemList;
+        Integer listSize;
+        Integer totalPage;
+        Long totalElements;
+        Boolean isFirst;
+        Boolean isLast;
+    }
+
+
 
 
 }

@@ -1,9 +1,11 @@
 package com.umc.TheGoods.converter.member;
 
+import com.umc.TheGoods.converter.item.ItemConverter;
 import com.umc.TheGoods.domain.enums.MemberRole;
 import com.umc.TheGoods.domain.images.ProfileImg;
 import com.umc.TheGoods.domain.item.Category;
 import com.umc.TheGoods.domain.item.Item;
+import com.umc.TheGoods.domain.item.ItemOption;
 import com.umc.TheGoods.domain.mapping.member.MemberCategory;
 import com.umc.TheGoods.domain.mapping.member.MemberTerm;
 import com.umc.TheGoods.domain.member.Auth;
@@ -11,8 +13,12 @@ import com.umc.TheGoods.domain.member.Member;
 import com.umc.TheGoods.domain.member.Term;
 import com.umc.TheGoods.domain.mypage.Account;
 import com.umc.TheGoods.domain.mypage.Address;
+import com.umc.TheGoods.domain.order.OrderItem;
+import com.umc.TheGoods.service.ItemService.ItemQueryService;
+import com.umc.TheGoods.web.dto.item.ItemResponseDTO;
 import com.umc.TheGoods.web.dto.member.MemberRequestDTO;
 import com.umc.TheGoods.web.dto.member.MemberResponseDTO;
+import org.springframework.data.domain.Page;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.time.LocalDateTime;
@@ -378,5 +384,26 @@ public class MemberConverter {
                 .build();
 
     }
+
+    public static MemberResponseDTO.MyPageOrderItemDTO toMyPageOrderItemDTO(OrderItem orderItem, Item item){
+
+        List<ItemResponseDTO.ItemImgResponseDTO> itemImgResponseDTOList = item.getItemImgList().stream()
+                .map(ItemConverter::getItemImgDTO)
+                .filter(ItemResponseDTO.ItemImgResponseDTO::getIsThumbNail).collect(Collectors.toList());
+
+        List<String> itemOptionList = item.getItemOptionList().stream()
+                .map(ItemOption::getName).collect(Collectors.toList());
+
+        return MemberResponseDTO.MyPageOrderItemDTO.builder()
+                .imageUrl(itemImgResponseDTOList.get(0).getItemImgUrl())
+                .option(itemOptionList)
+                .name(item.getName())
+                .orderStatus(orderItem.getStatus())
+                .price(item.getPrice())
+                .time(orderItem.getCreatedAt())
+                .build();
+    }
+
+
 
 }

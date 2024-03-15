@@ -5,25 +5,36 @@ import com.umc.TheGoods.apiPayload.ApiResponse;
 import com.umc.TheGoods.apiPayload.code.status.ErrorStatus;
 import com.umc.TheGoods.apiPayload.code.status.SuccessStatus;
 import com.umc.TheGoods.apiPayload.exception.handler.MemberHandler;
+import com.umc.TheGoods.converter.item.ItemConverter;
 import com.umc.TheGoods.converter.member.MemberConverter;
 import com.umc.TheGoods.domain.enums.MemberRole;
 import com.umc.TheGoods.domain.enums.MemberStatus;
+import com.umc.TheGoods.domain.enums.OrderStatus;
 import com.umc.TheGoods.domain.images.ProfileImg;
+import com.umc.TheGoods.domain.item.Item;
 import com.umc.TheGoods.domain.member.Auth;
 import com.umc.TheGoods.domain.member.Member;
 import com.umc.TheGoods.domain.mypage.Account;
 import com.umc.TheGoods.domain.mypage.Address;
+import com.umc.TheGoods.domain.order.OrderItem;
 import com.umc.TheGoods.redis.domain.RefreshToken;
 import com.umc.TheGoods.redis.service.RedisService;
+import com.umc.TheGoods.service.ItemService.ItemQueryService;
 import com.umc.TheGoods.service.MemberService.MemberCommandService;
 import com.umc.TheGoods.service.MemberService.MemberQueryService;
+import com.umc.TheGoods.service.OrderService.OrderQueryService;
+import com.umc.TheGoods.validation.annotation.CheckPage;
+import com.umc.TheGoods.web.dto.item.ItemResponseDTO;
 import com.umc.TheGoods.web.dto.member.MemberDetail;
 import com.umc.TheGoods.web.dto.member.MemberRequestDTO;
 import com.umc.TheGoods.web.dto.member.MemberResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
@@ -34,6 +45,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @Slf4j
@@ -46,7 +58,7 @@ public class MemberController {
     private final MemberCommandService memberCommandService;
     private final MemberQueryService memberQueryService;
     private final RedisService redisService;
-
+    private final OrderQueryService orderQueryService;
 
     @PostMapping("/join")
     @Operation(summary = "회원가입 API", description = "request 파라미터 : 닉네임, 비밀번호(String), 이메일, 생일(yyyymmdd), 성별(MALE, FEMALE, NO_SELECET), 폰번호(010xxxxxxxx),이용약관(Boolean 배열), 카테고리(Long 배열)")
@@ -220,23 +232,6 @@ public class MemberController {
         return ApiResponse.onSuccess(MemberConverter.toSocialLoginResultDTO(result));
     }
 
-    /**
-     * 마이페이지 프로필 수정 API
-     */
-
-    @PutMapping(value = "/profile/modify", consumes = "multipart/form-data")
-    @Operation(summary = "마이페이지 프로필 수정(닉네임, 프로필 사진, 소개) api", description = "request : 프로필 이미지, 닉네임, 자기소개 ")
-    public ApiResponse<MemberResponseDTO.ProfileModifyResultDTO> profileModify(@RequestParam("profile") MultipartFile profile,
-                                                                               @RequestParam("nickname") String nickname,
-                                                                               @RequestParam("introduce") String introduce,
-                                                                               Authentication authentication) {
-        Member member = memberQueryService.findMemberById(Long.valueOf(authentication.getName().toString())).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
-
-
-        Member modifyMember = memberCommandService.profileModify(profile, nickname, introduce, member);
-
-        return ApiResponse.onSuccess(MemberConverter.toProfileModify(modifyMember));
-    }
 
     @GetMapping(value = "/profile")
     @Operation(summary = "프로필 조회 api", description = "프로필이미지, 닉네임을 조회할 수 있습니다.")
@@ -261,18 +256,7 @@ public class MemberController {
 
     }
 
-    @PutMapping(value = "/role/update")
-    @Operation(summary = "사용자 역할 전환 api", description = "BUYER은 SELLER로 SELLER는 BUYER로 역할 변경")
-    public ApiResponse<MemberResponseDTO.RoleUpdateResultDTO> updateRole(Authentication authentication) {
 
-        Member member = memberQueryService.findMemberById(Long.valueOf(authentication.getName().toString())).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
-
-        Member update = memberCommandService.updateRole(member);
-
-
-
-        return ApiResponse.onSuccess(MemberConverter.toUpdateRole(update));
-    }
 
     @PutMapping(value = "/phone/name/update")
     @Operation(summary = "주문시 고객 정보 수정(이름, 번호) api", description = "이름과 번호 수정할 수 있는 기능")
@@ -287,62 +271,10 @@ public class MemberController {
         return ApiResponse.onSuccess(null);
     }
 
-    @PostMapping(value = "/address")
-    @Operation(summary = "회원 배송지 추가 api", description = "request: 우편번호, 배송지명, 배송지, 배송메모")
-    public ApiResponse<MemberResponseDTO.AddressResultDTO> postAddress(@RequestBody MemberRequestDTO.AddressDTO request, Authentication authentication) {
 
-        Member member = memberQueryService.findMemberById(Long.valueOf(authentication.getName().toString())).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
-        Address address = memberCommandService.postAddress(request,member);
 
-        return ApiResponse.onSuccess(MemberConverter.toPostAddressDTO(address.getAddressName()));
-    }
 
-    @PostMapping(value = "/account")
-    @Operation(summary = "회원 계좌 추가 api", description = "request: 소유주 이름, 은행 이름, 계좌번호")
-    public ApiResponse<MemberResponseDTO.AccountResultDTO> postAccount(@RequestBody MemberRequestDTO.AccountDTO request, Authentication authentication) {
-
-        Member member = memberQueryService.findMemberById(Long.valueOf(authentication.getName().toString())).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
-
-        Account account = memberCommandService.postAccount(request,member);
-
-        return ApiResponse.onSuccess(MemberConverter.toPostAccountDTO(account.getOwner()));
-    }
-
-    @PutMapping(value = "/address/update/{addressId}")
-    @Operation(summary = "회원 주소 수정 api", description = "request: 우편번호, 배송지명, 배송지, 배송메모")
-    public ApiResponse<MemberResponseDTO.AddressResultDTO> updateAddress(@RequestBody MemberRequestDTO.AddressDTO request,
-                                                                         @PathVariable (name = "addressId") Long addressId,
-                                                                         Authentication authentication) {
-
-        Member member = memberQueryService.findMemberById(Long.valueOf(authentication.getName().toString())).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
-        memberCommandService.updateAddress(request, addressId);
-
-        return ApiResponse.onSuccess(null);
-    }
-
-    @PutMapping(value = "/account/update/{accountId}")
-    @Operation(summary = "회원 계좌 수정 api", description = "request: 소유주 이름, 은행 이름, 계좌번호")
-    public ApiResponse<MemberResponseDTO.AccountResultDTO> updateAccount(@RequestBody MemberRequestDTO.AccountDTO request,
-                                                                         @PathVariable (name = "accountId") Long accountId,
-                                                                         Authentication authentication) {
-
-        Member member = memberQueryService.findMemberById(Long.valueOf(authentication.getName().toString())).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
-
-        memberCommandService.updateAccount(request,accountId);
-
-        return ApiResponse.onSuccess(null);
-    }
-
-    @DeleteMapping(value = "/delete")
-    @Operation(summary = "회원 탈퇴 api", description = "request: 회원 탈퇴 사유 번호로 주시면 됩니다")
-    public ApiResponse<?> deleteMember(@RequestBody MemberRequestDTO.WithdrawReasonDTO request,
-                                       Authentication authentication){
-
-        Member member = memberQueryService.findMemberById(Long.valueOf(authentication.getName().toString())).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
-        memberCommandService.deleteMember(request, member);
-        return ApiResponse.of(SuccessStatus.MEMBER_DELETE_SUCCESS, null);
-    }
 
 
 }
