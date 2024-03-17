@@ -140,10 +140,24 @@ public class MyPageController {
                                                                                    Authentication authentication){
         // jwt로 사용자 정보 찾기
         Member member = memberQueryService.findMemberById(Long.valueOf(authentication.getName().toString())).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
-        //주문 상태에 따른 상품 데이터 Page로 가져오기
+
 
 
         return ApiResponse.onSuccess(orderQueryService.getMyPageOrderItemList(member,orderStatus,page));
+    }
+
+    /**
+     *
+     */
+
+    @PutMapping(value = "/mypage/notification/update")
+    @Operation(summary="mypage 알림 설정 변경 api", description = "마이페이지에서 알림을 on/off할 수 있는 api입니다\n"+
+            "request parameter에 알림 타입을 넣어줘야합니다.")
+    @Parameter(name = "type", description = "1: 아이템 알림, 2: 메세지 알림, 3: 마케팅 알림, 4: 포스트 알림")
+    public ApiResponse<?> updateNotification(Authentication authentication, @RequestParam Integer type){
+        Member member = memberQueryService.findMemberById(Long.valueOf(authentication.getName().toString())).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        memberCommandService.updateNotification(member,type);
+        return ApiResponse.of(SuccessStatus.MEMBER_NOTIFICATION_UPDATE,null);
     }
 
 }

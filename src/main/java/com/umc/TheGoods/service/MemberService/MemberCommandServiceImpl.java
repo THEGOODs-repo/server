@@ -672,5 +672,44 @@ public class MemberCommandServiceImpl implements MemberCommandService {
         }
 
     }
+
+    @Override
+    public void updateNotification(Member member, Integer type) {
+
+        switch(type){
+            case 1:
+                if(member.getItemNotice()){
+                    memberRepository.changeItemNotificationTrue(member.getId());
+                }else{
+                    memberRepository.changeItemNotificationFalse(member.getId());
+                }
+
+                break;
+            case 2:
+                if(member.getMessageNotice()){
+                    memberRepository.changeMessageNotificationTrue(member.getId());
+                }else{
+                    memberRepository.changeMessageNotificationFalse(member.getId());
+                }
+
+                break;
+            case 3:
+                if(member.getMarketingNotice()){
+                    memberRepository.changeMarketingNotificationTrue(member.getId());
+                }else{
+                    memberRepository.changeMarketingNotificationFalse(member.getId());
+                }
+
+                break;
+            case 4:
+                if(member.getPostNotice()){
+                    memberRepository.changePostNotificationTrue(member.getId());
+                }else{
+                    memberRepository.changePostNotificationFalse(member.getId());
+                }
+
+                break;
+        }
+    }
 }
 

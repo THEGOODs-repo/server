@@ -62,4 +62,6 @@ public interface MemberCommandService {
 
     void deleteMember(MemberRequestDTO.WithdrawReasonDTO request, Member member);
 
+    void updateNotification(Member member, Integer type);
+
 }

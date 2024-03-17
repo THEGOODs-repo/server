@@ -26,6 +26,7 @@ import com.umc.TheGoods.domain.payment.Payment;
 import com.umc.TheGoods.domain.types.SocialType;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicInsert;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -35,6 +36,7 @@ import java.util.List;
 @Entity
 @Getter
 @Builder
+@DynamicInsert
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class Member extends BaseDateTimeEntity {
