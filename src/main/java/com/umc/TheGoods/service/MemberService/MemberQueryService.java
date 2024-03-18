@@ -20,4 +20,6 @@ public interface MemberQueryService {
     List<Address> findAllAddressById(Long id);
 
     List<Account> findAllAccountById(Long id);
+
+    Optional<Account> findAccountById(Long id);
 }

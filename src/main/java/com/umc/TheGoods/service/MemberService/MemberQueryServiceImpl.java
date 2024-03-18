@@ -61,4 +61,8 @@ public class MemberQueryServiceImpl implements MemberQueryService {
         List<Account> account = accountRepository.findAllByMember_Id(id);
         return account;
     }
+
+    public Optional<Account> findAccountById(Long id){
+        return accountRepository.findByMember_Id(id);
+    }
 }

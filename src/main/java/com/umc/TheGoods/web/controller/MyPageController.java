@@ -26,6 +26,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Optional;
+
 @RestController
 @Slf4j
 @RequiredArgsConstructor
@@ -102,7 +104,7 @@ public class MyPageController {
 
     @PutMapping(value = "/account/update/{accountId}")
     @Operation(summary = "회원 계좌 수정 api", description = "request: 소유주 이름, 은행 이름, 계좌번호")
-    public ApiResponse<MemberResponseDTO.AccountResultDTO> updateAccount(@RequestBody MemberRequestDTO.AccountDTO request,
+    public ApiResponse<?> updateAccount(@RequestBody MemberRequestDTO.AccountDTO request,
                                                                          @PathVariable (name = "accountId") Long accountId,
                                                                          Authentication authentication) {
 
@@ -110,7 +112,19 @@ public class MyPageController {
 
         memberCommandService.updateAccount(request,accountId);
 
-        return ApiResponse.onSuccess(null);
+        return ApiResponse.of(SuccessStatus.MEMBER_ACCOUNT_UPDATE,null);
+    }
+
+
+
+    @GetMapping(value = "/account")
+    @Operation(summary = "mypage 계좌 조회 api")
+    public ApiResponse<MemberResponseDTO.AccountDTO> getAccount(Authentication authentication){
+
+        Member member = memberQueryService.findMemberById(Long.valueOf(authentication.getName().toString())).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        Account account = memberQueryService.findAccountById(member.getId()).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_ACCOUNT_NOT_FOUND));
+
+        return ApiResponse.onSuccess(MemberConverter.toGetAccountDTO(account));
     }
 
     @DeleteMapping(value = "/delete")
@@ -159,5 +173,7 @@ public class MyPageController {
         memberCommandService.updateNotification(member,type);
         return ApiResponse.of(SuccessStatus.MEMBER_NOTIFICATION_UPDATE,null);
     }
+
+
 
 }

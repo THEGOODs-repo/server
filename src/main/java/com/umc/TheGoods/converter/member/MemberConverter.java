@@ -369,21 +369,6 @@ public class MemberConverter {
 
     }
 
-    public static MemberResponseDTO.AddressResultDTO toUpdateAddressDTO(String address){
-
-        return MemberResponseDTO.AddressResultDTO.builder()
-                .name(address)
-                .build();
-
-    }
-
-    public static MemberResponseDTO.AccountResultDTO toUpdateAccountDTO(String account){
-
-        return MemberResponseDTO.AccountResultDTO.builder()
-                .name(account)
-                .build();
-
-    }
 
     public static MemberResponseDTO.MyPageOrderItemDTO toMyPageOrderItemDTO(OrderItem orderItem, Item item){
 
@@ -404,6 +389,14 @@ public class MemberConverter {
                 .build();
     }
 
+    public static MemberResponseDTO.AccountDTO toGetAccountDTO(Account account){
+        return MemberResponseDTO.AccountDTO.builder()
+                .accountNum(account.getAccountNum())
+                .bankName(account.getBankName())
+                .owner(account.getOwner())
+                .defaultCheck(account.getDefaultCheck())
+                .build();
+    }
 
 
 }
