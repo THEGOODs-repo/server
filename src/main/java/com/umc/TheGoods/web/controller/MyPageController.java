@@ -26,6 +26,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -92,37 +93,53 @@ public class MyPageController {
 
     @PutMapping(value = "/address/update/{addressId}")
     @Operation(summary = "회원 주소 수정 api", description = "request: 우편번호, 배송지명, 배송지, 배송메모")
+    @Parameters(value = {
+            @Parameter(name = "addressId", description = "주소 id 입니다.")
+    })
     public ApiResponse<MemberResponseDTO.AddressResultDTO> updateAddress(@RequestBody MemberRequestDTO.AddressDTO request,
                                                                          @PathVariable (name = "addressId") Long addressId,
                                                                          Authentication authentication) {
 
         Member member = memberQueryService.findMemberById(Long.valueOf(authentication.getName().toString())).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
-        memberCommandService.updateAddress(request, addressId);
+        memberCommandService.updateAddress(request, member, addressId);
 
         return ApiResponse.onSuccess(null);
     }
 
     @PutMapping(value = "/account/update/{accountId}")
     @Operation(summary = "회원 계좌 수정 api", description = "request: 소유주 이름, 은행 이름, 계좌번호")
+    @Parameters(value = {
+            @Parameter(name = "accountId", description = "계좌 id 입니다.")
+    })
     public ApiResponse<?> updateAccount(@RequestBody MemberRequestDTO.AccountDTO request,
                                                                          @PathVariable (name = "accountId") Long accountId,
                                                                          Authentication authentication) {
 
         Member member = memberQueryService.findMemberById(Long.valueOf(authentication.getName().toString())).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
-        memberCommandService.updateAccount(request,accountId);
+        memberCommandService.updateAccount(request,member, accountId);
 
         return ApiResponse.of(SuccessStatus.MEMBER_ACCOUNT_UPDATE,null);
     }
 
+    @DeleteMapping(value = "account/delete/{accountId}")
+    @Operation(summary = "회원 계좌 삭제 api", description = "계좌를 삭제하는 api입니다. ")
+    @Parameters(value = {
+            @Parameter(name = "accountId", description = "계좌 id 입니다.")
+    })
+    public ApiResponse<?> deleteAccount(Authentication authentication,@PathVariable(name = "accountId") Long accountId){
+        Member member = memberQueryService.findMemberById(Long.valueOf(authentication.getName().toString())).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        memberCommandService.deleteAccount(member, accountId);
+        return ApiResponse.of(SuccessStatus.MEMBER_ACCOUNT_DELETE,null);
+    }
 
 
     @GetMapping(value = "/account")
     @Operation(summary = "mypage 계좌 조회 api")
-    public ApiResponse<MemberResponseDTO.AccountDTO> getAccount(Authentication authentication){
+    public ApiResponse<List<MemberResponseDTO.AccountDTO>> getAccount(Authentication authentication){
 
         Member member = memberQueryService.findMemberById(Long.valueOf(authentication.getName().toString())).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
-        Account account = memberQueryService.findAccountById(member.getId()).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_ACCOUNT_NOT_FOUND));
+        List<Account> account = memberQueryService.findAccountById(member.getId());
 
         return ApiResponse.onSuccess(MemberConverter.toGetAccountDTO(account));
     }

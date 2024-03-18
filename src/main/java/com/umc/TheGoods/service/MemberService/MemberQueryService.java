@@ -21,5 +21,5 @@ public interface MemberQueryService {
 
     List<Account> findAllAccountById(Long id);
 
-    Optional<Account> findAccountById(Long id);
+    List<Account> findAccountById(Long id);
 }

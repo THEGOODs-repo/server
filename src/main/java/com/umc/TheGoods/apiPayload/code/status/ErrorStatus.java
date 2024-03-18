@@ -57,6 +57,7 @@ public enum ErrorStatus implements BaseErrorCode {
     MEMBER_ACCOUNT_NOT_FOUND(HttpStatus.BAD_REQUEST, "MEMBER4008", "계좌가 존재하지 않습니다"),
     MEMBER_ADDRESS_NOT_FOUND(HttpStatus.BAD_REQUEST, "MEMBER4009", "주소가 존재하지 않습니다"),
     MEMBER_INACTIVATE(HttpStatus.NOT_ACCEPTABLE, "MEMBER40010", "탈퇴한 회원입니다."),
+    MEMBER_NOT_OWNER(HttpStatus.NOT_ACCEPTABLE, "MEMBER40010", "해당 회원이 아닙니다."),
 
     //JWT
 

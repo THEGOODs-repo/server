@@ -389,13 +389,17 @@ public class MemberConverter {
                 .build();
     }
 
-    public static MemberResponseDTO.AccountDTO toGetAccountDTO(Account account){
-        return MemberResponseDTO.AccountDTO.builder()
-                .accountNum(account.getAccountNum())
-                .bankName(account.getBankName())
-                .owner(account.getOwner())
-                .defaultCheck(account.getDefaultCheck())
-                .build();
+    public static List<MemberResponseDTO.AccountDTO> toGetAccountDTO(List<Account> account){
+
+        List<MemberResponseDTO.AccountDTO> accountList = account.stream().map(a -> MemberResponseDTO.AccountDTO.builder()
+                .id(a.getId())
+                .accountNum(a.getAccountNum())
+                .bankName(a.getBankName())
+                .owner(a.getOwner())
+                .defaultCheck(a.getDefaultCheck())
+                .build()).collect(Collectors.toList());
+
+        return accountList;
     }
 
 

@@ -56,9 +56,11 @@ public interface MemberCommandService {
 
     Account postAccount(MemberRequestDTO.AccountDTO request, Member member);
 
-    void updateAddress(MemberRequestDTO.AddressDTO request,Long addressId);
+    void updateAddress(MemberRequestDTO.AddressDTO request,Member member, Long addressId);
 
-    void updateAccount(MemberRequestDTO.AccountDTO request, Long accountId);
+    void updateAccount(MemberRequestDTO.AccountDTO request, Member member,Long accountId);
+
+    void deleteAccount(Member member, Long accountId);
 
     void deleteMember(MemberRequestDTO.WithdrawReasonDTO request, Member member);
 

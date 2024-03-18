@@ -618,20 +618,38 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     }
 
     @Override
-    public void updateAddress(MemberRequestDTO.AddressDTO request, Long addressId) {
+    public void updateAddress(MemberRequestDTO.AddressDTO request, Member member,Long addressId) {
 
         Address address = addressRepository.findById(addressId).orElseThrow(()-> new MemberHandler(ErrorStatus.MEMBER_ADDRESS_NOT_FOUND));
+        if(!address.getMember().equals(member)){
+            throw new MemberHandler(ErrorStatus.MEMBER_NOT_OWNER);
+        }
         addressRepository.changeAddress(addressId, request.getAddressName(),request.getAddressSpec(), request.getDeliveryMemo(), request.getZipcode(), request.getDefaultCheck(),request.getRecipientName(),request.getRecipientPhone());
 
 
     }
 
     @Override
-    public void updateAccount(MemberRequestDTO.AccountDTO request, Long accountId) {
+    public void updateAccount(MemberRequestDTO.AccountDTO request, Member member, Long accountId) {
 
         Account account = accountRepository.findById(accountId).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_ACCOUNT_NOT_FOUND));
+
+        if(!account.getMember().equals(member)){
+            throw new MemberHandler(ErrorStatus.MEMBER_NOT_OWNER);
+        }
         accountRepository.changeAccount(accountId, request.getAccountNum(),request.getBankName(),request.getOwner(),request.getDefaultCheck());
 
+    }
+
+    @Override
+    public void deleteAccount(Member member, Long accountId) {
+        Account account = accountRepository.findById(accountId).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_ACCOUNT_NOT_FOUND));
+
+        if(!account.getMember().equals(member)){
+            throw new MemberHandler(ErrorStatus.MEMBER_NOT_OWNER);
+        }
+
+        accountRepository.delete(account);
     }
 
     /**

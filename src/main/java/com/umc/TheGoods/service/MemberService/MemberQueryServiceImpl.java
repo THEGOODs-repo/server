@@ -62,7 +62,7 @@ public class MemberQueryServiceImpl implements MemberQueryService {
         return account;
     }
 
-    public Optional<Account> findAccountById(Long id){
-        return accountRepository.findByMember_Id(id);
+    public List<Account> findAccountById(Long id){
+        return accountRepository.findAllByMember_Id(id);
     }
 }
