@@ -80,6 +80,7 @@ public class MyPageController {
         return ApiResponse.onSuccess(MemberConverter.toPostAddressDTO(address.getAddressName()));
     }
 
+
     @PostMapping(value = "/account")
     @Operation(summary = "회원 계좌 추가 api", description = "request: 소유주 이름, 은행 이름, 계좌번호")
     public ApiResponse<MemberResponseDTO.AccountResultDTO> postAccount(@RequestBody MemberRequestDTO.AccountDTO request, Authentication authentication) {
@@ -92,7 +93,7 @@ public class MyPageController {
     }
 
     @PutMapping(value = "/address/update/{addressId}")
-    @Operation(summary = "회원 주소 수정 api", description = "request: 우편번호, 배송지명, 배송지, 배송메모")
+    @Operation(summary = "회원 배송지 수정 api", description = "request: 우편번호, 배송지명, 배송지, 배송메모")
     @Parameters(value = {
             @Parameter(name = "addressId", description = "주소 id 입니다.")
     })
@@ -122,12 +123,25 @@ public class MyPageController {
         return ApiResponse.of(SuccessStatus.MEMBER_ACCOUNT_UPDATE,null);
     }
 
-    @DeleteMapping(value = "account/delete/{accountId}")
+    @DeleteMapping(value = "/address/delete/{addressId}")
+    @Operation(summary = "회원 배송지 삭제 api", description = "배송지를 삭제하는 api입니다.")
+    @Parameters(value = {
+            @Parameter(name = "addressId", description = "배송지 id 입니다.")
+    })
+    public ApiResponse<?> deleteAddress(Authentication authentication,
+                                        @PathVariable(name = "addressId") Long addressId){
+        Member member = memberQueryService.findMemberById(Long.valueOf(authentication.getName().toString())).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        memberCommandService.deleteAddress(member, addressId);
+        return ApiResponse.of(SuccessStatus.MEMBER_ADDRESS_DELETE,null);
+    }
+
+    @DeleteMapping(value = "/account/delete/{accountId}")
     @Operation(summary = "회원 계좌 삭제 api", description = "계좌를 삭제하는 api입니다. ")
     @Parameters(value = {
             @Parameter(name = "accountId", description = "계좌 id 입니다.")
     })
-    public ApiResponse<?> deleteAccount(Authentication authentication,@PathVariable(name = "accountId") Long accountId){
+    public ApiResponse<?> deleteAccount(Authentication authentication,
+                                        @PathVariable(name = "accountId") Long accountId){
         Member member = memberQueryService.findMemberById(Long.valueOf(authentication.getName().toString())).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
         memberCommandService.deleteAccount(member, accountId);
         return ApiResponse.of(SuccessStatus.MEMBER_ACCOUNT_DELETE,null);
@@ -142,6 +156,15 @@ public class MyPageController {
         List<Account> account = memberQueryService.findAccountById(member.getId());
 
         return ApiResponse.onSuccess(MemberConverter.toGetAccountDTO(account));
+    }
+
+    @GetMapping(value = "/address")
+    @Operation(summary = "mypage 배송지 조회 api")
+    public ApiResponse<List<MemberResponseDTO.AddressDTO>> getAddress(Authentication authentication){
+        Member member = memberQueryService.findMemberById(Long.valueOf(authentication.getName().toString())).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        List<Address> addressList = memberQueryService.findAllAddressById(member.getId());
+
+        return ApiResponse.onSuccess(MemberConverter.toGetAddressDTO(addressList));
     }
 
     @DeleteMapping(value = "/delete")

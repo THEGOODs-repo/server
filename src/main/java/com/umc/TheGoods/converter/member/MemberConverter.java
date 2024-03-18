@@ -402,5 +402,18 @@ public class MemberConverter {
         return accountList;
     }
 
+    public static List<MemberResponseDTO.AddressDTO> toGetAddressDTO(List<Address> address){
+        List<MemberResponseDTO.AddressDTO> addressList = address.stream().map(a -> MemberResponseDTO.AddressDTO.builder()
+                .addressName(a.getAddressName())
+                .addressSpec(a.getAddressSpec())
+                .deliveryMemo(a.getDeliveryMemo())
+                .defaultCheck(a.getDefaultCheck())
+                .recipientName(a.getRecipientName())
+                .recipientPhone(a.getRecipientPhone())
+                .id(a.getId())
+                .zipcode(a.getZipcode()).build()).collect(Collectors.toList());
+        return addressList;
+    }
+
 
 }

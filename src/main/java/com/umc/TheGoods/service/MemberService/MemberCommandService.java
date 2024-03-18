@@ -66,4 +66,6 @@ public interface MemberCommandService {
 
     void updateNotification(Member member, Integer type);
 
+    void deleteAddress(Member member, Long addressId);
+
 }

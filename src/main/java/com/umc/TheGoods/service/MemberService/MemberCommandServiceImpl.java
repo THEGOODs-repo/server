@@ -652,6 +652,17 @@ public class MemberCommandServiceImpl implements MemberCommandService {
         accountRepository.delete(account);
     }
 
+    @Override
+    public void deleteAddress(Member member, Long addressId) {
+        Address address = addressRepository.findById(addressId).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_ADDRESS_NOT_FOUND));
+
+        if(!address.getMember().equals(member)){
+            throw new MemberHandler(ErrorStatus.MEMBER_NOT_OWNER);
+        }
+
+        addressRepository.delete(address);
+    }
+
     /**
      * 카테고리 validator
      */
