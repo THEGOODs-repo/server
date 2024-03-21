@@ -15,6 +15,8 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
 
     List<Account> findAllByMember_Id(Long id);
 
+    Optional<Account> findByMember_Id(Long id);
+
     @Transactional
     @Modifying(clearAutomatically = true)
     @Query("UPDATE Account a SET a.accountNum = :accountNum, a.bankName = :bankName, a.owner = :owner, a.defaultCheck = :defaultCheck WHERE a.id = :accountId")

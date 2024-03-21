@@ -31,6 +31,17 @@ public class MemberRequestDTO {
     }
 
     @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class CustomInfoDTO{
+        private List<Long> TagList;
+        private List<Long> CategoryList;
+        private Boolean InfoTerm;
+    }
+
+
+    @Getter
     @NoArgsConstructor
     @AllArgsConstructor
     public static class LoginDTO {
@@ -142,8 +153,34 @@ public class MemberRequestDTO {
 
     @Getter
     @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class WithdrawReasonDTO {
         Integer reason;
         Boolean caution;
     }
+
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class DeclareDTO{
+        //접수 항목
+        Integer receipt;
+        //판매 항목
+        String salePost;
+        //신고 이유
+        String reason;
+    }
+
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ContactDTO{
+        Integer start;
+        Integer end;
+        boolean all;
+    }
+
+
+
 }

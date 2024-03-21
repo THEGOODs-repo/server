@@ -4,6 +4,7 @@ import com.umc.TheGoods.domain.item.Category;
 import com.umc.TheGoods.domain.item.Item;
 import com.umc.TheGoods.domain.item.Tag;
 import com.umc.TheGoods.domain.member.Member;
+import com.umc.TheGoods.domain.order.OrderItem;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -53,4 +54,9 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
     Page<Item> findAllByIdIn(List<Long> itemId, PageRequest pageRequest);
 
     Page<Item> findAllByCategory(Category category, PageRequest pageRequest);
+
+    @Query("SELECT oi.item FROM OrderItem oi WHERE oi.id = :orderItemId")
+    Item findItemByOrderItem(Long orderItemId);
+
+    List<Item> findAllByMember(Member member);
 }

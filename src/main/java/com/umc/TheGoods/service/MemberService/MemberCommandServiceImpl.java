@@ -8,21 +8,26 @@ import com.umc.TheGoods.apiPayload.exception.handler.MemberHandler;
 import com.umc.TheGoods.config.MailConfig;
 import com.umc.TheGoods.config.springSecurity.provider.TokenProvider;
 import com.umc.TheGoods.converter.member.MemberConverter;
+import com.umc.TheGoods.domain.enums.ItemStatus;
 import com.umc.TheGoods.domain.enums.MemberRole;
 import com.umc.TheGoods.domain.enums.MemberStatus;
 import com.umc.TheGoods.domain.images.ProfileImg;
 import com.umc.TheGoods.domain.item.Category;
+import com.umc.TheGoods.domain.item.Item;
+import com.umc.TheGoods.domain.item.Tag;
+
 import com.umc.TheGoods.domain.mapping.member.MemberCategory;
+import com.umc.TheGoods.domain.mapping.member.MemberTag;
 import com.umc.TheGoods.domain.mapping.member.MemberTerm;
 import com.umc.TheGoods.domain.member.Auth;
 import com.umc.TheGoods.domain.member.Member;
 import com.umc.TheGoods.domain.member.Term;
-import com.umc.TheGoods.domain.mypage.Account;
-import com.umc.TheGoods.domain.mypage.Address;
-import com.umc.TheGoods.domain.mypage.WithdrawReason;
+import com.umc.TheGoods.domain.mypage.*;
 import com.umc.TheGoods.domain.types.SocialType;
 import com.umc.TheGoods.redis.domain.RefreshToken;
 import com.umc.TheGoods.redis.service.RedisService;
+import com.umc.TheGoods.repository.TagRepository;
+import com.umc.TheGoods.repository.item.ItemRepository;
 import com.umc.TheGoods.repository.member.*;
 import com.umc.TheGoods.service.UtilService;
 import com.umc.TheGoods.web.dto.member.*;
@@ -67,6 +72,12 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     private final TokenProvider tokenProvider;
     private final RedisService redisService;
     private final WithdrawReasonRepository withdrawReasonRepository;
+    private final TagRepository tagRepository;
+    private final MemberTagRepository memberTagRepository;
+    private final MemberCategoryRepository memberCategoryRepository;
+    private final DeclarationRepository declarationRepository;
+    private final ContactTimeRepository contactTimeRepository;
+    private final ItemRepository itemRepository;
 
     @Value("${jwt.token.secret}")
     private String key; // 토큰 만들어내는 key값
@@ -618,20 +629,49 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     }
 
     @Override
-    public void updateAddress(MemberRequestDTO.AddressDTO request, Long addressId) {
+    public void updateAddress(MemberRequestDTO.AddressDTO request, Member member,Long addressId) {
 
         Address address = addressRepository.findById(addressId).orElseThrow(()-> new MemberHandler(ErrorStatus.MEMBER_ADDRESS_NOT_FOUND));
+        if(!address.getMember().equals(member)){
+            throw new MemberHandler(ErrorStatus.MEMBER_NOT_OWNER);
+        }
         addressRepository.changeAddress(addressId, request.getAddressName(),request.getAddressSpec(), request.getDeliveryMemo(), request.getZipcode(), request.getDefaultCheck(),request.getRecipientName(),request.getRecipientPhone());
 
 
     }
 
     @Override
-    public void updateAccount(MemberRequestDTO.AccountDTO request, Long accountId) {
+    public void updateAccount(MemberRequestDTO.AccountDTO request, Member member, Long accountId) {
 
         Account account = accountRepository.findById(accountId).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_ACCOUNT_NOT_FOUND));
+
+        if(!account.getMember().equals(member)){
+            throw new MemberHandler(ErrorStatus.MEMBER_NOT_OWNER);
+        }
         accountRepository.changeAccount(accountId, request.getAccountNum(),request.getBankName(),request.getOwner(),request.getDefaultCheck());
 
+    }
+
+    @Override
+    public void deleteAccount(Member member, Long accountId) {
+        Account account = accountRepository.findById(accountId).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_ACCOUNT_NOT_FOUND));
+
+        if(!account.getMember().equals(member)){
+            throw new MemberHandler(ErrorStatus.MEMBER_NOT_OWNER);
+        }
+
+        accountRepository.delete(account);
+    }
+
+    @Override
+    public void deleteAddress(Member member, Long addressId) {
+        Address address = addressRepository.findById(addressId).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_ADDRESS_NOT_FOUND));
+
+        if(!address.getMember().equals(member)){
+            throw new MemberHandler(ErrorStatus.MEMBER_NOT_OWNER);
+        }
+
+        addressRepository.delete(address);
     }
 
     /**
@@ -648,8 +688,10 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     }
 
     @Override
-    public void deleteMember(MemberRequestDTO.WithdrawReasonDTO request, Member member) {
+    @Transactional
+    public void deleteMember(MemberRequestDTO.WithdrawReasonDTO request, Long memberId) {
 
+        Member member = memberRepository.findById(memberId).orElseThrow(()-> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
         WithdrawReason withdrawReason = WithdrawReason.builder()
                 .reason(request.getReason())
                 .caution(request.getCaution())
@@ -658,7 +700,10 @@ public class MemberCommandServiceImpl implements MemberCommandService {
         withdrawReasonRepository.save(withdrawReason);
         member.inactivateStatus();
         memberRepository.save(member);
-
+        List<Item> itemList = itemRepository.findAllByMember(member);
+        itemList.stream().forEach(item -> {
+            item.updateStatus(ItemStatus.INACTIVE);
+        });
         return;
     }
 
@@ -671,6 +716,120 @@ public class MemberCommandServiceImpl implements MemberCommandService {
             return true;
         }
 
+    }
+
+    @Override
+    public void updateNotification(Member member, Integer type) {
+
+        switch(type){
+            case 1:
+                if(member.getItemNotice()){
+                    memberRepository.changeItemNotificationTrue(member.getId());
+                }else{
+                    memberRepository.changeItemNotificationFalse(member.getId());
+                }
+
+                break;
+            case 2:
+                if(member.getMessageNotice()){
+                    memberRepository.changeMessageNotificationTrue(member.getId());
+                }else{
+                    memberRepository.changeMessageNotificationFalse(member.getId());
+                }
+
+                break;
+            case 3:
+                if(member.getMarketingNotice()){
+                    memberRepository.changeMarketingNotificationTrue(member.getId());
+                }else{
+                    memberRepository.changeMarketingNotificationFalse(member.getId());
+                }
+
+                break;
+            case 4:
+                if(member.getPostNotice()){
+                    memberRepository.changePostNotificationTrue(member.getId());
+                }else{
+                    memberRepository.changePostNotificationFalse(member.getId());
+                }
+
+                break;
+        }
+    }
+
+
+    @Transactional
+    @Override
+    public void updateCustomInfo(Long memberId, MemberRequestDTO.CustomInfoDTO request) {
+        //정보 동의 약관 변경
+        memberRepository.changeInfoTerm(memberId,request.getInfoTerm());
+        Member member = memberRepository.findById(memberId).orElseThrow(()-> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        // 카테고리 저장 로직
+        // request에서 받아온 카테고리 List 형태로 변환
+        List<Category> categoryList = request.getCategoryList().stream()
+                .map(category -> {
+                    return categoryRepository.findById(category).orElseThrow(() -> new MemberHandler(ErrorStatus.CATEGORY_NOT_FOUND));
+                }).collect(Collectors.toList());
+        //Member와 Category는 n:m관계여서 Category List로 MemberCategory Entity List로 변환
+        List<MemberCategory> memberCategoryList = MemberConverter.toMemberCategoryList(categoryList);
+
+        //기존에 있던 해당 Member의 MemberCategory 비우기
+        memberCategoryRepository.deleteByMember(member);
+        member.getMemberCategoryList().clear();
+
+        //memberCategory에 member 매핑해주기
+        memberCategoryList.forEach(memberCategory -> {
+            memberCategory.setMember(member);
+        });
+
+
+        //memberTagList도 memberCategoryList와 로직은 동일합니다
+
+        List<Tag> tagList = request.getTagList().stream()
+                .map(tag ->{
+                    return tagRepository.findById(tag).orElseThrow(() -> new MemberHandler(ErrorStatus.TAG_NOT_FOUND));
+                }).collect(Collectors.toList());
+
+        List<MemberTag> memberTagList = MemberConverter.toMemberTagList(tagList);
+
+        memberTagRepository.deleteByMember(member);
+        member.getMemberTagList().clear();
+        memberTagList.forEach(memberTag -> {
+            memberTag.setMember(member);
+        });
+        memberRepository.save(member);
+
+    }
+
+    @Override
+    public void postDeclare(Member member, MemberRequestDTO.DeclareDTO request) {
+
+        Declaration declaration = MemberConverter.toDeclaration(member, request);
+        declarationRepository.save(declaration);
+
+    }
+
+    @Override
+    public void deleteDeclare(Long declarationId, Member member) {
+
+        Declaration declaration = declarationRepository.findById(declarationId).orElseThrow(()-> new MemberHandler(ErrorStatus.DECLARE_NOT_FOUND));
+
+        if(!declaration.getMember().equals(member)){
+            throw new MemberHandler(ErrorStatus.MEMBER_NOT_OWNER);
+        }
+        declarationRepository.delete(declaration);
+    }
+
+    @Override
+    @Transactional
+    public void postContact(Long memberId, MemberRequestDTO.ContactDTO request){
+
+        Member member = memberRepository.findById(memberId).orElseThrow(()-> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        ContactTime contactTime = MemberConverter.toContactTime(member,request);
+        contactTimeRepository.deleteByMember(member);
+
+        contactTimeRepository.save(contactTime);
     }
 }
 

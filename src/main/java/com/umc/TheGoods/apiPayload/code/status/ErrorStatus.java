@@ -57,6 +57,7 @@ public enum ErrorStatus implements BaseErrorCode {
     MEMBER_ACCOUNT_NOT_FOUND(HttpStatus.BAD_REQUEST, "MEMBER4008", "계좌가 존재하지 않습니다"),
     MEMBER_ADDRESS_NOT_FOUND(HttpStatus.BAD_REQUEST, "MEMBER4009", "주소가 존재하지 않습니다"),
     MEMBER_INACTIVATE(HttpStatus.NOT_ACCEPTABLE, "MEMBER40010", "탈퇴한 회원입니다."),
+    MEMBER_NOT_OWNER(HttpStatus.NOT_ACCEPTABLE, "MEMBER40010", "해당 회원이 아닙니다."),
 
     //JWT
 
@@ -71,6 +72,9 @@ public enum ErrorStatus implements BaseErrorCode {
 
     //Term
     TERM_NOT_FOUND(HttpStatus.NOT_FOUND, "TERM4001", "해당 약관이 존재하지 않습니다."),
+
+    //Declaration
+    DECLARE_NOT_FOUND(HttpStatus.NOT_FOUND, "DECLARE4001", "해당 신고 내역이 존재하지 않습니다."),
 
     //ProfileImg
     PROFILEIMG_NOT_FOUND(HttpStatus.NOT_FOUND, "PROFILEIMG4001", "해당 프로필 이미지가 존재하지 않습니다."),

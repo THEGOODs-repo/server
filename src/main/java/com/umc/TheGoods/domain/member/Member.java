@@ -17,6 +17,7 @@ import com.umc.TheGoods.domain.mapping.ViewSearch.TagSearch;
 import com.umc.TheGoods.domain.mapping.comment.CommentLike;
 import com.umc.TheGoods.domain.mapping.comment.CommentMention;
 import com.umc.TheGoods.domain.mapping.member.MemberCategory;
+import com.umc.TheGoods.domain.mapping.member.MemberTag;
 import com.umc.TheGoods.domain.mapping.member.MemberTerm;
 import com.umc.TheGoods.domain.mapping.post.PostLike;
 import com.umc.TheGoods.domain.mypage.*;
@@ -26,6 +27,7 @@ import com.umc.TheGoods.domain.payment.Payment;
 import com.umc.TheGoods.domain.types.SocialType;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicInsert;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -35,6 +37,7 @@ import java.util.List;
 @Entity
 @Getter
 @Builder
+@DynamicInsert
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class Member extends BaseDateTimeEntity {
@@ -103,9 +106,19 @@ public class Member extends BaseDateTimeEntity {
     @ColumnDefault("false")
     private Boolean marketingNotice;
 
+    @Column(columnDefinition = "BOOLEAN")
+    @ColumnDefault("false")
+    private Boolean postNotice;
+
+    @Column(columnDefinition = "BOOLEAN")
+    @ColumnDefault("false")
+    private Boolean infoTerm;
+
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<MemberCategory> memberCategoryList = new ArrayList<>();
 
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    private List<MemberTag> memberTagList = new ArrayList<>();
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<MemberTerm> memberTermList = new ArrayList<>();

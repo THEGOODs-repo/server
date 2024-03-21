@@ -160,7 +160,9 @@ public class Item extends BaseDateTimeEntity {
         }
         return this.itemImgList;
     }
-
+    public void updateStatus(ItemStatus itemStatus){
+        this.status = itemStatus;
+    }
     public void updateItem(ItemRequestDTO.UpdateItemDTO updateItemDTO) {
 
         DeliveryType deliveryType = null;

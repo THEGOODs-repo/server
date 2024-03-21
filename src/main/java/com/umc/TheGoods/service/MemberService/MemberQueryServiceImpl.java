@@ -1,19 +1,29 @@
 package com.umc.TheGoods.service.MemberService;
 
+import com.umc.TheGoods.apiPayload.code.status.ErrorStatus;
+import com.umc.TheGoods.apiPayload.exception.handler.MemberHandler;
 import com.umc.TheGoods.domain.images.ProfileImg;
+import com.umc.TheGoods.domain.item.Category;
+import com.umc.TheGoods.domain.item.Tag;
+import com.umc.TheGoods.domain.mapping.Tag.CategoryTag;
+import com.umc.TheGoods.domain.mapping.member.MemberCategory;
+import com.umc.TheGoods.domain.mapping.member.MemberTag;
 import com.umc.TheGoods.domain.member.Member;
 import com.umc.TheGoods.domain.mypage.Account;
 import com.umc.TheGoods.domain.mypage.Address;
-import com.umc.TheGoods.repository.member.AccountRepository;
-import com.umc.TheGoods.repository.member.AddressRepository;
-import com.umc.TheGoods.repository.member.MemberRepository;
-import com.umc.TheGoods.repository.member.ProfileImgRepository;
+import com.umc.TheGoods.domain.mypage.Declaration;
+import com.umc.TheGoods.repository.TagRepository;
+import com.umc.TheGoods.repository.item.CategoryTagRepository;
+import com.umc.TheGoods.repository.member.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.sound.midi.MetaMessage;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -25,6 +35,11 @@ public class MemberQueryServiceImpl implements MemberQueryService {
     private final AddressRepository addressRepository;
 
     private final AccountRepository accountRepository;
+    private final CategoryRepository categoryRepository;
+    private final MemberCategoryRepository memberCategoryRepository;
+    private final MemberTagRepository memberTagRepository;
+    private final TagRepository tagRepository;
+    private final DeclarationRepository declarationRepository;
 
     @Override
     public Optional<Member> findMemberById(Long id) {
@@ -60,5 +75,41 @@ public class MemberQueryServiceImpl implements MemberQueryService {
 
         List<Account> account = accountRepository.findAllByMember_Id(id);
         return account;
+    }
+
+    public List<Account> findAccountById(Long id){
+        return accountRepository.findAllByMember_Id(id);
+    }
+
+    @Override
+    public List<Category> findCategoryByMember(Member member) {
+
+        List<MemberCategory> memberCategoryList = memberCategoryRepository.findAllByMember(member);
+
+        List<Category> categoryList = memberCategoryList.stream().map(m ->{
+                return categoryRepository.findById(m.getCategory().getId()).orElseThrow(() -> new MemberHandler(ErrorStatus.CATEGORY_NOT_FOUND));
+        }).collect(Collectors.toList());
+
+        return categoryList;
+
+    }
+
+    @Override
+    public List<Tag> findTagByMember(Member member) {
+
+        List<MemberTag> memberTagList = memberTagRepository.findAllByMember(member);
+
+        List<Tag> tagList = memberTagList.stream().map(t ->{
+            return tagRepository.findById(t.getTag().getId()).orElseThrow(() -> new MemberHandler(ErrorStatus.TAG_NOT_FOUND));
+        }).collect(Collectors.toList());
+        return tagList;
+    }
+
+    @Override
+    public List<Declaration> findDeclarationByMember(Member member) {
+
+        List<Declaration> declarationList = declarationRepository.findAllByMember(member);
+
+        return declarationList;
     }
 }
