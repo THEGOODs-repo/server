@@ -172,6 +172,15 @@ public class MemberRequestDTO {
         String reason;
     }
 
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ContactDTO{
+        Integer start;
+        Integer end;
+        boolean all;
+    }
+
 
 
 }

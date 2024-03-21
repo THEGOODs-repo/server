@@ -160,6 +160,7 @@ public class MemberResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class ProfileResultDTO {
+        Long id;
         String name;
         String url;
         String phone;
@@ -247,6 +248,7 @@ public class MemberResponseDTO {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class MyPageOrderItemDTO{
+        private Long id;
         private String imageUrl;
         private Long price;
         private OrderStatus orderStatus;

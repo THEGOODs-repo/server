@@ -16,6 +16,7 @@ import com.umc.TheGoods.domain.member.Member;
 import com.umc.TheGoods.domain.member.Term;
 import com.umc.TheGoods.domain.mypage.Account;
 import com.umc.TheGoods.domain.mypage.Address;
+import com.umc.TheGoods.domain.mypage.ContactTime;
 import com.umc.TheGoods.domain.mypage.Declaration;
 import com.umc.TheGoods.domain.order.OrderItem;
 import com.umc.TheGoods.service.ItemService.ItemQueryService;
@@ -243,6 +244,7 @@ public class MemberConverter {
                 .defaultCheck(a.getDefaultCheck())
                 .build()).collect(Collectors.toList());
         List<MemberResponseDTO.AddressDTO> addressList = address.stream().map(a -> MemberResponseDTO.AddressDTO.builder()
+                .id(a.getId())
                 .addressName(a.getAddressName())
                 .addressSpec(a.getAddressSpec())
                 .deliveryMemo(a.getDeliveryMemo())
@@ -394,6 +396,7 @@ public class MemberConverter {
                 .map(ItemOption::getName).collect(Collectors.toList());
 
         return MemberResponseDTO.MyPageOrderItemDTO.builder()
+                .id(orderItem.getId())
                 .imageUrl(itemImgResponseDTOList.get(0).getItemImgUrl())
                 .option(itemOptionList)
                 .name(item.getName())
@@ -418,6 +421,7 @@ public class MemberConverter {
 
     public static List<MemberResponseDTO.AddressDTO> toGetAddressDTO(List<Address> address){
         List<MemberResponseDTO.AddressDTO> addressList = address.stream().map(a -> MemberResponseDTO.AddressDTO.builder()
+                .id(a.getId())
                 .addressName(a.getAddressName())
                 .addressSpec(a.getAddressSpec())
                 .deliveryMemo(a.getDeliveryMemo())
@@ -493,6 +497,16 @@ public class MemberConverter {
 
         return MemberResponseDTO.DeclareResponseDTO.builder()
                 .declareDTOList(declarationDTOList)
+                .build();
+    }
+
+    public static ContactTime toContactTime(Member member, MemberRequestDTO.ContactDTO request){
+
+        return ContactTime.builder()
+                .member(member)
+                .allTime(request.isAll())
+                .endTime(request.getEnd())
+                .startTime(request.getStart())
                 .build();
     }
 

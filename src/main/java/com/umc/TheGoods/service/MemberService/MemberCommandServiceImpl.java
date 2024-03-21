@@ -20,10 +20,7 @@ import com.umc.TheGoods.domain.mapping.member.MemberTerm;
 import com.umc.TheGoods.domain.member.Auth;
 import com.umc.TheGoods.domain.member.Member;
 import com.umc.TheGoods.domain.member.Term;
-import com.umc.TheGoods.domain.mypage.Account;
-import com.umc.TheGoods.domain.mypage.Address;
-import com.umc.TheGoods.domain.mypage.Declaration;
-import com.umc.TheGoods.domain.mypage.WithdrawReason;
+import com.umc.TheGoods.domain.mypage.*;
 import com.umc.TheGoods.domain.types.SocialType;
 import com.umc.TheGoods.redis.domain.RefreshToken;
 import com.umc.TheGoods.redis.service.RedisService;
@@ -76,6 +73,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     private final MemberTagRepository memberTagRepository;
     private final MemberCategoryRepository memberCategoryRepository;
     private final DeclarationRepository declarationRepository;
+    private final ContactTimeRepository contactTimeRepository;
 
     @Value("${jwt.token.secret}")
     private String key; // 토큰 만들어내는 key값
@@ -799,7 +797,6 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     public void postDeclare(Member member, MemberRequestDTO.DeclareDTO request) {
 
         Declaration declaration = MemberConverter.toDeclaration(member, request);
-        System.out.println(declaration.getType());
         declarationRepository.save(declaration);
 
     }
@@ -813,6 +810,17 @@ public class MemberCommandServiceImpl implements MemberCommandService {
             throw new MemberHandler(ErrorStatus.MEMBER_NOT_OWNER);
         }
         declarationRepository.delete(declaration);
+    }
+
+    @Override
+    @Transactional
+    public void postContact(Long memberId, MemberRequestDTO.ContactDTO request){
+
+        Member member = memberRepository.findById(memberId).orElseThrow(()-> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        ContactTime contactTime = MemberConverter.toContactTime(member,request);
+        contactTimeRepository.deleteByMember(member);
+
+        contactTimeRepository.save(contactTime);
     }
 }
 

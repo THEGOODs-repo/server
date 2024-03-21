@@ -19,7 +19,8 @@ public enum SuccessStatus implements BaseCode {
     MEMBER_ADDRESS_DELETE(HttpStatus.OK, "MEMBER2005", "회원 배송지 삭제 성공입니다."),
     MEMBER_CUSTOM_INFO_UPDATE(HttpStatus.OK, "MEMBER2006", "회원 맞춤 정보 변경 성공입니다."),
     MEMBER_DECLARE_SUCCESS(HttpStatus.OK, "MEMBER2007", "신고 등록 성공했습니다."),
-    MEMBER_DECLARE_DELETE(HttpStatus.OK, "MEMBER2008", "신고 삭제 성공했습니다.")
+    MEMBER_DECLARE_DELETE(HttpStatus.OK, "MEMBER2008", "신고 삭제 성공했습니다."),
+    MEMBER_CONTACT_SUCCESS(HttpStatus.OK, "MEMBER2009", "연락가능 시간 변경 성공입니다.")
     ;
 
     private final HttpStatus httpStatus;

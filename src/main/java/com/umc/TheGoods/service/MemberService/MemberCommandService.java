@@ -74,4 +74,6 @@ public interface MemberCommandService {
 
     void deleteDeclare(Long declarationId, Member member);
 
+    void postContact(Long memberId, MemberRequestDTO.ContactDTO request);
+
 }

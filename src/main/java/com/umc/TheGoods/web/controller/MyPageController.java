@@ -281,6 +281,17 @@ public class MyPageController {
         return ApiResponse.of(SuccessStatus.MEMBER_DECLARE_DELETE,null);
     }
 
+    @PostMapping(value = "/contact")
+    @Operation(summary = "mypage 연락가능 시간 수정 api")
+    public ApiResponse<?> postContact(Authentication authentication,
+                                      @RequestBody MemberRequestDTO.ContactDTO request){
+
+
+
+        memberCommandService.postContact(Long.valueOf(authentication.getName().toString()), request);
+        return ApiResponse.of(SuccessStatus.MEMBER_CONTACT_SUCCESS,null);
+    }
+
     /**
      * 주문 상세 내역
      * 입금처, 입금 은행, 상품 사진, 상품 이름, 상품 옵션, 주문 상태(결제 전, 결제 완료), 주문자명, 주문자 연락처, 주문 번호, 상품 주문 개수, 상품가격
