@@ -8,10 +8,12 @@ import com.umc.TheGoods.apiPayload.exception.handler.MemberHandler;
 import com.umc.TheGoods.config.MailConfig;
 import com.umc.TheGoods.config.springSecurity.provider.TokenProvider;
 import com.umc.TheGoods.converter.member.MemberConverter;
+import com.umc.TheGoods.domain.enums.ItemStatus;
 import com.umc.TheGoods.domain.enums.MemberRole;
 import com.umc.TheGoods.domain.enums.MemberStatus;
 import com.umc.TheGoods.domain.images.ProfileImg;
 import com.umc.TheGoods.domain.item.Category;
+import com.umc.TheGoods.domain.item.Item;
 import com.umc.TheGoods.domain.item.Tag;
 
 import com.umc.TheGoods.domain.mapping.member.MemberCategory;
@@ -25,6 +27,7 @@ import com.umc.TheGoods.domain.types.SocialType;
 import com.umc.TheGoods.redis.domain.RefreshToken;
 import com.umc.TheGoods.redis.service.RedisService;
 import com.umc.TheGoods.repository.TagRepository;
+import com.umc.TheGoods.repository.item.ItemRepository;
 import com.umc.TheGoods.repository.member.*;
 import com.umc.TheGoods.service.UtilService;
 import com.umc.TheGoods.web.dto.member.*;
@@ -74,6 +77,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     private final MemberCategoryRepository memberCategoryRepository;
     private final DeclarationRepository declarationRepository;
     private final ContactTimeRepository contactTimeRepository;
+    private final ItemRepository itemRepository;
 
     @Value("${jwt.token.secret}")
     private String key; // 토큰 만들어내는 key값
@@ -684,8 +688,10 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     }
 
     @Override
-    public void deleteMember(MemberRequestDTO.WithdrawReasonDTO request, Member member) {
+    @Transactional
+    public void deleteMember(MemberRequestDTO.WithdrawReasonDTO request, Long memberId) {
 
+        Member member = memberRepository.findById(memberId).orElseThrow(()-> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
         WithdrawReason withdrawReason = WithdrawReason.builder()
                 .reason(request.getReason())
                 .caution(request.getCaution())
@@ -694,7 +700,10 @@ public class MemberCommandServiceImpl implements MemberCommandService {
         withdrawReasonRepository.save(withdrawReason);
         member.inactivateStatus();
         memberRepository.save(member);
-
+        List<Item> itemList = itemRepository.findAllByMember(member);
+        itemList.stream().forEach(item -> {
+            item.updateStatus(ItemStatus.INACTIVE);
+        });
         return;
     }
 

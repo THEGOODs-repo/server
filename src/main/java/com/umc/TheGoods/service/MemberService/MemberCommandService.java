@@ -62,7 +62,7 @@ public interface MemberCommandService {
 
     void deleteAccount(Member member, Long accountId);
 
-    void deleteMember(MemberRequestDTO.WithdrawReasonDTO request, Member member);
+    void deleteMember(MemberRequestDTO.WithdrawReasonDTO request, Long memberId);
 
     void updateNotification(Member member, Integer type);
 

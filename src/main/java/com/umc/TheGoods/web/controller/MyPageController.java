@@ -177,8 +177,8 @@ public class MyPageController {
     public ApiResponse<?> deleteMember(@RequestBody MemberRequestDTO.WithdrawReasonDTO request,
                                        Authentication authentication){
 
-        Member member = memberQueryService.findMemberById(Long.valueOf(authentication.getName().toString())).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
-        memberCommandService.deleteMember(request, member);
+
+        memberCommandService.deleteMember(request, Long.valueOf(authentication.getName().toString()));
         return ApiResponse.of(SuccessStatus.MEMBER_DELETE_SUCCESS, null);
     }
 
