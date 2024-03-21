@@ -1,9 +1,8 @@
 package com.umc.TheGoods.domain.mapping.member;
 
-import com.umc.TheGoods.domain.common.BaseDateTimeEntity;
 import com.umc.TheGoods.domain.item.Category;
+import com.umc.TheGoods.domain.item.Tag;
 import com.umc.TheGoods.domain.member.Member;
-import com.umc.TheGoods.web.dto.member.MemberResponseDTO;
 import lombok.*;
 
 import javax.persistence.*;
@@ -13,11 +12,10 @@ import javax.persistence.*;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class MemberCategory extends BaseDateTimeEntity {
-
+public class MemberTag {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "member_category_id")
+    @Column(name = "member_tag_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -25,13 +23,12 @@ public class MemberCategory extends BaseDateTimeEntity {
     private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "category_id")
-    private Category category;
+    @JoinColumn(name = "tag_id")
+    private Tag tag;
 
     public void setMember(Member member) {
         this.member = member;
-        member.getMemberCategoryList().add(this); // Add the current MemberCategory to the new Member
+        member.getMemberTagList().add(this);
 
     }
-
 }

@@ -3,7 +3,9 @@ package com.umc.TheGoods.web.dto.member;
 import com.umc.TheGoods.domain.enums.MemberRole;
 import com.umc.TheGoods.domain.enums.MemberStatus;
 import com.umc.TheGoods.domain.enums.OrderStatus;
+import com.umc.TheGoods.domain.item.Category;
 import com.umc.TheGoods.domain.item.ItemOption;
+import com.umc.TheGoods.domain.item.Tag;
 import com.umc.TheGoods.redis.domain.RefreshToken;
 import com.umc.TheGoods.domain.mypage.Account;
 import com.umc.TheGoods.domain.mypage.Address;
@@ -264,6 +266,33 @@ public class MemberResponseDTO {
         Long totalElements;
         Boolean isFirst;
         Boolean isLast;
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class TagDTO{
+        private Long id;
+        private String name;
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class CategoryDTO{
+        private Long id;
+        private String name;
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class CustomInfoDTO{
+        List<TagDTO> tagList;
+        List<CategoryDTO> categoryList;
     }
 
 

@@ -6,6 +6,8 @@ import com.umc.TheGoods.apiPayload.code.status.SuccessStatus;
 import com.umc.TheGoods.apiPayload.exception.handler.MemberHandler;
 import com.umc.TheGoods.converter.member.MemberConverter;
 import com.umc.TheGoods.domain.enums.OrderStatus;
+import com.umc.TheGoods.domain.item.Category;
+import com.umc.TheGoods.domain.item.Tag;
 import com.umc.TheGoods.domain.member.Member;
 import com.umc.TheGoods.domain.mypage.Account;
 import com.umc.TheGoods.domain.mypage.Address;
@@ -18,7 +20,8 @@ import com.umc.TheGoods.web.dto.member.MemberResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
-import io.swagger.v3.oas.annotations.tags.Tag;
+
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -33,7 +36,7 @@ import java.util.Optional;
 @Slf4j
 @RequiredArgsConstructor
 @Validated
-@Tag(name = "MyPage", description = "MyPage 관련 API")
+@io.swagger.v3.oas.annotations.tags.Tag(name = "MyPage", description = "MyPage 관련 API")
 @RequestMapping("/api/members/mypage")
 public class MyPageController {
 
@@ -182,7 +185,7 @@ public class MyPageController {
      * OrderStatus 결제전, 결제 완료, 배송준비, 배송 시작, 배송완료, 주문 취소, 구매 확정, 반품 진행중, 반품 완료 주문 상태 별로 상품 조회 가능해야함
      * 주문시간, 주문상태(결제전, 결제완료), 상품 이름, 상품 옵션, 가격, 사진
      */
-    @GetMapping(value = "/mypage/item")
+    @GetMapping(value = "/item")
     @Operation(summary = "mypage 구매관리 조회 api", description = "마이페이지에서 구매관리 페이지에서 상품정보를 가져오는 api입니다.\n" +
             "request parameter에 페이지 번호와 주문 상태를 넣어줘야합니다.")
     @Parameters(value = {
@@ -204,7 +207,7 @@ public class MyPageController {
      *
      */
 
-    @PutMapping(value = "/mypage/notification/update")
+    @PutMapping(value = "/notification/update")
     @Operation(summary="mypage 알림 설정 변경 api", description = "마이페이지에서 알림을 on/off할 수 있는 api입니다\n"+
             "request parameter에 알림 타입을 넣어줘야합니다.")
     @Parameter(name = "type", description = "1: 아이템 알림, 2: 메세지 알림, 3: 마케팅 알림, 4: 포스트 알림")
@@ -214,6 +217,31 @@ public class MyPageController {
         return ApiResponse.of(SuccessStatus.MEMBER_NOTIFICATION_UPDATE,null);
     }
 
+    @PostMapping(value = "/custom/info")
+    @Operation(summary = "mypage 고객 맞춤 정보 변경 api", description = "")
+    public ApiResponse<?> updateCustomInfo(Authentication authentication,
+                                           @RequestBody MemberRequestDTO.CustomInfoDTO request){
+        Member member = memberQueryService.findMemberById(Long.valueOf(authentication.getName().toString())).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
+        //회원 맞춤 정보 update하는 로직
+        memberCommandService.updateCustomInfo(member.getId(),request);
+        return ApiResponse.of(SuccessStatus.MEMBER_CUSTOM_INFO_UPDATE,null);
+    }
+
+    @GetMapping(value = "/custom/info")
+    @Operation(summary = "mypage 고객 맞춤 정보 조회 api",description = "")
+    public ApiResponse<MemberResponseDTO.CustomInfoDTO> getCustomInfo(Authentication authentication){
+
+        Member member = memberQueryService.findMemberById(Long.valueOf(authentication.getName().toString())).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        List<Category> categoryList = memberQueryService.findCategoryByMember(member);
+        List<Tag> tagList = memberQueryService.findTagByMember(member);
+        return ApiResponse.onSuccess(MemberConverter.toCustomInfoDTO(categoryList, tagList));
+    }
+
+    /**
+     * 주문 상세 내역
+     * 입금처, 입금 은행, 상품 사진, 상품 이름, 상품 옵션, 주문 상태(결제 전, 결제 완료), 주문자명, 주문자 연락처, 주문 번호, 상품 주문 개수, 상품가격
+     * 배송비, 총 주문 가격, 입금자명, 입금액, 입금 날짜, 배송 방법, 받는 사람, 연락처, 주소, 메모, 송장번호, 택배사, 예금주, 은행명, 계좌번호
+     */
 
 }

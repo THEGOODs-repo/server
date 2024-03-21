@@ -12,7 +12,10 @@ import com.umc.TheGoods.domain.enums.MemberRole;
 import com.umc.TheGoods.domain.enums.MemberStatus;
 import com.umc.TheGoods.domain.images.ProfileImg;
 import com.umc.TheGoods.domain.item.Category;
+import com.umc.TheGoods.domain.item.Tag;
+
 import com.umc.TheGoods.domain.mapping.member.MemberCategory;
+import com.umc.TheGoods.domain.mapping.member.MemberTag;
 import com.umc.TheGoods.domain.mapping.member.MemberTerm;
 import com.umc.TheGoods.domain.member.Auth;
 import com.umc.TheGoods.domain.member.Member;
@@ -23,6 +26,7 @@ import com.umc.TheGoods.domain.mypage.WithdrawReason;
 import com.umc.TheGoods.domain.types.SocialType;
 import com.umc.TheGoods.redis.domain.RefreshToken;
 import com.umc.TheGoods.redis.service.RedisService;
+import com.umc.TheGoods.repository.TagRepository;
 import com.umc.TheGoods.repository.member.*;
 import com.umc.TheGoods.service.UtilService;
 import com.umc.TheGoods.web.dto.member.*;
@@ -67,6 +71,9 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     private final TokenProvider tokenProvider;
     private final RedisService redisService;
     private final WithdrawReasonRepository withdrawReasonRepository;
+    private final TagRepository tagRepository;
+    private final MemberTagRepository memberTagRepository;
+    private final MemberCategoryRepository memberCategoryRepository;
 
     @Value("${jwt.token.secret}")
     private String key; // 토큰 만들어내는 key값
@@ -739,6 +746,51 @@ public class MemberCommandServiceImpl implements MemberCommandService {
 
                 break;
         }
+    }
+
+
+    @Transactional
+    @Override
+    public void updateCustomInfo(Long memberId, MemberRequestDTO.CustomInfoDTO request) {
+        //정보 동의 약관 변경
+        memberRepository.changeInfoTerm(memberId,request.getInfoTerm());
+        Member member = memberRepository.findById(memberId).orElseThrow(()-> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        // 카테고리 저장 로직
+        // request에서 받아온 카테고리 List 형태로 변환
+        List<Category> categoryList = request.getCategoryList().stream()
+                .map(category -> {
+                    return categoryRepository.findById(category).orElseThrow(() -> new MemberHandler(ErrorStatus.CATEGORY_NOT_FOUND));
+                }).collect(Collectors.toList());
+        //Member와 Category는 n:m관계여서 Category List로 MemberCategory Entity List로 변환
+        List<MemberCategory> memberCategoryList = MemberConverter.toMemberCategoryList(categoryList);
+
+        //기존에 있던 해당 Member의 MemberCategory 비우기
+        memberCategoryRepository.deleteByMember(member);
+        member.getMemberCategoryList().clear();
+
+        //memberCategory에 member 매핑해주기
+        memberCategoryList.forEach(memberCategory -> {
+            memberCategory.setMember(member);
+        });
+
+
+        //memberTagList도 memberCategoryList와 로직은 동일합니다
+
+        List<Tag> tagList = request.getTagList().stream()
+                .map(tag ->{
+                    return tagRepository.findById(tag).orElseThrow(() -> new MemberHandler(ErrorStatus.TAG_NOT_FOUND));
+                }).collect(Collectors.toList());
+
+        List<MemberTag> memberTagList = MemberConverter.toMemberTagList(tagList);
+
+        memberTagRepository.deleteByMember(member);
+        member.getMemberTagList().clear();
+        memberTagList.forEach(memberTag -> {
+            memberTag.setMember(member);
+        });
+        memberRepository.save(member);
+
     }
 }
 

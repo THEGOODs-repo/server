@@ -68,4 +68,6 @@ public interface MemberCommandService {
 
     void deleteAddress(Member member, Long addressId);
 
+    void updateCustomInfo(Long memberId, MemberRequestDTO.CustomInfoDTO request);
+
 }

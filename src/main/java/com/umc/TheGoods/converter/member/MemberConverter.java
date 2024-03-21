@@ -6,7 +6,10 @@ import com.umc.TheGoods.domain.images.ProfileImg;
 import com.umc.TheGoods.domain.item.Category;
 import com.umc.TheGoods.domain.item.Item;
 import com.umc.TheGoods.domain.item.ItemOption;
+import com.umc.TheGoods.domain.item.Tag;
+import com.umc.TheGoods.domain.mapping.Tag.CategoryTag;
 import com.umc.TheGoods.domain.mapping.member.MemberCategory;
+import com.umc.TheGoods.domain.mapping.member.MemberTag;
 import com.umc.TheGoods.domain.mapping.member.MemberTerm;
 import com.umc.TheGoods.domain.member.Auth;
 import com.umc.TheGoods.domain.member.Member;
@@ -110,6 +113,16 @@ public class MemberConverter {
                                 .category(category)
                                 .build()
                 ).collect(Collectors.toList());
+
+    }
+
+    public static List<MemberTag> toMemberTagList(List<Tag> tagList){
+
+        return tagList.stream().map(tag ->
+                MemberTag.builder()
+                        .tag(tag)
+                        .build()
+        ).collect(Collectors.toList());
 
     }
 
@@ -415,5 +428,29 @@ public class MemberConverter {
         return addressList;
     }
 
+    public static MemberResponseDTO.CustomInfoDTO toCustomInfoDTO(List<Category> categoryList, List<Tag> tagList){
+        List<MemberResponseDTO.CategoryDTO> category = categoryList.stream().map(
+                c ->{
+                    return MemberResponseDTO.CategoryDTO
+                            .builder()
+                            .id(c.getId())
+                            .name(c.getName())
+                            .build();}
+        ).collect(Collectors.toList());
+
+        List<MemberResponseDTO.TagDTO> tag = tagList.stream().map(
+                t ->{
+                    return MemberResponseDTO.TagDTO.builder()
+                            .id(t.getId())
+                            .name(t.getName())
+                            .build();
+                }
+        ).collect(Collectors.toList());
+
+        return MemberResponseDTO.CustomInfoDTO.builder()
+                .categoryList(category)
+                .tagList(tag)
+                .build();
+    }
 
 }

@@ -1,6 +1,8 @@
 package com.umc.TheGoods.service.MemberService;
 
 import com.umc.TheGoods.domain.images.ProfileImg;
+import com.umc.TheGoods.domain.item.Category;
+import com.umc.TheGoods.domain.item.Tag;
 import com.umc.TheGoods.domain.member.Member;
 import com.umc.TheGoods.domain.mypage.Account;
 import com.umc.TheGoods.domain.mypage.Address;
@@ -22,4 +24,8 @@ public interface MemberQueryService {
     List<Account> findAllAccountById(Long id);
 
     List<Account> findAccountById(Long id);
+
+    List<Category> findCategoryByMember(Member member);
+
+    List<Tag> findTagByMember(Member member);
 }

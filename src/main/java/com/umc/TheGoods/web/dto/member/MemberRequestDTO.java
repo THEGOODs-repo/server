@@ -31,6 +31,17 @@ public class MemberRequestDTO {
     }
 
     @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class CustomInfoDTO{
+        private List<Long> TagList;
+        private List<Long> CategoryList;
+        private Boolean InfoTerm;
+    }
+
+
+    @Getter
     @NoArgsConstructor
     @AllArgsConstructor
     public static class LoginDTO {

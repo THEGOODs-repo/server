@@ -71,6 +71,9 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     @Query("UPDATE Member m SET m.postNotice = false WHERE m.id = :memberId")
     void changePostNotificationTrue(Long memberId);
 
-
+    @Transactional
+    @Modifying(clearAutomatically = true)
+    @Query("UPDATE Member m SET m.infoTerm = :infoTerm WHERE m.id = :memberId")
+    void changeInfoTerm(Long memberId, Boolean infoTerm);
 
 }
