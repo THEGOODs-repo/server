@@ -73,6 +73,9 @@ public enum ErrorStatus implements BaseErrorCode {
     //Term
     TERM_NOT_FOUND(HttpStatus.NOT_FOUND, "TERM4001", "해당 약관이 존재하지 않습니다."),
 
+    //Declaration
+    DECLARE_NOT_FOUND(HttpStatus.NOT_FOUND, "DECLARE4001", "해당 신고 내역이 존재하지 않습니다."),
+
     //ProfileImg
     PROFILEIMG_NOT_FOUND(HttpStatus.NOT_FOUND, "PROFILEIMG4001", "해당 프로필 이미지가 존재하지 않습니다."),
 

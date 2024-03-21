@@ -22,6 +22,7 @@ import com.umc.TheGoods.domain.member.Member;
 import com.umc.TheGoods.domain.member.Term;
 import com.umc.TheGoods.domain.mypage.Account;
 import com.umc.TheGoods.domain.mypage.Address;
+import com.umc.TheGoods.domain.mypage.Declaration;
 import com.umc.TheGoods.domain.mypage.WithdrawReason;
 import com.umc.TheGoods.domain.types.SocialType;
 import com.umc.TheGoods.redis.domain.RefreshToken;
@@ -74,6 +75,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     private final TagRepository tagRepository;
     private final MemberTagRepository memberTagRepository;
     private final MemberCategoryRepository memberCategoryRepository;
+    private final DeclarationRepository declarationRepository;
 
     @Value("${jwt.token.secret}")
     private String key; // 토큰 만들어내는 key값
@@ -791,6 +793,26 @@ public class MemberCommandServiceImpl implements MemberCommandService {
         });
         memberRepository.save(member);
 
+    }
+
+    @Override
+    public void postDeclare(Member member, MemberRequestDTO.DeclareDTO request) {
+
+        Declaration declaration = MemberConverter.toDeclaration(member, request);
+        System.out.println(declaration.getType());
+        declarationRepository.save(declaration);
+
+    }
+
+    @Override
+    public void deleteDeclare(Long declarationId, Member member) {
+
+        Declaration declaration = declarationRepository.findById(declarationId).orElseThrow(()-> new MemberHandler(ErrorStatus.DECLARE_NOT_FOUND));
+
+        if(!declaration.getMember().equals(member)){
+            throw new MemberHandler(ErrorStatus.MEMBER_NOT_OWNER);
+        }
+        declarationRepository.delete(declaration);
     }
 }
 

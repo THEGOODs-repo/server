@@ -16,6 +16,7 @@ import com.umc.TheGoods.domain.member.Member;
 import com.umc.TheGoods.domain.member.Term;
 import com.umc.TheGoods.domain.mypage.Account;
 import com.umc.TheGoods.domain.mypage.Address;
+import com.umc.TheGoods.domain.mypage.Declaration;
 import com.umc.TheGoods.domain.order.OrderItem;
 import com.umc.TheGoods.service.ItemService.ItemQueryService;
 import com.umc.TheGoods.web.dto.item.ItemResponseDTO;
@@ -450,6 +451,48 @@ public class MemberConverter {
         return MemberResponseDTO.CustomInfoDTO.builder()
                 .categoryList(category)
                 .tagList(tag)
+                .build();
+    }
+
+    public static Declaration toDeclaration(Member member, MemberRequestDTO.DeclareDTO request){
+
+        String type= new String();
+        switch (request.getReceipt()){
+            case 1:
+                type = "판매글 이름";
+                break;
+            case 2:
+                 type = "판매글 링크";
+                break;
+            case 3:
+                type = "판매자 이름";
+                break;
+            case 4:
+                type = "판매자 링크";
+                break;
+        }
+        return Declaration.builder()
+                .type(type)
+                .reason(request.getReason())
+                .salesPost(request.getSalePost())
+                .member(member)
+                .build();
+    }
+
+    public static MemberResponseDTO.DeclareResponseDTO toDeclarationDTO(List<Declaration> declarationList){
+
+        List<MemberResponseDTO.DeclarationDTO> declarationDTOList = declarationList.stream().map(declaration ->
+        {
+            return MemberResponseDTO.DeclarationDTO.builder()
+                    .declarationId(declaration.getId())
+                    .receipt(declaration.getType())
+                    .salePost(declaration.getSalesPost())
+                    .reason(declaration.getReason())
+                    .build();
+        }).collect(Collectors.toList());
+
+        return MemberResponseDTO.DeclareResponseDTO.builder()
+                .declareDTOList(declarationDTOList)
                 .build();
     }
 

@@ -6,6 +6,7 @@ import com.umc.TheGoods.domain.item.Tag;
 import com.umc.TheGoods.domain.member.Member;
 import com.umc.TheGoods.domain.mypage.Account;
 import com.umc.TheGoods.domain.mypage.Address;
+import com.umc.TheGoods.domain.mypage.Declaration;
 
 import java.util.List;
 import java.util.Optional;
@@ -28,4 +29,6 @@ public interface MemberQueryService {
     List<Category> findCategoryByMember(Member member);
 
     List<Tag> findTagByMember(Member member);
+
+    List<Declaration> findDeclarationByMember(Member member);
 }

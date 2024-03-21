@@ -70,4 +70,8 @@ public interface MemberCommandService {
 
     void updateCustomInfo(Long memberId, MemberRequestDTO.CustomInfoDTO request);
 
+    void postDeclare(Member member, MemberRequestDTO.DeclareDTO request);
+
+    void deleteDeclare(Long declarationId, Member member);
+
 }

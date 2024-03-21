@@ -295,6 +295,29 @@ public class MemberResponseDTO {
         List<CategoryDTO> categoryList;
     }
 
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class DeclarationDTO{
+
+        Long declarationId;
+        //접수 항목
+        String receipt;
+        //판매 항목
+        String salePost;
+        //신고 이유
+        String reason;
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class DeclareResponseDTO{
+        List<DeclarationDTO> declareDTOList;
+    }
+
 
 
 

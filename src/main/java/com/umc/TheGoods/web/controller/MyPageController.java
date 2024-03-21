@@ -8,9 +8,11 @@ import com.umc.TheGoods.converter.member.MemberConverter;
 import com.umc.TheGoods.domain.enums.OrderStatus;
 import com.umc.TheGoods.domain.item.Category;
 import com.umc.TheGoods.domain.item.Tag;
+import com.umc.TheGoods.domain.member.Auth;
 import com.umc.TheGoods.domain.member.Member;
 import com.umc.TheGoods.domain.mypage.Account;
 import com.umc.TheGoods.domain.mypage.Address;
+import com.umc.TheGoods.domain.mypage.Declaration;
 import com.umc.TheGoods.service.MemberService.MemberCommandService;
 import com.umc.TheGoods.service.MemberService.MemberQueryService;
 import com.umc.TheGoods.service.OrderService.OrderQueryService;
@@ -218,7 +220,7 @@ public class MyPageController {
     }
 
     @PostMapping(value = "/custom/info")
-    @Operation(summary = "mypage 고객 맞춤 정보 변경 api", description = "")
+    @Operation(summary = "mypage 고객 맞춤 정보 변경 api", description = "request로 카테고리와 태그, 정보이용 동의를 보내면 카테고리와 태그 정보 수정됩니다.")
     public ApiResponse<?> updateCustomInfo(Authentication authentication,
                                            @RequestBody MemberRequestDTO.CustomInfoDTO request){
         Member member = memberQueryService.findMemberById(Long.valueOf(authentication.getName().toString())).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
@@ -229,13 +231,54 @@ public class MyPageController {
     }
 
     @GetMapping(value = "/custom/info")
-    @Operation(summary = "mypage 고객 맞춤 정보 조회 api",description = "")
+    @Operation(summary = "mypage 고객 맞춤 정보 조회 api",description = "회원의 카테고리와 태그 정보 가져올 수 있습니다.")
     public ApiResponse<MemberResponseDTO.CustomInfoDTO> getCustomInfo(Authentication authentication){
 
         Member member = memberQueryService.findMemberById(Long.valueOf(authentication.getName().toString())).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
         List<Category> categoryList = memberQueryService.findCategoryByMember(member);
         List<Tag> tagList = memberQueryService.findTagByMember(member);
         return ApiResponse.onSuccess(MemberConverter.toCustomInfoDTO(categoryList, tagList));
+    }
+
+    /**\
+     * 신고 기능
+     * 접수항목, 판매글, 접수사유
+     */
+    @PostMapping(value = "/declare")
+    @Operation(summary = "mypage 신고하기 api", description = "reuqest: receipt(1: 판매글 이름, 2: 판매글 링크, 3: 판매자 이름, 4: 판매자 링크" +
+            "salePost: 판매글, reason: 신고 이유")
+    public ApiResponse<?> uploadDeclare(Authentication authentication,
+                                       @RequestBody MemberRequestDTO.DeclareDTO request){
+
+        Member member = memberQueryService.findMemberById(Long.valueOf(authentication.getName().toString())).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        memberCommandService.postDeclare(member, request);
+
+        return ApiResponse.of(SuccessStatus.MEMBER_DECLARE_SUCCESS,null);
+    }
+
+    @GetMapping(value = "/declare")
+    @Operation(summary = "mypage 신고 내역 조회 api", description = "모든 신고내역 조회")
+    public ApiResponse<MemberResponseDTO.DeclareResponseDTO> getDeclare(Authentication authentication){
+
+        Member member = memberQueryService.findMemberById(Long.valueOf(authentication.getName().toString())).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        List<Declaration> declaration = memberQueryService.findDeclarationByMember(member);
+
+        return ApiResponse.onSuccess(MemberConverter.toDeclarationDTO(declaration));
+    }
+
+    @DeleteMapping(value = "/declare/{declarationId}")
+    @Operation(summary = "mypage 신고 내역 삭제 api", description = "신고 내역 삭제")
+    @Parameters(value = {
+            @Parameter(name = "declarationId", description = "신고내역 id 입니다.")
+    })
+    public ApiResponse<?> deleteDeclare(Authentication authentication,
+                                        @PathVariable(name = "declarationId") Long declarationId){
+        Member member = memberQueryService.findMemberById(Long.valueOf(authentication.getName().toString())).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        memberCommandService.deleteDeclare(declarationId,member);
+        return ApiResponse.of(SuccessStatus.MEMBER_DECLARE_DELETE,null);
     }
 
     /**

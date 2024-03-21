@@ -11,6 +11,7 @@ import com.umc.TheGoods.domain.mapping.member.MemberTag;
 import com.umc.TheGoods.domain.member.Member;
 import com.umc.TheGoods.domain.mypage.Account;
 import com.umc.TheGoods.domain.mypage.Address;
+import com.umc.TheGoods.domain.mypage.Declaration;
 import com.umc.TheGoods.repository.TagRepository;
 import com.umc.TheGoods.repository.item.CategoryTagRepository;
 import com.umc.TheGoods.repository.member.*;
@@ -38,6 +39,7 @@ public class MemberQueryServiceImpl implements MemberQueryService {
     private final MemberCategoryRepository memberCategoryRepository;
     private final MemberTagRepository memberTagRepository;
     private final TagRepository tagRepository;
+    private final DeclarationRepository declarationRepository;
 
     @Override
     public Optional<Member> findMemberById(Long id) {
@@ -101,5 +103,13 @@ public class MemberQueryServiceImpl implements MemberQueryService {
             return tagRepository.findById(t.getTag().getId()).orElseThrow(() -> new MemberHandler(ErrorStatus.TAG_NOT_FOUND));
         }).collect(Collectors.toList());
         return tagList;
+    }
+
+    @Override
+    public List<Declaration> findDeclarationByMember(Member member) {
+
+        List<Declaration> declarationList = declarationRepository.findAllByMember(member);
+
+        return declarationList;
     }
 }
