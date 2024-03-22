@@ -18,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -172,6 +173,8 @@ public class CartCommandServiceImpl implements CartCommandService {
     @Override
     public void deleteCartDetail(CartRequestDTO.cartDetailDeleteDTO request, Member member) {
 
+        List<Long> deleteCartId = new ArrayList<>();
+
         request.getCartDetailIdList().forEach(cartDetailId -> {
 
             CartDetail cartDetail = cartDetailRepository.findById(cartDetailId).orElseThrow(() -> new OrderHandler(ErrorStatus.CART_DETAIL_NOT_FOUND));
@@ -179,22 +182,26 @@ public class CartCommandServiceImpl implements CartCommandService {
             Cart cart = cartDetail.getCart();
 
             // 해당 cart 내역을 수정할 권한 있는지 검증
-            if (!cartDetail.getCart().getMember().equals(member)) {
+            if (!cart.getMember().equals(member)) {
                 throw new OrderHandler(ErrorStatus.NOT_CART_OWNER);
             }
             cartDetail.detachCart();
             cartDetail.detachItemOption();
 
             cartDetailRepository.deleteById(cartDetail.getId());
-            cartDetailRepository.flush();
+
+            //cartDetailRepository.flush();
 
             // 장바구니 상품의 마지막 옵션 내역을 삭제한 경우: 장바구니 상품 내역도 삭제
             if (cart.getCartDetailList().isEmpty()) {
-                log.info(" ===================== 마지막 옵션 삭제 ========================");
-                cart.detachMember();
-                cart.detachItem();
-                cartRepository.deleteCartById(cart.getId());
+                deleteCartId.add(cart.getId());
             }
+        });
+
+
+        deleteCartId.forEach(cartId -> {
+            log.info(" ===================== deleteSingleCart ========================");
+            deleteSingleCart(cartId);
         });
 
     }
@@ -209,6 +216,7 @@ public class CartCommandServiceImpl implements CartCommandService {
                 throw new OrderHandler(ErrorStatus.NOT_CART_OWNER);
             }
 
+            // 해당 장바구니 상품의 담은 옵션 삭제
             List<CartDetail> cartDetailList = cartDetailRepository.findAllByCart(cart);
             cartDetailList.forEach(cartDetail -> {
                 log.info("===== cartDetailId: {}", cartDetail.getId());
@@ -218,20 +226,24 @@ public class CartCommandServiceImpl implements CartCommandService {
                 cartDetailRepository.deleteById(cartDetail.getId());
             });
 
-//            cart.getCartDetailList().forEach(cartDetail -> {
-//                log.info("===== cartDetailId: {}", cartDetail.getId());
-//                cartDetail.detachCart();
-//                cartDetail.detachItemOption();
-//
-//                cartDetailRepository.deleteById(cartDetail.getId());
-//            });
 
-            cartDetailRepository.flush();
-
+            // 해당 장바구니 상품 내역 삭제
             cart.detachMember();
             cart.detachItem();
-            cartRepository.deleteCartById(cart.getId());
+            cart.detachCartDetail();
+            cartRepository.deleteById(cart.getId());
         });
 
+    }
+
+    private void deleteSingleCart(Long cartId) {
+        Cart cart = cartRepository.findById(cartId).orElseThrow(() -> new OrderHandler(ErrorStatus.CART_NOT_FOUND));
+
+        log.info("========================= delete query please=========================");
+        // 해당 장바구니 상품 내역 삭제
+        cart.detachMember();
+        cart.detachItem();
+        cart.detachCartDetail();
+        cartRepository.deleteById(cart.getId());
     }
 }

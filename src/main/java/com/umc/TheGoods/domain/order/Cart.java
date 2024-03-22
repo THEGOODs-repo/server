@@ -52,12 +52,14 @@ public class Cart extends BaseDateTimeEntity {
     public void detachMember() {
         if (this.member != null) {
             this.member.getCartList().remove(this);
+            this.member = null;
         }
     }
 
     public void detachItem() {
         if (this.item != null) {
             this.item.getItemCartList().remove(this);
+            this.item = null;
         }
     }
 
