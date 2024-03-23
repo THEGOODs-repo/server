@@ -42,6 +42,7 @@ public enum ErrorStatus implements BaseErrorCode {
     NOT_CART_OWNER(HttpStatus.BAD_REQUEST, "CART4002", "본인의 장바구니 내역이 아닙니다. 접근할 수 없습니다."),
     CART_DETAIL_FOUND_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "CART4003", "단일 상품의 장바구니 상세 내역을 찾을 수 없습니다. 관리자에게 문의 바랍니다."),
     CART_DETAIL_NOT_FOUND(HttpStatus.NOT_FOUND, "CART4004", "해당 장바구니 상세 내역을 찾을 수 없습니다"),
+    DELETE_CART_DETAIL_FAILED(HttpStatus.BAD_REQUEST, "CART4005", "장바구니 상세 내역을 삭제할 수 없습니다."),
 
     // test
     TEMP_EXCEPTION(HttpStatus.BAD_REQUEST, "TEMP4001", "테스트"),
@@ -61,11 +62,11 @@ public enum ErrorStatus implements BaseErrorCode {
 
     //JWT
 
-    JWT_BAD_REQUEST(HttpStatus.UNAUTHORIZED, "JWT4001","잘못된 JWT 서명입니다."),
-    JWT_ACCESS_TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, "JWT4002","액세스 토큰이 만료되었습니다."),
-    JWT_REFRESH_TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, "JWT4003","리프레시 토큰이 만료되었습니다. 다시 로그인하시기 바랍니다."),
-    JWT_UNSUPPORTED_TOKEN(HttpStatus.UNAUTHORIZED, "JWT4004","지원하지 않는 JWT 토큰입니다."),
-    JWT_TOKEN_NOT_FOUND(HttpStatus.UNAUTHORIZED, "JWT4005","유효한 JWT 토큰이 없습니다."),
+    JWT_BAD_REQUEST(HttpStatus.UNAUTHORIZED, "JWT4001", "잘못된 JWT 서명입니다."),
+    JWT_ACCESS_TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, "JWT4002", "액세스 토큰이 만료되었습니다."),
+    JWT_REFRESH_TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, "JWT4003", "리프레시 토큰이 만료되었습니다. 다시 로그인하시기 바랍니다."),
+    JWT_UNSUPPORTED_TOKEN(HttpStatus.UNAUTHORIZED, "JWT4004", "지원하지 않는 JWT 토큰입니다."),
+    JWT_TOKEN_NOT_FOUND(HttpStatus.UNAUTHORIZED, "JWT4005", "유효한 JWT 토큰이 없습니다."),
 
     //Category
     CATEGORY_NOT_FOUND(HttpStatus.NOT_FOUND, "CATEGORY4001", "해당 카테고리가 존재하지 않습니다"),
