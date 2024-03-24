@@ -3,6 +3,7 @@ package com.umc.TheGoods.service.OrderService;
 import com.umc.TheGoods.domain.enums.OrderStatus;
 import com.umc.TheGoods.domain.member.Member;
 import com.umc.TheGoods.domain.order.OrderItem;
+import com.umc.TheGoods.web.dto.member.MemberResponseDTO;
 import com.umc.TheGoods.web.dto.order.OrderRequestDTO;
 import org.springframework.data.domain.Page;
 
@@ -23,4 +24,6 @@ public interface OrderQueryService {
     boolean isExistOrders(Long id);
 
     boolean isExistOrderItem(Long id);
+
+    MemberResponseDTO.MyPageOrderItemListDTO getMyPageOrderItemList(Member member, OrderStatus orderStatus, Integer pageIdx);
 }

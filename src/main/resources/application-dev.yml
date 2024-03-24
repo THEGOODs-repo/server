@@ -4,6 +4,10 @@ spring:
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
+  redis:
+    host: ${REDIS_HOST}
+    port: ${REDIS_PORT}
+    password: ${REDIS_PASSWORD}
   jpa:
     hibernate:
       ddl-auto: update
@@ -34,3 +38,4 @@ social:
 iamport:
   key: ${IAMPORT_KEY}
   secret: ${IAMPORT_SECRET}
+

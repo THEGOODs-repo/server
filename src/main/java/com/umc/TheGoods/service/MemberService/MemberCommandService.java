@@ -4,7 +4,11 @@ package com.umc.TheGoods.service.MemberService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.umc.TheGoods.domain.member.Auth;
 import com.umc.TheGoods.domain.member.Member;
+import com.umc.TheGoods.domain.mypage.Account;
+import com.umc.TheGoods.domain.mypage.Address;
+import com.umc.TheGoods.redis.domain.RefreshToken;
 import com.umc.TheGoods.web.dto.member.MemberRequestDTO;
+import com.umc.TheGoods.web.dto.member.MemberResponseDTO;
 import org.springframework.web.multipart.MultipartFile;
 
 
@@ -16,7 +20,9 @@ public interface MemberCommandService {
 
     Member join(MemberRequestDTO.JoinDTO request);
 
-    String login(MemberRequestDTO.LoginDTO request);
+    MemberResponseDTO.LoginResultDTO login(MemberRequestDTO.LoginDTO request);
+    void logout(String accessToken, Member member);
+    String regenerateAccessToken(RefreshToken refreshToken);
 
     Auth sendPhoneAuth(String phone) throws JsonProcessingException;
 
@@ -42,5 +48,32 @@ public interface MemberCommandService {
 
     Member profileModify(MultipartFile profile, String nickname, String introduce, Member member);
 
+    Member updateRole(Member member);
+
+    void updatePhoneName(MemberRequestDTO.PhoneNameUpdateDTO request, Member member);
+
+    Address postAddress(MemberRequestDTO.AddressDTO request,Member member);
+
+    Account postAccount(MemberRequestDTO.AccountDTO request, Member member);
+
+    void updateAddress(MemberRequestDTO.AddressDTO request,Member member, Long addressId);
+
+    void updateAccount(MemberRequestDTO.AccountDTO request, Member member,Long accountId);
+
+    void deleteAccount(Member member, Long accountId);
+
+    void deleteMember(MemberRequestDTO.WithdrawReasonDTO request, Long memberId);
+
+    void updateNotification(Member member, Integer type);
+
+    void deleteAddress(Member member, Long addressId);
+
+    void updateCustomInfo(Long memberId, MemberRequestDTO.CustomInfoDTO request);
+
+    void postDeclare(Member member, MemberRequestDTO.DeclareDTO request);
+
+    void deleteDeclare(Long declarationId, Member member);
+
+    void postContact(Long memberId, MemberRequestDTO.ContactDTO request);
 
 }

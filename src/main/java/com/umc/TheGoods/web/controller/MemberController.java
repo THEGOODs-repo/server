@@ -3,27 +3,49 @@ package com.umc.TheGoods.web.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.umc.TheGoods.apiPayload.ApiResponse;
 import com.umc.TheGoods.apiPayload.code.status.ErrorStatus;
+import com.umc.TheGoods.apiPayload.code.status.SuccessStatus;
 import com.umc.TheGoods.apiPayload.exception.handler.MemberHandler;
+import com.umc.TheGoods.converter.item.ItemConverter;
 import com.umc.TheGoods.converter.member.MemberConverter;
+import com.umc.TheGoods.domain.enums.MemberRole;
+import com.umc.TheGoods.domain.enums.MemberStatus;
+import com.umc.TheGoods.domain.enums.OrderStatus;
 import com.umc.TheGoods.domain.images.ProfileImg;
+import com.umc.TheGoods.domain.item.Item;
 import com.umc.TheGoods.domain.member.Auth;
 import com.umc.TheGoods.domain.member.Member;
+import com.umc.TheGoods.domain.mypage.Account;
+import com.umc.TheGoods.domain.mypage.Address;
+import com.umc.TheGoods.domain.order.OrderItem;
+import com.umc.TheGoods.redis.domain.RefreshToken;
+import com.umc.TheGoods.redis.service.RedisService;
+import com.umc.TheGoods.service.ItemService.ItemQueryService;
 import com.umc.TheGoods.service.MemberService.MemberCommandService;
 import com.umc.TheGoods.service.MemberService.MemberQueryService;
+import com.umc.TheGoods.service.OrderService.OrderQueryService;
+import com.umc.TheGoods.validation.annotation.CheckPage;
+import com.umc.TheGoods.web.dto.item.ItemResponseDTO;
 import com.umc.TheGoods.web.dto.member.MemberDetail;
 import com.umc.TheGoods.web.dto.member.MemberRequestDTO;
 import com.umc.TheGoods.web.dto.member.MemberResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @Slf4j
@@ -35,6 +57,8 @@ public class MemberController {
 
     private final MemberCommandService memberCommandService;
     private final MemberQueryService memberQueryService;
+    private final RedisService redisService;
+    private final OrderQueryService orderQueryService;
 
     @PostMapping("/join")
     @Operation(summary = "회원가입 API", description = "request 파라미터 : 닉네임, 비밀번호(String), 이메일, 생일(yyyymmdd), 성별(MALE, FEMALE, NO_SELECET), 폰번호(010xxxxxxxx),이용약관(Boolean 배열), 카테고리(Long 배열)")
@@ -53,20 +77,35 @@ public class MemberController {
     public ApiResponse<MemberResponseDTO.LoginResultDTO> login(@RequestBody MemberRequestDTO.LoginDTO request) {
 
 
-        return ApiResponse.onSuccess(MemberConverter.toLoginResultDTO(memberCommandService.login(request)));
+        return ApiResponse.onSuccess(memberCommandService.login(request));
     }
 
+    @Operation(summary = "로그아웃 API", description = "로그아웃 API 입니다.")
+    @PostMapping("/logout")
+    public ApiResponse<MemberResponseDTO.LogoutResultDTO> logout(Authentication authentication,
+                                                                 HttpServletRequest authorizationHeader) {
+        String token = authorizationHeader.getHeader("Authorization").substring(7);
+        Member member = memberQueryService.findMemberById(Long.valueOf(authentication.getName().toString())).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        memberCommandService.logout(token, member);
+        return ApiResponse.onSuccess(MemberConverter.toLogoutResultDTO(member));
+    }
+
+    @Operation(summary = "리프레쉬 토큰을 이용해 accessToken 재발급 API ️", description = "리프레쉬 토큰으로 accessToken 재발급하는 API입니다.")
+    @PostMapping("/token/regenerate")
+    public ApiResponse<MemberResponseDTO.NewTokenDTO> getNewToken(@RequestBody MemberRequestDTO.RefreshTokenDTO request) {
+        RefreshToken newRefreshToken = redisService.reGenerateRefreshToken(request);
+        String accessToken = memberCommandService.regenerateAccessToken(newRefreshToken);
+        return ApiResponse.onSuccess(MemberConverter.toNewTokenDTO(accessToken, newRefreshToken.getToken()));
+    }
 
     @PostMapping("/jwt/test")
     @Operation(summary = "jwt test API", description = "테스트 용도 api")
     public ResponseEntity<?> jwtTest(Authentication authentication) {
         //request값으로 Bearer {jwt} 값을 넘겨주면 jwt를 해석해서 Authentication에 정보가 담기고 담긴 정보를 가공해서 사용
         //jwt 토큰은 회원가입하고 로그인하면 발급받을 수 있습니다.
-        MemberDetail memberDetail = (MemberDetail) authentication.getPrincipal();
+        Member member = memberQueryService.findMemberById(Long.valueOf(authentication.getName().toString())).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
-        return ResponseEntity.ok().body("memberId: " + memberDetail.getMemberId() +
-                " memberName: " + memberDetail.getMemberName() +
-                " memberRole: " + memberDetail.getMemberRole());
+        return ResponseEntity.ok().body(member.getEmail());
     }
 
 
@@ -109,7 +148,16 @@ public class MemberController {
     public ApiResponse<MemberResponseDTO.PhoneAuthConfirmFindEmailResultDTO> phoneAuthFindEmail(@RequestBody MemberRequestDTO.PhoneAuthConfirmFindEmailDTO request) {
         String email = memberCommandService.confirmPhoneAuthFindEmail(request);
 
-        return ApiResponse.onSuccess(MemberConverter.toPhoneAuthConfirmFindEmailDTO(email));
+        Member member = memberQueryService.findMemberByEmail(email).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        Optional<ProfileImg> profileImg = memberQueryService.findProfileImgByMember(member.getId());
+
+        if(profileImg.isEmpty()){
+            return ApiResponse.onSuccess(MemberConverter.toPhoneAuthConfirmFindEmailDTO(email, null));
+        }
+        else {
+            return ApiResponse.onSuccess(MemberConverter.toPhoneAuthConfirmFindEmailDTO(email, profileImg.get().getUrl()));
+        }
     }
 
     @PostMapping("email/auth")
@@ -143,8 +191,7 @@ public class MemberController {
             new MemberHandler(ErrorStatus.MEMBER_PASSWORD_NOT_EQUAL);
         }
 
-        MemberDetail memberDetail = (MemberDetail) authentication.getPrincipal();
-        Member member = memberQueryService.findMemberById(memberDetail.getMemberId()).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        Member member = memberQueryService.findMemberById(Long.valueOf(authentication.getName().toString())).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
         Boolean updatePassword = memberCommandService.updatePassword(request, member);
 
@@ -185,36 +232,50 @@ public class MemberController {
         return ApiResponse.onSuccess(MemberConverter.toSocialLoginResultDTO(result));
     }
 
-    /**
-     * 마이페이지 프로필 수정 API
-     */
-
-    @PutMapping(value = "/profile/modify", consumes = "multipart/form-data")
-    @Operation(summary = "프로필 수정 api", description = "request : 프로필 이미지, 닉네임, 자기소개 ")
-    public ApiResponse<MemberResponseDTO.ProfileModifyResultDTO> profileModify(@RequestParam("profile") MultipartFile profile,
-                                                                               @RequestParam("nickname") String nickname,
-                                                                               @RequestParam("introduce") String introduce,
-                                                                               Authentication authentication) {
-        MemberDetail memberDetail = (MemberDetail) authentication.getPrincipal();
-        Member member = memberQueryService.findMemberById(memberDetail.getMemberId()).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
-
-
-        Member modifyMember = memberCommandService.profileModify(profile, nickname, introduce, member);
-
-        return ApiResponse.onSuccess(MemberConverter.toProfileModify(modifyMember));
-    }
 
     @GetMapping(value = "/profile")
     @Operation(summary = "프로필 조회 api", description = "프로필이미지, 닉네임을 조회할 수 있습니다.")
     public ApiResponse<MemberResponseDTO.ProfileResultDTO> getProfile(Authentication authentication) {
 
-        MemberDetail memberDetail = (MemberDetail) authentication.getPrincipal();
-        Member member = memberQueryService.findMemberById(memberDetail.getMemberId()).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
-        ProfileImg profileImg = memberQueryService.findProfileImgByMember(member.getId()).orElseThrow(() -> new MemberHandler(ErrorStatus.PROFILEIMG_NOT_FOUND));
 
 
-        return ApiResponse.onSuccess(MemberConverter.toProfile(member.getNickname(), profileImg.getUrl()));
+        Member member = memberQueryService.findMemberById(Long.valueOf(authentication.getName().toString())).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        Optional<ProfileImg> profileImg = memberQueryService.findProfileImgByMember(member.getId());
+        List<Address> address = memberQueryService.findAllAddressById(member.getId());
+        List<Account> account = memberQueryService.findAllAccountById(member.getId());
+
+
+
+        if(profileImg.isEmpty()){
+            return ApiResponse.onSuccess(MemberConverter.toProfile(member, null, account, address));
+        }
+        else {
+            return ApiResponse.onSuccess(MemberConverter.toProfile(member, profileImg.get().getUrl(),account, address));
+        }
+
+
     }
+
+
+
+    @PutMapping(value = "/phone/name/update")
+    @Operation(summary = "주문시 고객 정보 수정(이름, 번호) api", description = "이름과 번호 수정할 수 있는 기능")
+    public ApiResponse<MemberResponseDTO.PhoneNameUpdateResultDTO> updateRole(@RequestBody MemberRequestDTO.PhoneNameUpdateDTO request, Authentication authentication) {
+
+        Member member = memberQueryService.findMemberById(Long.valueOf(authentication.getName().toString())).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        memberCommandService.updatePhoneName(request, member);
+
+
+
+        return ApiResponse.onSuccess(null);
+    }
+
+
+
+
+
+
 
 }
 

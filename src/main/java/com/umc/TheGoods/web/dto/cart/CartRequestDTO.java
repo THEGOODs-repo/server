@@ -41,6 +41,13 @@ public class CartRequestDTO {
     }
 
     @Getter
+    public static class cartUpdateDTOList {
+        @NotNull
+        @Valid
+        List<cartUpdateDTO> cartUpdateDTOList;
+    }
+
+    @Getter
     public static class cartUpdateDTO {
         @NotNull
         @ExistCartDetail
@@ -50,6 +57,18 @@ public class CartRequestDTO {
         @Max(100000)
         @NotNull
         Integer amount;
+    }
+
+    @Getter
+    public static class cartDetailDeleteDTO {
+        @NotNull
+        List<Long> cartDetailIdList;
+    }
+
+    @Getter
+    public static class cartDeleteDTO {
+        @NotNull
+        List<Long> cartIdList;
     }
 
 }

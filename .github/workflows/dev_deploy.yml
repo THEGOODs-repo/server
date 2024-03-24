@@ -40,6 +40,9 @@ jobs:
           social.naver.client-secret: ${{ secrets.NAVER_CLIENT_SECRET }}
           iamport.key: ${{ secrets.IAMPORT_KEY }}
           iamport.secret: ${{ secrets.IAMPORT_SECRET }}
+          spring.redis.host: ${{ secrets.REDIS_HOST }}
+          spring.redis.port: ${{ secrets.REDIS_PORT }}
+          spring.redis.password: ${{ secrets.REDIS_PASSWORD }}
 
 
 
@@ -76,8 +79,8 @@ jobs:
         with:
           aws_access_key: ${{ secrets.AWS_ACTION_ACCESS_KEY_ID }}
           aws_secret_key: ${{ secrets.AWS_ACTION_SECRET_ACCESS_KEY }}
-          application_name: cicd-test
-          environment_name: Cicd-test-env
+          application_name: thegoods-dev
+          environment_name: Thegoods-dev-env
           version_label: github-action-${{ steps.current-time.outputs.formattedTime }}
           region: ap-northeast-2
           deployment_package: deploy/deploy.zip

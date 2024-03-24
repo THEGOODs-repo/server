@@ -20,5 +20,22 @@ public interface ItemQueryService {
 
     public Page<Item> getMyItemList(Member member, Integer page);
 
-    public Page<Item> searchItem(Member member, String itemName, String categoryName, String sellerName, List<String> tagName, Integer page);
+    Page<Item> getTodayItemList(Integer page);
+
+    public Page<Item> getSimilarItemList(Long itemId, Member member, Integer page);
+
+    Page<Item> getTopSaleItemList(Integer page);
+
+    Page<Item> getSteadySaleItemList(Integer page);
+
+    public Page<Item> getItemByTagCount(Integer page);
+
+    public Page<Item> getItemByDeliveryDate(Integer page);
+
+    public Page<Item> searchItem(Member member, String itemName, String categoryName, String sellerName, List<String> tagName, String type, Integer page);
+
+    Page<Item> getMainItem(String type, Integer page);
+
+    Page<Item> getRelatedItem(Long itemId, Integer page);
+
 }

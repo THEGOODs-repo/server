@@ -1,10 +1,12 @@
 package com.umc.TheGoods.converter.order;
 
+import com.umc.TheGoods.converter.item.ItemConverter;
 import com.umc.TheGoods.domain.enums.OrderStatus;
 import com.umc.TheGoods.domain.order.OrderDetail;
 import com.umc.TheGoods.domain.order.OrderItem;
 import com.umc.TheGoods.domain.order.Orders;
 import com.umc.TheGoods.domain.types.PayType;
+import com.umc.TheGoods.web.dto.item.ItemResponseDTO;
 import com.umc.TheGoods.web.dto.order.OrderRequestDTO;
 import com.umc.TheGoods.web.dto.order.OrderResponseDTO;
 import org.springframework.data.domain.Page;
@@ -46,7 +48,7 @@ public class OrderConverter {
         return OrderItem.builder()
                 .totalPrice(0L)
                 .deliveryFee(deliveryFee)
-                .status(OrderStatus.PAY_PREV)
+                .status(OrderStatus.PAY_COMP)
                 .receiverName(request.getReceiverName())
                 .receiverPhone(request.getReceiverPhone())
                 .zipcode(request.getZipcode())
@@ -69,13 +71,20 @@ public class OrderConverter {
     }
 
     public static OrderResponseDTO.OrderItemPreViewDTO toOrderItemPreViewDTO(OrderItem orderItem) {
+
+        List<ItemResponseDTO.ItemImgResponseDTO> itemImgResponseDTOList = orderItem.getItem().getItemImgList().stream()
+                .map(ItemConverter::getItemImgDTO)
+                .filter(ItemResponseDTO.ItemImgResponseDTO::getIsThumbNail).collect(Collectors.toList());
+
+        String itemImgUrl = itemImgResponseDTOList.get(0).getItemImgUrl();
+
         return OrderResponseDTO.OrderItemPreViewDTO.builder()
                 .orderItemId((orderItem.getId()))
                 .orderStatus(orderItem.getStatus())
                 .orderDateTime(orderItem.getCreatedAt())
                 .itemName(orderItem.getItem().getName())
                 .optionString(toOptionString(orderItem))
-                .imgUrl("img url") // 추후 썸네일 이미지 가져오는 메소드 통해 값 입력 필요
+                .imgUrl(itemImgUrl)
                 .price(orderItem.getTotalPrice())
                 .build();
     }
@@ -95,10 +104,17 @@ public class OrderConverter {
     }
 
     public static OrderResponseDTO.OrderItemViewDTO toOrderItemViewDTO(OrderItem orderItem) {
+
+        List<ItemResponseDTO.ItemImgResponseDTO> itemImgResponseDTOList = orderItem.getItem().getItemImgList().stream()
+                .map(ItemConverter::getItemImgDTO)
+                .filter(ItemResponseDTO.ItemImgResponseDTO::getIsThumbNail).collect(Collectors.toList());
+
+        String itemImgUrl = itemImgResponseDTOList.get(0).getItemImgUrl();
+
         return OrderResponseDTO.OrderItemViewDTO.builder()
                 .ordersId(orderItem.getOrders().getId())
                 .orderItemId(orderItem.getId())
-                .imgUrl("img url")
+                .imgUrl(itemImgUrl)
                 .itemName(orderItem.getItem().getName())
                 .optionString(toOptionString(orderItem))
                 .orderStatus(orderItem.getStatus())

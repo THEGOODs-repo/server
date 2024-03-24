@@ -1,24 +1,36 @@
 package com.umc.TheGoods.service.MemberService;
 
+import antlr.Token;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.umc.TheGoods.apiPayload.code.status.ErrorStatus;
 import com.umc.TheGoods.apiPayload.exception.handler.MemberHandler;
 import com.umc.TheGoods.config.MailConfig;
+import com.umc.TheGoods.config.springSecurity.provider.TokenProvider;
 import com.umc.TheGoods.converter.member.MemberConverter;
+import com.umc.TheGoods.domain.enums.ItemStatus;
+import com.umc.TheGoods.domain.enums.MemberRole;
+import com.umc.TheGoods.domain.enums.MemberStatus;
 import com.umc.TheGoods.domain.images.ProfileImg;
 import com.umc.TheGoods.domain.item.Category;
+import com.umc.TheGoods.domain.item.Item;
+import com.umc.TheGoods.domain.item.Tag;
+
 import com.umc.TheGoods.domain.mapping.member.MemberCategory;
+import com.umc.TheGoods.domain.mapping.member.MemberTag;
 import com.umc.TheGoods.domain.mapping.member.MemberTerm;
 import com.umc.TheGoods.domain.member.Auth;
 import com.umc.TheGoods.domain.member.Member;
 import com.umc.TheGoods.domain.member.Term;
+import com.umc.TheGoods.domain.mypage.*;
+import com.umc.TheGoods.domain.types.SocialType;
+import com.umc.TheGoods.redis.domain.RefreshToken;
+import com.umc.TheGoods.redis.service.RedisService;
+import com.umc.TheGoods.repository.TagRepository;
+import com.umc.TheGoods.repository.item.ItemRepository;
 import com.umc.TheGoods.repository.member.*;
 import com.umc.TheGoods.service.UtilService;
-import com.umc.TheGoods.web.dto.member.KakaoProfile;
-import com.umc.TheGoods.web.dto.member.MemberRequestDTO;
-import com.umc.TheGoods.web.dto.member.NaverProfile;
-import com.umc.TheGoods.web.dto.member.OAuthToken;
+import com.umc.TheGoods.web.dto.member.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,6 +38,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,13 +51,12 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.umc.TheGoods.config.springSecurity.utils.JwtUtil.createJwt;
 
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
+@Transactional
 public class MemberCommandServiceImpl implements MemberCommandService {
 
     private final MemberRepository memberRepository;
@@ -55,6 +67,17 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     private final MailConfig mailConfig;
     private final ProfileImgRepository profileImgRepository;
     private final UtilService utilService;
+    private final AddressRepository addressRepository;
+    private final AccountRepository accountRepository;
+    private final TokenProvider tokenProvider;
+    private final RedisService redisService;
+    private final WithdrawReasonRepository withdrawReasonRepository;
+    private final TagRepository tagRepository;
+    private final MemberTagRepository memberTagRepository;
+    private final MemberCategoryRepository memberCategoryRepository;
+    private final DeclarationRepository declarationRepository;
+    private final ContactTimeRepository contactTimeRepository;
+    private final ItemRepository itemRepository;
 
     @Value("${jwt.token.secret}")
     private String key; // 토큰 만들어내는 key값
@@ -128,24 +151,38 @@ public class MemberCommandServiceImpl implements MemberCommandService {
      * @return
      */
     @Override
-    public String login(MemberRequestDTO.LoginDTO request) {
+    public MemberResponseDTO.LoginResultDTO login(MemberRequestDTO.LoginDTO request) {
 
         //email 없음
         Member selectedMember = memberRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_EMAIL_NOT_FOUND));
 
-
+        if(!this.checkDeregister(selectedMember)){
+            throw new MemberHandler(ErrorStatus.MEMBER_INACTIVATE);
+        }
         //password 틀림
         if (!encoder.matches(request.getPassword(), selectedMember.getPassword())) {
             throw new MemberHandler(ErrorStatus.MEMBER_PASSWORD_ERROR);
         }
 
-        //사용자 권한
-        List<String> roles = new ArrayList<>();
-        roles.add("ROLE_USER");
 
-        return createJwt(selectedMember.getId(), selectedMember.getNickname(), expiredMs, key, roles);
+        return MemberResponseDTO.LoginResultDTO.builder()
+                .accessToken(redisService.saveLoginStatus(selectedMember.getId(), tokenProvider.createAccessToken(selectedMember.getId(), selectedMember.getMemberRole().toString() , request.getEmail(), Arrays.asList(new SimpleGrantedAuthority("USER")))))
+                .refreshToken(redisService.generateRefreshToken(request.getEmail()))
+                .build();
 
+    }
+
+    @Override
+    public String regenerateAccessToken(RefreshToken refreshToken) {
+        Member member = memberRepository.findById(refreshToken.getMemberId()).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        return redisService.saveLoginStatus(member.getId(), tokenProvider.createAccessToken(member.getId(), member.getMemberRole().toString(),member.getEmail(),Arrays.asList(new SimpleGrantedAuthority("USER"))));
+    }
+
+    @Override
+    @Transactional
+    public void logout(String accessToken, Member member) {
+        redisService.resolveLogout(accessToken);
     }
 
     /**
@@ -336,7 +373,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
         List<String> roles = new ArrayList<>();
         roles.add("ROLE_USER");
 
-        return createJwt(member.getId(), member.getNickname(), expiredMs, key, roles);
+        return tokenProvider.createAccessToken(member.getId(), member.getMemberRole().toString() , member.getEmail(), Arrays.asList(new SimpleGrantedAuthority("USER")));
     }
 
     @Override
@@ -433,10 +470,11 @@ public class MemberCommandServiceImpl implements MemberCommandService {
         Optional<Member> member = memberRepository.findByPhone(phone);
 
         if (member.isPresent()) {
-            List<String> roles = new ArrayList<>();
-            roles.add("ROLE_USER");
 
-            return createJwt(member.get().getId(), member.get().getNickname(), expiredMs, key, roles);
+            if(!this.checkDeregister(member.orElseThrow())){
+                throw new MemberHandler(ErrorStatus.MEMBER_INACTIVATE);
+            }
+            return tokenProvider.createAccessToken(member.get().getId(), member.get().getMemberRole().toString() , member.get().getEmail(), Arrays.asList(new SimpleGrantedAuthority("USER")));
 
         }
 
@@ -517,10 +555,12 @@ public class MemberCommandServiceImpl implements MemberCommandService {
         Optional<Member> member = memberRepository.findByPhone(phone);
 
         if (member.isPresent()) {
-            List<String> roles = new ArrayList<>();
-            roles.add("ROLE_USER");
 
-            return createJwt(member.get().getId(), member.get().getNickname(), expiredMs, key, roles);
+            if(!this.checkDeregister(member.orElseThrow())){
+                throw new MemberHandler(ErrorStatus.MEMBER_INACTIVATE);
+            }
+
+            return tokenProvider.createAccessToken(member.get().getId(), member.get().getMemberRole().toString() , member.get().getEmail(), Arrays.asList(new SimpleGrantedAuthority("USER")));
 
         }
 
@@ -548,6 +588,92 @@ public class MemberCommandServiceImpl implements MemberCommandService {
         return member;
     }
 
+    @Override
+    public Member updateRole(Member member) {
+
+        if (member.getMemberRole() == MemberRole.BUYER) {
+
+            memberRepository.changeMemberRole(member.getId(), MemberRole.SELLER);
+
+            return member;
+        } else {
+            memberRepository.changeMemberRole(member.getId(), MemberRole.BUYER);
+            return member;
+        }
+
+    }
+
+    @Override
+    public void updatePhoneName(MemberRequestDTO.PhoneNameUpdateDTO request, Member member) {
+
+        memberRepository.changeMemberName(member.getId(),request.getName());
+
+        memberRepository.changeMemberPhone(member.getId(),request.getPhone());
+
+    }
+
+    @Override
+    public Address postAddress(MemberRequestDTO.AddressDTO request, Member member) {
+
+        Address address =MemberConverter.toAddress(request,member);
+        addressRepository.save(address);
+        return address;
+    }
+
+    @Override
+    public Account postAccount(MemberRequestDTO.AccountDTO request, Member member) {
+
+        Account account =MemberConverter.toAccount(request,member);
+        accountRepository.save(account);
+        return account;
+    }
+
+    @Override
+    public void updateAddress(MemberRequestDTO.AddressDTO request, Member member,Long addressId) {
+
+        Address address = addressRepository.findById(addressId).orElseThrow(()-> new MemberHandler(ErrorStatus.MEMBER_ADDRESS_NOT_FOUND));
+        if(!address.getMember().equals(member)){
+            throw new MemberHandler(ErrorStatus.MEMBER_NOT_OWNER);
+        }
+        addressRepository.changeAddress(addressId, request.getAddressName(),request.getAddressSpec(), request.getDeliveryMemo(), request.getZipcode(), request.getDefaultCheck(),request.getRecipientName(),request.getRecipientPhone());
+
+
+    }
+
+    @Override
+    public void updateAccount(MemberRequestDTO.AccountDTO request, Member member, Long accountId) {
+
+        Account account = accountRepository.findById(accountId).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_ACCOUNT_NOT_FOUND));
+
+        if(!account.getMember().equals(member)){
+            throw new MemberHandler(ErrorStatus.MEMBER_NOT_OWNER);
+        }
+        accountRepository.changeAccount(accountId, request.getAccountNum(),request.getBankName(),request.getOwner(),request.getDefaultCheck());
+
+    }
+
+    @Override
+    public void deleteAccount(Member member, Long accountId) {
+        Account account = accountRepository.findById(accountId).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_ACCOUNT_NOT_FOUND));
+
+        if(!account.getMember().equals(member)){
+            throw new MemberHandler(ErrorStatus.MEMBER_NOT_OWNER);
+        }
+
+        accountRepository.delete(account);
+    }
+
+    @Override
+    public void deleteAddress(Member member, Long addressId) {
+        Address address = addressRepository.findById(addressId).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_ADDRESS_NOT_FOUND));
+
+        if(!address.getMember().equals(member)){
+            throw new MemberHandler(ErrorStatus.MEMBER_NOT_OWNER);
+        }
+
+        addressRepository.delete(address);
+    }
+
     /**
      * 카테고리 validator
      */
@@ -559,6 +685,151 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     @Override
     public boolean existMemberById(Long memberId) {
         return memberRepository.existsById(memberId);
+    }
+
+    @Override
+    @Transactional
+    public void deleteMember(MemberRequestDTO.WithdrawReasonDTO request, Long memberId) {
+
+        Member member = memberRepository.findById(memberId).orElseThrow(()-> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        WithdrawReason withdrawReason = WithdrawReason.builder()
+                .reason(request.getReason())
+                .caution(request.getCaution())
+                .member(member)
+                .build();
+        withdrawReasonRepository.save(withdrawReason);
+        member.inactivateStatus();
+        memberRepository.save(member);
+        List<Item> itemList = itemRepository.findAllByMember(member);
+        itemList.stream().forEach(item -> {
+            item.updateStatus(ItemStatus.INACTIVE);
+        });
+        return;
+    }
+
+    public boolean checkDeregister(Member member){
+
+        if(member.getMemberStatus() == MemberStatus.INACTIVE){
+            return false;
+        }
+        else{
+            return true;
+        }
+
+    }
+
+    @Override
+    public void updateNotification(Member member, Integer type) {
+
+        switch(type){
+            case 1:
+                if(member.getItemNotice()){
+                    memberRepository.changeItemNotificationTrue(member.getId());
+                }else{
+                    memberRepository.changeItemNotificationFalse(member.getId());
+                }
+
+                break;
+            case 2:
+                if(member.getMessageNotice()){
+                    memberRepository.changeMessageNotificationTrue(member.getId());
+                }else{
+                    memberRepository.changeMessageNotificationFalse(member.getId());
+                }
+
+                break;
+            case 3:
+                if(member.getMarketingNotice()){
+                    memberRepository.changeMarketingNotificationTrue(member.getId());
+                }else{
+                    memberRepository.changeMarketingNotificationFalse(member.getId());
+                }
+
+                break;
+            case 4:
+                if(member.getPostNotice()){
+                    memberRepository.changePostNotificationTrue(member.getId());
+                }else{
+                    memberRepository.changePostNotificationFalse(member.getId());
+                }
+
+                break;
+        }
+    }
+
+
+    @Transactional
+    @Override
+    public void updateCustomInfo(Long memberId, MemberRequestDTO.CustomInfoDTO request) {
+        //정보 동의 약관 변경
+        memberRepository.changeInfoTerm(memberId,request.getInfoTerm());
+        Member member = memberRepository.findById(memberId).orElseThrow(()-> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        // 카테고리 저장 로직
+        // request에서 받아온 카테고리 List 형태로 변환
+        List<Category> categoryList = request.getCategoryList().stream()
+                .map(category -> {
+                    return categoryRepository.findById(category).orElseThrow(() -> new MemberHandler(ErrorStatus.CATEGORY_NOT_FOUND));
+                }).collect(Collectors.toList());
+        //Member와 Category는 n:m관계여서 Category List로 MemberCategory Entity List로 변환
+        List<MemberCategory> memberCategoryList = MemberConverter.toMemberCategoryList(categoryList);
+
+        //기존에 있던 해당 Member의 MemberCategory 비우기
+        memberCategoryRepository.deleteByMember(member);
+        member.getMemberCategoryList().clear();
+
+        //memberCategory에 member 매핑해주기
+        memberCategoryList.forEach(memberCategory -> {
+            memberCategory.setMember(member);
+        });
+
+
+        //memberTagList도 memberCategoryList와 로직은 동일합니다
+
+        List<Tag> tagList = request.getTagList().stream()
+                .map(tag ->{
+                    return tagRepository.findById(tag).orElseThrow(() -> new MemberHandler(ErrorStatus.TAG_NOT_FOUND));
+                }).collect(Collectors.toList());
+
+        List<MemberTag> memberTagList = MemberConverter.toMemberTagList(tagList);
+
+        memberTagRepository.deleteByMember(member);
+        member.getMemberTagList().clear();
+        memberTagList.forEach(memberTag -> {
+            memberTag.setMember(member);
+        });
+        memberRepository.save(member);
+
+    }
+
+    @Override
+    public void postDeclare(Member member, MemberRequestDTO.DeclareDTO request) {
+
+        Declaration declaration = MemberConverter.toDeclaration(member, request);
+        declarationRepository.save(declaration);
+
+    }
+
+    @Override
+    public void deleteDeclare(Long declarationId, Member member) {
+
+        Declaration declaration = declarationRepository.findById(declarationId).orElseThrow(()-> new MemberHandler(ErrorStatus.DECLARE_NOT_FOUND));
+
+        if(!declaration.getMember().equals(member)){
+            throw new MemberHandler(ErrorStatus.MEMBER_NOT_OWNER);
+        }
+        declarationRepository.delete(declaration);
+    }
+
+    @Override
+    @Transactional
+    public void postContact(Long memberId, MemberRequestDTO.ContactDTO request){
+
+        Member member = memberRepository.findById(memberId).orElseThrow(()-> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        ContactTime contactTime = MemberConverter.toContactTime(member,request);
+        contactTimeRepository.deleteByMember(member);
+
+        contactTimeRepository.save(contactTime);
     }
 }
 

@@ -1,22 +1,36 @@
 package com.umc.TheGoods.converter.member;
 
+import com.umc.TheGoods.converter.item.ItemConverter;
 import com.umc.TheGoods.domain.enums.MemberRole;
 import com.umc.TheGoods.domain.images.ProfileImg;
 import com.umc.TheGoods.domain.item.Category;
 import com.umc.TheGoods.domain.item.Item;
+import com.umc.TheGoods.domain.item.ItemOption;
+import com.umc.TheGoods.domain.item.Tag;
+import com.umc.TheGoods.domain.mapping.Tag.CategoryTag;
 import com.umc.TheGoods.domain.mapping.member.MemberCategory;
+import com.umc.TheGoods.domain.mapping.member.MemberTag;
 import com.umc.TheGoods.domain.mapping.member.MemberTerm;
 import com.umc.TheGoods.domain.member.Auth;
 import com.umc.TheGoods.domain.member.Member;
 import com.umc.TheGoods.domain.member.Term;
+import com.umc.TheGoods.domain.mypage.Account;
+import com.umc.TheGoods.domain.mypage.Address;
+import com.umc.TheGoods.domain.mypage.ContactTime;
+import com.umc.TheGoods.domain.mypage.Declaration;
+import com.umc.TheGoods.domain.order.OrderItem;
+import com.umc.TheGoods.service.ItemService.ItemQueryService;
+import com.umc.TheGoods.web.dto.item.ItemResponseDTO;
 import com.umc.TheGoods.web.dto.member.MemberRequestDTO;
 import com.umc.TheGoods.web.dto.member.MemberResponseDTO;
+import org.springframework.data.domain.Page;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -31,11 +45,6 @@ public class MemberConverter {
                 .build();
     }
 
-    public static MemberResponseDTO.LoginResultDTO toLoginResultDTO(String jwt) {
-        return MemberResponseDTO.LoginResultDTO.builder()
-                .jwt(jwt)
-                .build();
-    }
 
     public static Member toMember(MemberRequestDTO.JoinDTO request, BCryptPasswordEncoder encoder) {
         return Member.builder()
@@ -51,6 +60,20 @@ public class MemberConverter {
                 .itemList(new ArrayList<>())
                 .build();
 
+    }
+
+    public static MemberResponseDTO.LogoutResultDTO toLogoutResultDTO(Member member){
+        return MemberResponseDTO.LogoutResultDTO.builder()
+                .memberId(member.getId())
+                .memberStatus(member.getMemberStatus())
+                .build();
+    }
+
+    public static MemberResponseDTO.NewTokenDTO toNewTokenDTO(String accessToken, String refreshToken) {
+        return MemberResponseDTO.NewTokenDTO.builder()
+                .refreshToken(refreshToken)
+                .accessToken(accessToken)
+                .build();
     }
 
     public static Member toUpdatePassword(Member member, String password) {
@@ -92,6 +115,16 @@ public class MemberConverter {
                                 .category(category)
                                 .build()
                 ).collect(Collectors.toList());
+
+    }
+
+    public static List<MemberTag> toMemberTagList(List<Tag> tagList){
+
+        return tagList.stream().map(tag ->
+                MemberTag.builder()
+                        .tag(tag)
+                        .build()
+        ).collect(Collectors.toList());
 
     }
 
@@ -140,9 +173,10 @@ public class MemberConverter {
     }
 
 
-    public static MemberResponseDTO.PhoneAuthConfirmFindEmailResultDTO toPhoneAuthConfirmFindEmailDTO(String email) {
+    public static MemberResponseDTO.PhoneAuthConfirmFindEmailResultDTO toPhoneAuthConfirmFindEmailDTO(String email,String url) {
         return MemberResponseDTO.PhoneAuthConfirmFindEmailResultDTO.builder()
                 .email(email)
+                .url(url)
                 .build();
     }
 
@@ -200,10 +234,60 @@ public class MemberConverter {
                 .build();
     }
 
-    public static MemberResponseDTO.ProfileResultDTO toProfile(String nickname, String url) {
+    public static MemberResponseDTO.ProfileResultDTO toProfile(Member member, String url, List<Account> account, List<Address> address) {
+
+        List<MemberResponseDTO.AccountDTO> accountList = account.stream().map(a -> MemberResponseDTO.AccountDTO.builder()
+                .id(a.getId())
+                .accountNum(a.getAccountNum())
+                .bankName(a.getBankName())
+                .owner(a.getOwner())
+                .defaultCheck(a.getDefaultCheck())
+                .build()).collect(Collectors.toList());
+        List<MemberResponseDTO.AddressDTO> addressList = address.stream().map(a -> MemberResponseDTO.AddressDTO.builder()
+                .id(a.getId())
+                .addressName(a.getAddressName())
+                .addressSpec(a.getAddressSpec())
+                .deliveryMemo(a.getDeliveryMemo())
+                .defaultCheck(a.getDefaultCheck())
+                .recipientName(a.getRecipientName())
+                .recipientPhone(a.getRecipientPhone())
+                .id(a.getId())
+                .zipcode(a.getZipcode()).build()).collect(Collectors.toList());
+
+        if (address.isEmpty() && account.isEmpty()){
+            return MemberResponseDTO.ProfileResultDTO.builder()
+                    .name(member.getName())
+                    .phone(member.getPhone())
+                    .url(url)
+                    .accountList(null)
+                    .addressList(null)
+                    .build();
+        }
+        if (account.isEmpty()){
+            return MemberResponseDTO.ProfileResultDTO.builder()
+                    .name(member.getName())
+                    .phone(member.getPhone())
+                    .url(url)
+                    .addressList(addressList)
+                    .accountList(accountList)
+                    .build();
+        }
+        if(address.isEmpty()){
+            return MemberResponseDTO.ProfileResultDTO.builder()
+                    .name(member.getName())
+                    .phone(member.getPhone())
+                    .url(url)
+                    .addressList(null)
+                    .accountList(accountList)
+                    .build();
+        }
+
         return MemberResponseDTO.ProfileResultDTO.builder()
-                .nickname(nickname)
+                .name(member.getName())
+                .phone(member.getPhone())
                 .url(url)
+                .addressList(addressList)
+                .accountList(accountList)
                 .build();
     }
 
@@ -245,5 +329,185 @@ public class MemberConverter {
                 .build();
     }
 
+    public static MemberResponseDTO.RoleUpdateResultDTO toUpdateRole(Member member) {
+
+        return MemberResponseDTO.RoleUpdateResultDTO.builder()
+                .role(member.getMemberRole())
+                .build();
+    }
+
+    public static MemberResponseDTO.PhoneNameUpdateResultDTO toUpdatePhoneName(Member member) {
+
+        return MemberResponseDTO.PhoneNameUpdateResultDTO.builder()
+                .name(member.getName())
+                .phone(member.getPhone())
+                .build();
+    }
+
+    public static Address toAddress(MemberRequestDTO.AddressDTO request,Member member){
+        return Address.builder()
+                .addressName(request.getAddressName())
+                .addressSpec(request.getAddressSpec())
+                .deliveryMemo(request.getDeliveryMemo())
+                .zipcode(request.getZipcode())
+                .recipientName(request.getRecipientName())
+                .recipientPhone(request.getRecipientPhone())
+                .defaultCheck(request.getDefaultCheck())
+                .member(member)
+                .build();
+    }
+
+
+    public static Account toAccount(MemberRequestDTO.AccountDTO request, Member member){
+            return Account.builder()
+                    .accountNum(request.getAccountNum())
+                    .bankName(request.getBankName())
+                    .owner(request.getOwner())
+                    .defaultCheck(request.getDefaultCheck())
+                    .member(member)
+                    .build();
+    }
+
+
+    public static MemberResponseDTO.AddressResultDTO toPostAddressDTO(String address){
+
+        return MemberResponseDTO.AddressResultDTO.builder()
+                .name(address)
+                .build();
+
+    }
+
+    public static MemberResponseDTO.AccountResultDTO toPostAccountDTO(String account){
+
+        return MemberResponseDTO.AccountResultDTO.builder()
+                .name(account)
+                .build();
+
+    }
+
+
+    public static MemberResponseDTO.MyPageOrderItemDTO toMyPageOrderItemDTO(OrderItem orderItem, Item item){
+
+        List<ItemResponseDTO.ItemImgResponseDTO> itemImgResponseDTOList = item.getItemImgList().stream()
+                .map(ItemConverter::getItemImgDTO)
+                .filter(ItemResponseDTO.ItemImgResponseDTO::getIsThumbNail).collect(Collectors.toList());
+
+        List<String> itemOptionList = item.getItemOptionList().stream()
+                .map(ItemOption::getName).collect(Collectors.toList());
+
+        return MemberResponseDTO.MyPageOrderItemDTO.builder()
+                .id(orderItem.getId())
+                .imageUrl(itemImgResponseDTOList.get(0).getItemImgUrl())
+                .option(itemOptionList)
+                .name(item.getName())
+                .orderStatus(orderItem.getStatus())
+                .price(item.getPrice())
+                .time(orderItem.getCreatedAt())
+                .build();
+    }
+
+    public static List<MemberResponseDTO.AccountDTO> toGetAccountDTO(List<Account> account){
+
+        List<MemberResponseDTO.AccountDTO> accountList = account.stream().map(a -> MemberResponseDTO.AccountDTO.builder()
+                .id(a.getId())
+                .accountNum(a.getAccountNum())
+                .bankName(a.getBankName())
+                .owner(a.getOwner())
+                .defaultCheck(a.getDefaultCheck())
+                .build()).collect(Collectors.toList());
+
+        return accountList;
+    }
+
+    public static List<MemberResponseDTO.AddressDTO> toGetAddressDTO(List<Address> address){
+        List<MemberResponseDTO.AddressDTO> addressList = address.stream().map(a -> MemberResponseDTO.AddressDTO.builder()
+                .id(a.getId())
+                .addressName(a.getAddressName())
+                .addressSpec(a.getAddressSpec())
+                .deliveryMemo(a.getDeliveryMemo())
+                .defaultCheck(a.getDefaultCheck())
+                .recipientName(a.getRecipientName())
+                .recipientPhone(a.getRecipientPhone())
+                .id(a.getId())
+                .zipcode(a.getZipcode()).build()).collect(Collectors.toList());
+        return addressList;
+    }
+
+    public static MemberResponseDTO.CustomInfoDTO toCustomInfoDTO(List<Category> categoryList, List<Tag> tagList){
+        List<MemberResponseDTO.CategoryDTO> category = categoryList.stream().map(
+                c ->{
+                    return MemberResponseDTO.CategoryDTO
+                            .builder()
+                            .id(c.getId())
+                            .name(c.getName())
+                            .build();}
+        ).collect(Collectors.toList());
+
+        List<MemberResponseDTO.TagDTO> tag = tagList.stream().map(
+                t ->{
+                    return MemberResponseDTO.TagDTO.builder()
+                            .id(t.getId())
+                            .name(t.getName())
+                            .build();
+                }
+        ).collect(Collectors.toList());
+
+        return MemberResponseDTO.CustomInfoDTO.builder()
+                .categoryList(category)
+                .tagList(tag)
+                .build();
+    }
+
+    public static Declaration toDeclaration(Member member, MemberRequestDTO.DeclareDTO request){
+
+        String type= new String();
+        switch (request.getReceipt()){
+            case 1:
+                type = "판매글 이름";
+                break;
+            case 2:
+                 type = "판매글 링크";
+                break;
+            case 3:
+                type = "판매자 이름";
+                break;
+            case 4:
+                type = "판매자 링크";
+                break;
+        }
+        return Declaration.builder()
+                .type(type)
+                .reason(request.getReason())
+                .salesPost(request.getSalePost())
+                .member(member)
+                .build();
+    }
+
+    public static MemberResponseDTO.DeclareResponseDTO toDeclarationDTO(List<Declaration> declarationList){
+
+        List<MemberResponseDTO.DeclarationDTO> declarationDTOList = declarationList.stream().map(declaration ->
+        {
+            return MemberResponseDTO.DeclarationDTO.builder()
+                    .declarationId(declaration.getId())
+                    .receipt(declaration.getType())
+                    .salePost(declaration.getSalesPost())
+                    .reason(declaration.getReason())
+                    .build();
+        }).collect(Collectors.toList());
+
+        return MemberResponseDTO.DeclareResponseDTO.builder()
+                .declareDTOList(declarationDTOList)
+                .build();
+    }
+
+    public static ContactTime toContactTime(Member member, MemberRequestDTO.ContactDTO request){
+
+        return ContactTime.builder()
+                .member(member)
+                .allTime(request.isAll())
+                .endTime(request.getEnd())
+                .startTime(request.getStart())
+                .build();
+    }
 
 }

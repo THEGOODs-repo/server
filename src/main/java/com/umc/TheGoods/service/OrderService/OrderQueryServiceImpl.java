@@ -2,12 +2,16 @@ package com.umc.TheGoods.service.OrderService;
 
 import com.umc.TheGoods.apiPayload.code.status.ErrorStatus;
 import com.umc.TheGoods.apiPayload.exception.handler.OrderHandler;
+import com.umc.TheGoods.converter.member.MemberConverter;
 import com.umc.TheGoods.domain.enums.OrderStatus;
+import com.umc.TheGoods.domain.item.Item;
 import com.umc.TheGoods.domain.member.Member;
 import com.umc.TheGoods.domain.order.OrderItem;
 import com.umc.TheGoods.domain.order.Orders;
+import com.umc.TheGoods.repository.item.ItemRepository;
 import com.umc.TheGoods.repository.order.OrderItemRepository;
 import com.umc.TheGoods.repository.order.OrderRepository;
+import com.umc.TheGoods.web.dto.member.MemberResponseDTO;
 import com.umc.TheGoods.web.dto.order.OrderRequestDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +21,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -24,6 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class OrderQueryServiceImpl implements OrderQueryService {
     private final OrderRepository orderRepository;
     private final OrderItemRepository orderItemRepository;
+    private final ItemRepository itemRepository;
 
     Integer pageSize = 10;
 
@@ -83,5 +91,38 @@ public class OrderQueryServiceImpl implements OrderQueryService {
         return orderItemRepository.existsById(id);
     }
 
+
+    @Override
+    public MemberResponseDTO.MyPageOrderItemListDTO getMyPageOrderItemList(Member member, OrderStatus orderStatus, Integer pageIdx) {
+
+        Page<OrderItem> orderItemList;
+
+
+        if (orderStatus == null) { // orderStatus 값이 없으면 전체 상태 조회 (필터링X)
+            orderItemList = orderItemRepository.findAllByOrdersIn(member.getOrdersList(), PageRequest.of(pageIdx, pageSize, Sort.by(Sort.Direction.DESC, "createdAt")));
+        } else { // orderStatus 값에 맞는 내역만 필터링
+            orderItemList = orderItemRepository.findAllByStatusAndOrdersIn(orderStatus, member.getOrdersList(), PageRequest.of(pageIdx, pageSize, Sort.by(Sort.Direction.DESC, "createdAt")));
+        }
+
+
+        List<OrderItem> itemList = orderItemList.getContent();
+        List<MemberResponseDTO.MyPageOrderItemDTO> itemListDTOList = itemList.stream()
+                .map(i ->{
+                    Item item = itemRepository.findItemByOrderItem(i.getId());
+                    return MemberConverter.toMyPageOrderItemDTO(i,item);
+
+                }).collect(Collectors.toList());
+
+        return MemberResponseDTO.MyPageOrderItemListDTO.builder()
+                .itemList(itemListDTOList)
+                .isFirst(orderItemList.isFirst())
+                .isLast(orderItemList.isLast())
+                .listSize(orderItemList.getSize())
+                .totalPage(orderItemList.getTotalPages())
+                .totalElements(orderItemList.getTotalElements())
+                .build();
+
+
+    }
 
 }

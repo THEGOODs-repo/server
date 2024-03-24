@@ -24,6 +24,7 @@ public enum ErrorStatus implements BaseErrorCode {
     ITEM_VIEW_ERROR(HttpStatus.BAD_REQUEST, "ITEM4005", "비회원 상품 조회 권한이 없습니다."),
     ITEM_SEARCH_ERROR(HttpStatus.BAD_REQUEST, "ITEM4006", "잘못된 검색어가 입력 되었습니다. 검색 조건은 하나만 가능합니다."),
     ITEM_NOT_SELLER(HttpStatus.BAD_REQUEST, "ITEM4007", "회원이 판매자가 아닙니다."),
+    MAIN_ITEM_SEARCH_TYPE_ERROR(HttpStatus.BAD_REQUEST, "ITEM4008", "잘못된 메인 상품 조회 타입 입니다."),
 
     // 주문 관련 에러
     LACK_OF_STOCK(HttpStatus.BAD_REQUEST, "ORDER4001", "재고가 부족합니다."),
@@ -53,13 +54,27 @@ public enum ErrorStatus implements BaseErrorCode {
     MEMBER_PHONE_AUTH_ERROR(HttpStatus.BAD_REQUEST, "MEMBER4005", "유효하지 않는 번호입니다."),
     MEMBER_EMAIL_AUTH_ERROR(HttpStatus.BAD_REQUEST, "MEMBER4006", "유효하지 않는 이메일입니다."),
     MEMBER_PASSWORD_NOT_EQUAL(HttpStatus.BAD_REQUEST, "MEMBER4007", "비밀번호가 일치하지 않습니다."),
+    MEMBER_ACCOUNT_NOT_FOUND(HttpStatus.BAD_REQUEST, "MEMBER4008", "계좌가 존재하지 않습니다"),
+    MEMBER_ADDRESS_NOT_FOUND(HttpStatus.BAD_REQUEST, "MEMBER4009", "주소가 존재하지 않습니다"),
+    MEMBER_INACTIVATE(HttpStatus.NOT_ACCEPTABLE, "MEMBER40010", "탈퇴한 회원입니다."),
+    MEMBER_NOT_OWNER(HttpStatus.NOT_ACCEPTABLE, "MEMBER40010", "해당 회원이 아닙니다."),
 
+    //JWT
+
+    JWT_BAD_REQUEST(HttpStatus.UNAUTHORIZED, "JWT4001","잘못된 JWT 서명입니다."),
+    JWT_ACCESS_TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, "JWT4002","액세스 토큰이 만료되었습니다."),
+    JWT_REFRESH_TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, "JWT4003","리프레시 토큰이 만료되었습니다. 다시 로그인하시기 바랍니다."),
+    JWT_UNSUPPORTED_TOKEN(HttpStatus.UNAUTHORIZED, "JWT4004","지원하지 않는 JWT 토큰입니다."),
+    JWT_TOKEN_NOT_FOUND(HttpStatus.UNAUTHORIZED, "JWT4005","유효한 JWT 토큰이 없습니다."),
 
     //Category
     CATEGORY_NOT_FOUND(HttpStatus.NOT_FOUND, "CATEGORY4001", "해당 카테고리가 존재하지 않습니다"),
 
     //Term
     TERM_NOT_FOUND(HttpStatus.NOT_FOUND, "TERM4001", "해당 약관이 존재하지 않습니다."),
+
+    //Declaration
+    DECLARE_NOT_FOUND(HttpStatus.NOT_FOUND, "DECLARE4001", "해당 신고 내역이 존재하지 않습니다."),
 
     //ProfileImg
     PROFILEIMG_NOT_FOUND(HttpStatus.NOT_FOUND, "PROFILEIMG4001", "해당 프로필 이미지가 존재하지 않습니다."),

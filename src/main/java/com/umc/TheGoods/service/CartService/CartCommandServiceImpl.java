@@ -14,11 +14,15 @@ import com.umc.TheGoods.repository.cart.CartRepository;
 import com.umc.TheGoods.service.ItemService.ItemQueryService;
 import com.umc.TheGoods.web.dto.cart.CartRequestDTO;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -136,27 +140,98 @@ public class CartCommandServiceImpl implements CartCommandService {
     }
 
     @Override
-    public CartDetail updateCart(CartRequestDTO.cartUpdateDTO request, Member member) {
+    public List<CartDetail> updateCart(CartRequestDTO.cartUpdateDTOList request, Member member) {
         // cartDetail 존재 여부 검증은 annotation에서 진행
-        CartDetail cartDetail = cartDetailRepository.findById(request.getCartDetailId()).get();
 
-        // 해당 cart 내역을 수정할 권한 있는지 검증
-        if (!cartDetail.getCart().getMember().equals(member)) {
-            throw new OrderHandler(ErrorStatus.NOT_CART_OWNER);
-        }
+        List<CartDetail> cartDetailList = request.getCartUpdateDTOList().stream().map(cartUpdateDTO -> {
+            CartDetail cartDetail = cartDetailRepository.findById(cartUpdateDTO.getCartDetailId()).get();
 
-        // 재고 수량과 비교
-        if (!cartDetail.getCart().getItem().getItemOptionList().isEmpty()) { // 상품 옵션이 있는 경우
-            if (request.getAmount() > cartDetail.getItemOption().getStock()) {
-                throw new OrderHandler(ErrorStatus.LACK_OF_STOCK);
+            // 해당 cart 내역을 수정할 권한 있는지 검증
+            if (!cartDetail.getCart().getMember().equals(member)) {
+                throw new OrderHandler(ErrorStatus.NOT_CART_OWNER);
             }
-        } else {
-            if (request.getAmount() > cartDetail.getCart().getItem().getStock()) {
-                throw new OrderHandler(ErrorStatus.LACK_OF_STOCK);
-            }
-        }
 
-        return cartDetail.updateAmount(request.getAmount());
+            // 재고 수량과 비교
+            if (!cartDetail.getCart().getItem().getItemOptionList().isEmpty()) { // 상품 옵션이 있는 경우
+                if (cartUpdateDTO.getAmount() > cartDetail.getItemOption().getStock()) {
+                    throw new OrderHandler(ErrorStatus.LACK_OF_STOCK);
+                }
+            } else {
+                if (cartUpdateDTO.getAmount() > cartDetail.getCart().getItem().getStock()) {
+                    throw new OrderHandler(ErrorStatus.LACK_OF_STOCK);
+                }
+            }
+
+            return cartDetail.updateAmount(cartUpdateDTO.getAmount());
+
+        }).collect(Collectors.toList());
+
+        return cartDetailList;
     }
 
+    @Override
+    public void deleteCartDetail(CartRequestDTO.cartDetailDeleteDTO request, Member member) {
+
+        request.getCartDetailIdList().forEach(cartDetailId -> {
+
+            CartDetail cartDetail = cartDetailRepository.findById(cartDetailId).orElseThrow(() -> new OrderHandler(ErrorStatus.CART_DETAIL_NOT_FOUND));
+
+            Cart cart = cartDetail.getCart();
+
+            // 해당 cart 내역을 수정할 권한 있는지 검증
+            if (!cartDetail.getCart().getMember().equals(member)) {
+                throw new OrderHandler(ErrorStatus.NOT_CART_OWNER);
+            }
+            cartDetail.detachCart();
+            cartDetail.detachItemOption();
+
+            cartDetailRepository.deleteById(cartDetail.getId());
+            cartDetailRepository.flush();
+
+            // 장바구니 상품의 마지막 옵션 내역을 삭제한 경우: 장바구니 상품 내역도 삭제
+            if (cart.getCartDetailList().isEmpty()) {
+                log.info(" ===================== 마지막 옵션 삭제 ========================");
+                cart.detachMember();
+                cart.detachItem();
+                cartRepository.deleteCartById(cart.getId());
+            }
+        });
+
+    }
+
+    @Override
+    public void deleteCart(CartRequestDTO.cartDeleteDTO request, Member member) {
+        request.getCartIdList().forEach(cartId -> {
+            Cart cart = cartRepository.findById(cartId).orElseThrow(() -> new OrderHandler(ErrorStatus.CART_NOT_FOUND));
+
+            // 해당 cart 내역을 수정할 권한 있는지 검증
+            if (!cart.getMember().equals(member)) {
+                throw new OrderHandler(ErrorStatus.NOT_CART_OWNER);
+            }
+
+            List<CartDetail> cartDetailList = cartDetailRepository.findAllByCart(cart);
+            cartDetailList.forEach(cartDetail -> {
+                log.info("===== cartDetailId: {}", cartDetail.getId());
+                cartDetail.detachCart();
+                cartDetail.detachItemOption();
+
+                cartDetailRepository.deleteById(cartDetail.getId());
+            });
+
+//            cart.getCartDetailList().forEach(cartDetail -> {
+//                log.info("===== cartDetailId: {}", cartDetail.getId());
+//                cartDetail.detachCart();
+//                cartDetail.detachItemOption();
+//
+//                cartDetailRepository.deleteById(cartDetail.getId());
+//            });
+
+            cartDetailRepository.flush();
+
+            cart.detachMember();
+            cart.detachItem();
+            cartRepository.deleteCartById(cart.getId());
+        });
+
+    }
 }

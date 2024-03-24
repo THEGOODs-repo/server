@@ -57,8 +57,7 @@ public class OrderController {
             member = memberQueryService.findMemberByNickname("no_login_user").orElseThrow(() -> new OrderHandler(ErrorStatus.NO_LOGIN_ORDER_NOT_AVAILABLE));
         } else {
             // request에서 member id 추출해 Member 엔티티 찾기
-            MemberDetail memberDetail = (MemberDetail) authentication.getPrincipal();
-            member = memberQueryService.findMemberById(memberDetail.getMemberId()).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+            member = memberQueryService.findMemberById(Long.valueOf(authentication.getName().toString())).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
         }
 
         Orders orders = orderCommandService.create(request, member);
@@ -88,8 +87,7 @@ public class OrderController {
         }
 
         // request에서 member id 추출해 Member 엔티티 찾기
-        MemberDetail memberDetail = (MemberDetail) authentication.getPrincipal();
-        Member member = memberQueryService.findMemberById(memberDetail.getMemberId()).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        Member member = memberQueryService.findMemberById(Long.valueOf(authentication.getName().toString())).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
         Page<OrderItem> orderItemList = orderQueryService.getOrderItemList(member, orderStatus, page - 1);
 
@@ -128,8 +126,7 @@ public class OrderController {
             member = memberQueryService.findMemberByNickname("no_login_user").orElseThrow(() -> new OrderHandler(ErrorStatus.NO_LOGIN_ORDER_NOT_AVAILABLE));
         } else {
             // request에서 member id 추출해 Member 엔티티 찾기
-            MemberDetail memberDetail = (MemberDetail) authentication.getPrincipal();
-            member = memberQueryService.findMemberById(memberDetail.getMemberId()).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+            member = memberQueryService.findMemberById(Long.valueOf(authentication.getName().toString())).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
         }
 
         OrderItem orderItem = orderQueryService.getOrderItem(member, orderItemId);
@@ -155,8 +152,7 @@ public class OrderController {
         }
 
         // request에서 member id 추출해 Member 엔티티 찾기
-        MemberDetail memberDetail = (MemberDetail) authentication.getPrincipal();
-        Member member = memberQueryService.findMemberById(memberDetail.getMemberId()).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        Member member = memberQueryService.findMemberById(Long.valueOf(authentication.getName().toString())).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
         OrderItem orderItem = orderCommandService.updateStatusToConfirm(orderItemId, member);
 
@@ -182,8 +178,7 @@ public class OrderController {
             member = memberQueryService.findMemberByNickname("no_login_user").orElseThrow(() -> new OrderHandler(ErrorStatus.NO_LOGIN_ORDER_NOT_AVAILABLE));
         } else {
             // request에서 member id 추출해 Member 엔티티 찾기
-            MemberDetail memberDetail = (MemberDetail) authentication.getPrincipal();
-            member = memberQueryService.findMemberById(memberDetail.getMemberId()).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+            member = memberQueryService.findMemberById(Long.valueOf(authentication.getName().toString())).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
         }
 
         OrderItem orderItem = orderCommandService.updateOrderItemAddress(request, orderItemId, member);
@@ -210,8 +205,7 @@ public class OrderController {
             member = memberQueryService.findMemberByNickname("no_login_user").orElseThrow(() -> new OrderHandler(ErrorStatus.NO_LOGIN_ORDER_NOT_AVAILABLE));
         } else {
             // request에서 member id 추출해 Member 엔티티 찾기
-            MemberDetail memberDetail = (MemberDetail) authentication.getPrincipal();
-            member = memberQueryService.findMemberById(memberDetail.getMemberId()).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+            member = memberQueryService.findMemberById(Long.valueOf(authentication.getName().toString())).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
         }
 
         OrderItem orderItem = orderCommandService.updateOrderItemRefundInfo(request, orderItemId, member);
