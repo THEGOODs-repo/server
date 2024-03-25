@@ -233,28 +233,6 @@ public class MemberController {
     }
 
 
-    @GetMapping(value = "/profile")
-    @Operation(summary = "프로필 조회 api", description = "프로필이미지, 닉네임을 조회할 수 있습니다.")
-    public ApiResponse<MemberResponseDTO.ProfileResultDTO> getProfile(Authentication authentication) {
-
-
-
-        Member member = memberQueryService.findMemberById(Long.valueOf(authentication.getName().toString())).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
-        Optional<ProfileImg> profileImg = memberQueryService.findProfileImgByMember(member.getId());
-        List<Address> address = memberQueryService.findAllAddressById(member.getId());
-        List<Account> account = memberQueryService.findAllAccountById(member.getId());
-
-
-
-        if(profileImg.isEmpty()){
-            return ApiResponse.onSuccess(MemberConverter.toProfile(member, null, account, address));
-        }
-        else {
-            return ApiResponse.onSuccess(MemberConverter.toProfile(member, profileImg.get().getUrl(),account, address));
-        }
-
-
-    }
 
 
 
