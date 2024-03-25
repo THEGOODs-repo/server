@@ -234,7 +234,8 @@ public class MemberConverter {
                 .build();
     }
 
-    public static MemberResponseDTO.ProfileResultDTO toProfile(Member member, String url, List<Account> account, List<Address> address) {
+    public static MemberResponseDTO.ProfileResultDTO toProfile(Member member, String url, List<Account> account,
+                                                               List<Address> address, Long following, Long dibs) {
 
         List<MemberResponseDTO.AccountDTO> accountList = account.stream().map(a -> MemberResponseDTO.AccountDTO.builder()
                 .id(a.getId())
@@ -261,6 +262,8 @@ public class MemberConverter {
                     .url(url)
                     .accountList(null)
                     .addressList(null)
+                    .following(following)
+                    .dibs(dibs)
                     .build();
         }
         if (account.isEmpty()){
@@ -270,6 +273,8 @@ public class MemberConverter {
                     .url(url)
                     .addressList(addressList)
                     .accountList(accountList)
+                    .following(following)
+                    .dibs(dibs)
                     .build();
         }
         if(address.isEmpty()){
@@ -279,6 +284,8 @@ public class MemberConverter {
                     .url(url)
                     .addressList(null)
                     .accountList(accountList)
+                    .following(following)
+                    .dibs(dibs)
                     .build();
         }
 
@@ -288,6 +295,8 @@ public class MemberConverter {
                 .url(url)
                 .addressList(addressList)
                 .accountList(accountList)
+                .following(following)
+                .dibs(dibs)
                 .build();
     }
 

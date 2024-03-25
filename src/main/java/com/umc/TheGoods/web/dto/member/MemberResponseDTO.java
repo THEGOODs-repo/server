@@ -166,6 +166,8 @@ public class MemberResponseDTO {
         String phone;
         List<MemberResponseDTO.AddressDTO> addressList;
         List<MemberResponseDTO.AccountDTO> accountList;
+        Long following;
+        Long dibs;
 
     }
 

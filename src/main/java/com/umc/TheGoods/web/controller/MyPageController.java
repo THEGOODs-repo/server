@@ -6,6 +6,7 @@ import com.umc.TheGoods.apiPayload.code.status.SuccessStatus;
 import com.umc.TheGoods.apiPayload.exception.handler.MemberHandler;
 import com.umc.TheGoods.converter.member.MemberConverter;
 import com.umc.TheGoods.domain.enums.OrderStatus;
+import com.umc.TheGoods.domain.images.ProfileImg;
 import com.umc.TheGoods.domain.item.Category;
 import com.umc.TheGoods.domain.item.Tag;
 import com.umc.TheGoods.domain.member.Auth;
@@ -292,6 +293,30 @@ public class MyPageController {
         return ApiResponse.of(SuccessStatus.MEMBER_CONTACT_SUCCESS,null);
     }
 
+    @GetMapping(value = "/profile")
+    @Operation(summary = "프로필 조회 api", description = "프로필이미지, 닉네임, 주소, 계좌, 팔로잉 수, 찜 수를 조회할 수 있습니다.")
+    public ApiResponse<MemberResponseDTO.ProfileResultDTO> getProfile(Authentication authentication) {
+
+
+
+        Member member = memberQueryService.findMemberById(Long.valueOf(authentication.getName().toString())).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        Optional<ProfileImg> profileImg = memberQueryService.findProfileImgByMember(member.getId());
+        List<Address> address = memberQueryService.findAllAddressById(member.getId());
+        List<Account> account = memberQueryService.findAllAccountById(member.getId());
+        Long following = Long.valueOf(member.getFollowingList().size());
+        Long dibs = Long.valueOf(member.getDibsList().size());
+
+
+
+        if(profileImg.isEmpty()){
+            return ApiResponse.onSuccess(MemberConverter.toProfile(member, null, account, address,following,dibs));
+        }
+        else {
+            return ApiResponse.onSuccess(MemberConverter.toProfile(member, profileImg.get().getUrl(),account, address,following,dibs));
+        }
+
+
+    }
     /**
      * 주문 상세 내역
      * 입금처, 입금 은행, 상품 사진, 상품 이름, 상품 옵션, 주문 상태(결제 전, 결제 완료), 주문자명, 주문자 연락처, 주문 번호, 상품 주문 개수, 상품가격
