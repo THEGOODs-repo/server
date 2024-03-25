@@ -67,6 +67,13 @@ public enum ErrorStatus implements BaseErrorCode {
     JWT_UNSUPPORTED_TOKEN(HttpStatus.UNAUTHORIZED, "JWT4004","지원하지 않는 JWT 토큰입니다."),
     JWT_TOKEN_NOT_FOUND(HttpStatus.UNAUTHORIZED, "JWT4005","유효한 JWT 토큰이 없습니다."),
 
+    //POST
+
+    POST_SELF_FOLLOW(HttpStatus.BAD_REQUEST, "POST4001", "자신을 팔로우 했습니다."),
+    POST_ALREADY_FOLLOW(HttpStatus.BAD_REQUEST, "POST4002", "이미 팔로우 했습니다."),
+    POST_FOLLOW_NOT_FOUND(HttpStatus.BAD_REQUEST, "POST4003", "해당 팔로우를 찾을수 없습니다."),
+
+
     //Category
     CATEGORY_NOT_FOUND(HttpStatus.NOT_FOUND, "CATEGORY4001", "해당 카테고리가 존재하지 않습니다"),
 

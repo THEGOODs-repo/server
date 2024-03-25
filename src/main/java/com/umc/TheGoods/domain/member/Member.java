@@ -187,10 +187,10 @@ public class Member extends BaseDateTimeEntity {
     private List<PostLike> postLikeList = new ArrayList<>();
 
     // Follow 양방향 매핑(mappedBy = "member"로 변경 할 수도 있음)
-    @OneToMany(mappedBy = "following", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "follower", cascade = CascadeType.ALL)
     private List<Follow> followingList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "follower", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "following", cascade = CascadeType.ALL)
     private List<Follow> followerList = new ArrayList<>();
 
     // Notice 양방향 매핑
