@@ -40,12 +40,14 @@ public class CartDetail extends BaseDateTimeEntity {
     public void detachCart() {
         if (this.cart != null) {
             this.cart.getCartDetailList().remove(this);
+            this.cart = null;
         }
     }
 
     public void detachItemOption() {
         if (this.itemOption != null) {
             this.itemOption.getCartDetailList().remove(this);
+            this.itemOption = null;
         }
     }
 

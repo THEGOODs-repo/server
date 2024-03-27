@@ -172,31 +172,45 @@ public class CartCommandServiceImpl implements CartCommandService {
     @Override
     public void deleteCartDetail(CartRequestDTO.cartDetailDeleteDTO request, Member member) {
 
-        request.getCartDetailIdList().forEach(cartDetailId -> {
+        Cart firstCart = cartDetailRepository.findById(request.getCartDetailIdList().get(0)).orElseThrow(() -> new OrderHandler(ErrorStatus.CART_DETAIL_NOT_FOUND)).getCart();
 
+        // request의 cartDetailIdList로 cartDetailList 생성
+        List<CartDetail> cartDetailList = request.getCartDetailIdList().stream().map(cartDetailId -> {
             CartDetail cartDetail = cartDetailRepository.findById(cartDetailId).orElseThrow(() -> new OrderHandler(ErrorStatus.CART_DETAIL_NOT_FOUND));
-
-            Cart cart = cartDetail.getCart();
 
             // 해당 cart 내역을 수정할 권한 있는지 검증
             if (!cartDetail.getCart().getMember().equals(member)) {
                 throw new OrderHandler(ErrorStatus.NOT_CART_OWNER);
             }
-            cartDetail.detachCart();
-            cartDetail.detachItemOption();
 
-            cartDetailRepository.deleteById(cartDetail.getId());
-            cartDetailRepository.flush();
-
-            // 장바구니 상품의 마지막 옵션 내역을 삭제한 경우: 장바구니 상품 내역도 삭제
-            if (cart.getCartDetailList().isEmpty()) {
-                log.info(" ===================== 마지막 옵션 삭제 ========================");
-                cart.detachMember();
-                cart.detachItem();
-                cartRepository.deleteCartById(cart.getId());
+            // cartDetailId가 모두 동일한 장바구니 내역에 대한 담은 옵션이 맞는지 검증
+            if (!firstCart.equals(cartDetail.getCart())) {
+                throw new OrderHandler(ErrorStatus.DELETE_CART_DETAIL_FAILED);
             }
-        });
+            return cartDetail;
+        }).collect(Collectors.toList());
 
+
+        // 해당 장바구니 상품의 모든 담은 옵션 list 조회
+        List<CartDetail> originCartDetailList = firstCart.getCartDetailList();
+
+        List<Long> cartDetailIdList = cartDetailList.stream().map(cartDetail -> {
+            return cartDetail.getId();
+        }).collect(Collectors.toList());
+        List<Long> originCartDetailIdList = originCartDetailList.stream().map(originCartDetail -> {
+            return originCartDetail.getId();
+        }).collect(Collectors.toList());
+
+        // 장바구니 삭제
+        if (isEqualCartDetailList(cartDetailIdList, originCartDetailIdList)) { // 해당 장바구니 상품 내역의 담은 옵션 모두를 삭제하는 경우
+            cartRepository.deleteById(firstCart.getId());
+        } else { // 해당 장바구니 생품 내역의 담은 옵션 일부만 삭제하는 경우
+            cartDetailList.forEach(cartDetail -> {
+                cartDetail.detachCart();
+                cartDetail.detachItemOption();
+                cartDetailRepository.deleteById(cartDetail.getId());
+            });
+        }
     }
 
     @Override
@@ -209,29 +223,23 @@ public class CartCommandServiceImpl implements CartCommandService {
                 throw new OrderHandler(ErrorStatus.NOT_CART_OWNER);
             }
 
-            List<CartDetail> cartDetailList = cartDetailRepository.findAllByCart(cart);
-            cartDetailList.forEach(cartDetail -> {
-                log.info("===== cartDetailId: {}", cartDetail.getId());
-                cartDetail.detachCart();
-                cartDetail.detachItemOption();
-
-                cartDetailRepository.deleteById(cartDetail.getId());
-            });
-
-//            cart.getCartDetailList().forEach(cartDetail -> {
-//                log.info("===== cartDetailId: {}", cartDetail.getId());
-//                cartDetail.detachCart();
-//                cartDetail.detachItemOption();
-//
-//                cartDetailRepository.deleteById(cartDetail.getId());
-//            });
-
-            cartDetailRepository.flush();
-
-            cart.detachMember();
-            cart.detachItem();
-            cartRepository.deleteCartById(cart.getId());
+            cartRepository.deleteById(cart.getId());
         });
 
+    }
+
+    private boolean isEqualCartDetailList(List<Long> x, List<Long> y) {
+        if (x == null) {
+            return y == null;
+        }
+
+        if (x.size() != y.size()) {
+            return false;
+        }
+
+        x = x.stream().sorted().collect(Collectors.toList());
+        y = y.stream().sorted().collect(Collectors.toList());
+
+        return x.equals(y);
     }
 }
