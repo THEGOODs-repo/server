@@ -141,9 +141,20 @@ public class CartCommandServiceImpl implements CartCommandService {
 //        return cartDetailList;
     }
 
-//    @Override
-//    public void deleteCartDetail(CartRequestDTO.cartDetailDeleteDTO request, Member member) {
-//
+    @Override
+    public void deleteCart(CartRequestDTO.cartOptionDeleteDTO request, Member member) {
+
+        request.getCartIdList().forEach(cartId->{
+            Cart cart = cartRepository.findById(cartId).orElseThrow(() -> new OrderHandler(ErrorStatus.CART_NOT_FOUND));
+
+            // 해당 cart 내역을 수정할 권한 있는지 검증
+            if (!cart.getMember().equals(member)) {
+                throw new OrderHandler(ErrorStatus.NOT_CART_OWNER);
+            }
+
+            cart.setCartStatus(CartStatus.USER_DEL);
+        });
+
 //        Cart firstCart = cartDetailRepository.findById(request.getCartDetailIdList().get(0)).orElseThrow(() -> new OrderHandler(ErrorStatus.CART_DETAIL_NOT_FOUND)).getCart();
 //
 //        // request의 cartDetailIdList로 cartDetailList 생성
@@ -183,7 +194,7 @@ public class CartCommandServiceImpl implements CartCommandService {
 //                cartDetailRepository.deleteById(cartDetail.getId());
 //            });
 //        }
-//    }
+    }
 //
 //    @Override
 //    public void deleteCart(CartRequestDTO.cartDeleteDTO request, Member member) {

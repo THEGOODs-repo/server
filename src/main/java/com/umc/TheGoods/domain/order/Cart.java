@@ -49,16 +49,12 @@ public class Cart extends BaseDateTimeEntity {
         member.getCartList().add(this);
     }
 
-//    public void setItem(Item item) {
-//        if (this.item != null) {
-//            this.item.getItemCartList().remove(this);
-//        }
-//        this.item = item;
-//        item.getItemCartList().add(this);
-//    }
-
     public void updateAmount(Integer n) {
         this.amount = n;
+    }
+
+    public void setCartStatus(CartStatus cartStatus) {
+        this.cartStatus = cartStatus;
     }
 
 }

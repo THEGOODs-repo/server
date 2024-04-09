@@ -56,9 +56,9 @@ public class CartRequestDTO {
     }
 
     @Getter
-    public static class cartDetailDeleteDTO {
+    public static class cartOptionDeleteDTO {
         @NotNull
-        List<Long> cartDetailIdList;
+        List<Long> cartIdList;
     }
 
     @Getter
