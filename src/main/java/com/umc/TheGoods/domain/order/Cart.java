@@ -58,7 +58,7 @@ public class Cart extends BaseDateTimeEntity {
 //    }
 
     public void updateAmount(Integer n) {
-        this.amount += n;
+        this.amount = n;
     }
 
 }

@@ -1,6 +1,6 @@
 package com.umc.TheGoods.web.dto.cart;
 
-import com.umc.TheGoods.validation.annotation.ExistCartDetail;
+import com.umc.TheGoods.validation.annotation.ExistCart;
 import com.umc.TheGoods.validation.annotation.ExistItem;
 import lombok.Getter;
 
@@ -46,8 +46,8 @@ public class CartRequestDTO {
     @Getter
     public static class cartUpdateDTO {
         @NotNull
-        @ExistCartDetail
-        Long cartDetailId;
+        @ExistCart
+        Long cartId;
 
         @Min(1)
         @Max(100000)
