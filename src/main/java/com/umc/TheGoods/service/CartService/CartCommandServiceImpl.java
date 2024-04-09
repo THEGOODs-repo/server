@@ -115,31 +115,6 @@ public class CartCommandServiceImpl implements CartCommandService {
 
             cart.updateAmount(cartUpdateDTO.getAmount());
         });
-
-//        List<CartDetail> cartDetailList = request.getCartUpdateDTOList().stream().map(cartUpdateDTO -> {
-//            CartDetail cartDetail = cartDetailRepository.findById(cartUpdateDTO.getCartDetailId()).get();
-//
-//            // 해당 cart 내역을 수정할 권한 있는지 검증
-//            if (!cartDetail.getCart().getMember().equals(member)) {
-//                throw new OrderHandler(ErrorStatus.NOT_CART_OWNER);
-//            }
-//
-//            // 재고 수량과 비교
-//            if (!cartDetail.getCart().getItem().getItemOptionList().isEmpty()) { // 상품 옵션이 있는 경우
-//                if (cartUpdateDTO.getAmount() > cartDetail.getItemOption().getStock()) {
-//                    throw new OrderHandler(ErrorStatus.LACK_OF_STOCK);
-//                }
-//            } else {
-//                if (cartUpdateDTO.getAmount() > cartDetail.getCart().getItem().getStock()) {
-//                    throw new OrderHandler(ErrorStatus.LACK_OF_STOCK);
-//                }
-//            }
-//
-//            return cartDetail.updateAmount(cartUpdateDTO.getAmount());
-//
-//        }).collect(Collectors.toList());
-//
-//        return cartDetailList;
     }
 
     @Override
@@ -155,46 +130,6 @@ public class CartCommandServiceImpl implements CartCommandService {
 
             cart.setCartStatus(CartStatus.USER_DEL);
         });
-
-//        Cart firstCart = cartDetailRepository.findById(request.getCartDetailIdList().get(0)).orElseThrow(() -> new OrderHandler(ErrorStatus.CART_DETAIL_NOT_FOUND)).getCart();
-//
-//        // request의 cartDetailIdList로 cartDetailList 생성
-//        List<CartDetail> cartDetailList = request.getCartDetailIdList().stream().map(cartDetailId -> {
-//            CartDetail cartDetail = cartDetailRepository.findById(cartDetailId).orElseThrow(() -> new OrderHandler(ErrorStatus.CART_DETAIL_NOT_FOUND));
-//
-//            // 해당 cart 내역을 수정할 권한 있는지 검증
-//            if (!cartDetail.getCart().getMember().equals(member)) {
-//                throw new OrderHandler(ErrorStatus.NOT_CART_OWNER);
-//            }
-//
-//            // cartDetailId가 모두 동일한 장바구니 내역에 대한 담은 옵션이 맞는지 검증
-//            if (!firstCart.equals(cartDetail.getCart())) {
-//                throw new OrderHandler(ErrorStatus.DELETE_CART_DETAIL_FAILED);
-//            }
-//            return cartDetail;
-//        }).collect(Collectors.toList());
-//
-//
-//        // 해당 장바구니 상품의 모든 담은 옵션 list 조회
-//        List<CartDetail> originCartDetailList = firstCart.getCartDetailList();
-//
-//        List<Long> cartDetailIdList = cartDetailList.stream().map(cartDetail -> {
-//            return cartDetail.getId();
-//        }).collect(Collectors.toList());
-//        List<Long> originCartDetailIdList = originCartDetailList.stream().map(originCartDetail -> {
-//            return originCartDetail.getId();
-//        }).collect(Collectors.toList());
-//
-//        // 장바구니 삭제
-//        if (isEqualCartDetailList(cartDetailIdList, originCartDetailIdList)) { // 해당 장바구니 상품 내역의 담은 옵션 모두를 삭제하는 경우
-//            cartRepository.deleteById(firstCart.getId());
-//        } else { // 해당 장바구니 생품 내역의 담은 옵션 일부만 삭제하는 경우
-//            cartDetailList.forEach(cartDetail -> {
-//                cartDetail.detachCart();
-//                cartDetail.detachItemOption();
-//                cartDetailRepository.deleteById(cartDetail.getId());
-//            });
-//        }
     }
 
     @Override
@@ -209,18 +144,6 @@ public class CartCommandServiceImpl implements CartCommandService {
             itemCartList.forEach(cart -> {
                 cart.setCartStatus(CartStatus.USER_DEL);
             });
-
         });
-//        request.getCartIdList().forEach(cartId -> {
-//            Cart cart = cartRepository.findById(cartId).orElseThrow(() -> new OrderHandler(ErrorStatus.CART_NOT_FOUND));
-//
-//            // 해당 cart 내역을 수정할 권한 있는지 검증
-//            if (!cart.getMember().equals(member)) {
-//                throw new OrderHandler(ErrorStatus.NOT_CART_OWNER);
-//            }
-//
-//            cartRepository.deleteById(cart.getId());
-//        });
-
     }
 }

@@ -23,12 +23,9 @@ public class CartQueryServiceImpl implements CartQueryService {
     public boolean isExistCart(Long cartId) {
         return cartRepository.existsById(cartId);
     }
-//
-//    @Override
-//    public boolean isExistCartDetail(Long cartDetailId) {
-//        return cartDetailRepository.existsById(cartDetailId);
-//    }
-//
+
+
+
 //    @Override
 //    public Cart getCartById(Long cartId, Member member) {
 //        Cart cart = cartRepository.findById(cartId).orElseThrow(() -> new OrderHandler(ErrorStatus.CART_NOT_FOUND));
