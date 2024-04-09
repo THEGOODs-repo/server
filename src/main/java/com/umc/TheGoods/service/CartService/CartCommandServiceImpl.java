@@ -17,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -144,7 +145,7 @@ public class CartCommandServiceImpl implements CartCommandService {
     @Override
     public void deleteCart(CartRequestDTO.cartOptionDeleteDTO request, Member member) {
 
-        request.getCartIdList().forEach(cartId->{
+        request.getCartIdList().forEach(cartId -> {
             Cart cart = cartRepository.findById(cartId).orElseThrow(() -> new OrderHandler(ErrorStatus.CART_NOT_FOUND));
 
             // 해당 cart 내역을 수정할 권한 있는지 검증
@@ -195,9 +196,21 @@ public class CartCommandServiceImpl implements CartCommandService {
 //            });
 //        }
     }
-//
-//    @Override
-//    public void deleteCart(CartRequestDTO.cartDeleteDTO request, Member member) {
+
+    @Override
+    public void deleteCartByItem(CartRequestDTO.cartDeleteByItemDTO request, Member member) {
+        request.getItemIdList().forEach(itemId -> {
+            List<Cart> itemCartList = cartRepository.findAllByMemberAndItemIdAndCartStatus(member, itemId, CartStatus.ACTIVE);
+
+            if (itemCartList.isEmpty()) {
+                throw new OrderHandler(ErrorStatus.CART_NOT_FOUND);
+            }
+
+            itemCartList.forEach(cart -> {
+                cart.setCartStatus(CartStatus.USER_DEL);
+            });
+
+        });
 //        request.getCartIdList().forEach(cartId -> {
 //            Cart cart = cartRepository.findById(cartId).orElseThrow(() -> new OrderHandler(ErrorStatus.CART_NOT_FOUND));
 //
@@ -208,21 +221,6 @@ public class CartCommandServiceImpl implements CartCommandService {
 //
 //            cartRepository.deleteById(cart.getId());
 //        });
-//
-//    }
-//
-//    private boolean isEqualCartDetailList(List<Long> x, List<Long> y) {
-//        if (x == null) {
-//            return y == null;
-//        }
-//
-//        if (x.size() != y.size()) {
-//            return false;
-//        }
-//
-//        x = x.stream().sorted().collect(Collectors.toList());
-//        y = y.stream().sorted().collect(Collectors.toList());
-//
-//        return x.equals(y);
-//    }
+
+    }
 }

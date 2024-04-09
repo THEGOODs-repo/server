@@ -10,7 +10,7 @@ public interface CartCommandService {
     void updateCart(CartRequestDTO.cartUpdateDTOList request, Member member);
 
     void deleteCart(CartRequestDTO.cartOptionDeleteDTO request, Member member);
-//
-//    void deleteCart(CartRequestDTO.cartDeleteDTO request, Member member);
+
+    void deleteCartByItem(CartRequestDTO.cartDeleteByItemDTO request, Member member);
 
 }

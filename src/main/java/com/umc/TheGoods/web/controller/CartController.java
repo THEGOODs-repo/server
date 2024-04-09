@@ -110,27 +110,27 @@ public class CartController {
         return ApiResponse.onSuccess("장바구니 옵션 삭제 성공");
     }
 
-//    @DeleteMapping("/delete")
-//    @Operation(summary = "장바구니 상품 삭제 API", description = "해당 장바구니 내역을 삭제하는 API 입니다. \n\n" +
-//            "장바구니 내역 id 리스트를 보내주세요.")
-//    @ApiResponses(value = {
-//            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
-//    })
-//    public ApiResponse<String> deleteCart(@RequestBody CartRequestDTO.cartDeleteDTO request,
-//                                          Authentication authentication) {
-//
-//        // 비회원인 경우 처리 불가
-//        if (authentication == null) {
-//            throw new MemberHandler(ErrorStatus._UNAUTHORIZED);
-//        }
-//
-//        // request에서 member id 추출해 Member 엔티티 찾기
-//        Member member = memberQueryService.findMemberById(Long.valueOf(authentication.getName().toString())).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
-//
-//        cartCommandService.deleteCart(request, member);
-//
-//        return ApiResponse.onSuccess("장바구니 상품 삭제 성공");
-//    }
+    @DeleteMapping("/delete")
+    @Operation(summary = "장바구니 상품 삭제 API", description = "해당 장바구니 담은 상품을 삭제하는 API 입니다. \n\n" +
+            "삭제할 상품의 id 리스트를 보내주세요.")
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
+    })
+    public ApiResponse<String> deleteCart(@RequestBody CartRequestDTO.cartDeleteByItemDTO request,
+                                          Authentication authentication) {
+
+        // 비회원인 경우 처리 불가
+        if (authentication == null) {
+            throw new MemberHandler(ErrorStatus._UNAUTHORIZED);
+        }
+
+        // request에서 member id 추출해 Member 엔티티 찾기
+        Member member = memberQueryService.findMemberById(Long.valueOf(authentication.getName().toString())).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        cartCommandService.deleteCartByItem(request, member);
+
+        return ApiResponse.onSuccess("장바구니 상품 삭제 성공");
+    }
 //
 //    @GetMapping("/{cartId}/stock")
 //    @Operation(summary = "특정 장바구니 상품의 재고/옵션의 재고 목록 조회 API", description = "장바구니에 담긴 특정 상품의 재고 및 옵션의 재고 목록을 조회하는 API 입니다.")

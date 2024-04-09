@@ -14,7 +14,9 @@ public interface CartRepository extends JpaRepository<Cart, Long> {
 
     Optional<Cart> findByMemberAndItem(Member member, Item item);
 
-    List<Cart> findAllByMember(Member member);
+    List<Cart> findAllByMemberAndItemIdAndCartStatus(Member member, Long itemId, CartStatus cartStatus);
+
+    List<Cart> findAllByMemberAndCartStatusOrderByItemIdAsc(Member member, CartStatus cartStatus);
 
     Optional<Cart> findByMemberAndItemAndItemOptionAndCartStatus(Member member, Item item, ItemOption itemOption, CartStatus cartStatus);
 
