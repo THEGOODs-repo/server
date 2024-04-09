@@ -2,7 +2,6 @@ package com.umc.TheGoods.web.dto.cart;
 
 import com.umc.TheGoods.validation.annotation.ExistCartDetail;
 import com.umc.TheGoods.validation.annotation.ExistItem;
-import com.umc.TheGoods.validation.annotation.ExistItemOption;
 import lombok.Getter;
 
 import javax.validation.Valid;
@@ -14,29 +13,26 @@ import java.util.List;
 public class CartRequestDTO {
 
     @Getter
+    public static class cartAddDTOList {
+        @NotNull
+        @Valid
+        List<cartAddDTO> cartAddDTOList;
+
+    }
+
+    @Getter
     public static class cartAddDTO {
         @NotNull
         @ExistItem
         Long itemId;
 
-        Integer amount;
-
-        @NotNull
-        @Valid
-        List<cartOptionAddDTO> cartOptionAddDTOList;
-
-    }
-
-    @Getter
-    public static class cartOptionAddDTO {
-        @NotNull
-        @ExistItemOption
-        Long itemOptionId;
-
         @Min(1)
         @Max(100000)
         @NotNull
         Integer amount;
+
+        Long itemOptionId;
+
 
     }
 

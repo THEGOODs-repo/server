@@ -30,7 +30,7 @@ public class Cart extends BaseDateTimeEntity {
     private Item item;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "item_option_id", nullable = false)
+    @JoinColumn(name = "item_option_id")
     private ItemOption itemOption;
 
     @Column(nullable = false)
@@ -39,7 +39,7 @@ public class Cart extends BaseDateTimeEntity {
     @Enumerated(EnumType.STRING)
     @Column(columnDefinition = "VARCHAR(20)", nullable = false)
     private CartStatus cartStatus;
-    
+
     // 연관관계 메소드
     public void setMember(Member member) {
         if (this.member != null) {
@@ -49,12 +49,16 @@ public class Cart extends BaseDateTimeEntity {
         member.getCartList().add(this);
     }
 
-    public void setItem(Item item) {
-        if (this.item != null) {
-            this.item.getItemCartList().remove(this);
-        }
-        this.item = item;
-        item.getItemCartList().add(this);
+//    public void setItem(Item item) {
+//        if (this.item != null) {
+//            this.item.getItemCartList().remove(this);
+//        }
+//        this.item = item;
+//        item.getItemCartList().add(this);
+//    }
+
+    public void updateAmount(Integer n) {
+        this.amount += n;
     }
 
 }

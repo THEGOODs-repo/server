@@ -1,5 +1,5 @@
 package com.umc.TheGoods.domain.enums;
 
 public enum CartStatus {
-    ACTIVE, INACTIVE
+    ACTIVE, USER_DEL, ORDER_DEL
 }

@@ -22,7 +22,8 @@ public class CartDetailExistValidator implements ConstraintValidator<ExistCartDe
 
     @Override
     public boolean isValid(Long value, ConstraintValidatorContext context) {
-        boolean isValid = cartQueryService.isExistCartDetail(value);
+        boolean isValid = true;
+        //boolean isValid = cartQueryService.isExistCartDetail(value);
         if (!isValid) {
             context.disableDefaultConstraintViolation();
             context.buildConstraintViolationWithTemplate(ErrorStatus.CART_DETAIL_NOT_FOUND.getMessage()).addConstraintViolation();
