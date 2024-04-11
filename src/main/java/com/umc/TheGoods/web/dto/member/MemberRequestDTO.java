@@ -19,25 +19,15 @@ public class MemberRequestDTO {
     @AllArgsConstructor
     public static class JoinDTO {
         private String nickname;
+        private String name;
         private String password;
         private String email;
         private Date birthday;
         private String phone;
         private Gender gender;
         private List<Boolean> memberTerm;//약관 동의
-        @ExistCategory
-        private List<Long> memberCategory;
 
-    }
 
-    @Getter
-    @Setter
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class CustomInfoDTO{
-        private List<Long> TagList;
-        private List<Long> CategoryList;
-        private Boolean InfoTerm;
     }
 
 

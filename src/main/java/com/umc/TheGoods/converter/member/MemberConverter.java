@@ -8,8 +8,6 @@ import com.umc.TheGoods.domain.item.Item;
 import com.umc.TheGoods.domain.item.ItemOption;
 import com.umc.TheGoods.domain.item.Tag;
 import com.umc.TheGoods.domain.mapping.Tag.CategoryTag;
-import com.umc.TheGoods.domain.mapping.member.MemberCategory;
-import com.umc.TheGoods.domain.mapping.member.MemberTag;
 import com.umc.TheGoods.domain.mapping.member.MemberTerm;
 import com.umc.TheGoods.domain.member.Auth;
 import com.umc.TheGoods.domain.member.Member;
@@ -49,13 +47,13 @@ public class MemberConverter {
     public static Member toMember(MemberRequestDTO.JoinDTO request, BCryptPasswordEncoder encoder) {
         return Member.builder()
                 .nickname(request.getNickname())
+                .name(request.getName())
                 .password(encoder.encode(request.getPassword()))
                 .email(request.getEmail())
                 .birthday(request.getBirthday())
                 .gender(request.getGender())
                 .phone(request.getPhone())
                 .memberRole(MemberRole.BUYER)
-                .memberCategoryList(new ArrayList<>())
                 .memberTermList(new ArrayList<>())
                 .itemList(new ArrayList<>())
                 .build();
@@ -78,7 +76,6 @@ public class MemberConverter {
 
     public static Member toUpdatePassword(Member member, String password) {
         List<MemberTerm> memberTermList = member.getMemberTermList();
-        List<MemberCategory> memberCategoryList = member.getMemberCategoryList();
         List<Item> memberItemList = member.getItemList();
         if (memberItemList == null) {
             memberItemList = new ArrayList<>();
@@ -88,11 +85,9 @@ public class MemberConverter {
             memberTermList = new ArrayList<>();
         }
 
-        if (memberCategoryList == null) {
-            memberCategoryList = new ArrayList<>();
-        }
         return Member.builder()
                 .id(member.getId())
+                .name(member.getName())
                 .nickname(member.getNickname())
                 .password(password)
                 .email(member.getEmail())
@@ -100,33 +95,11 @@ public class MemberConverter {
                 .gender(member.getGender())
                 .phone(member.getPhone())
                 .memberRole(MemberRole.BUYER)
-                .memberCategoryList(memberCategoryList)
                 .memberTermList(memberTermList)
                 .itemList(memberItemList)
                 .build();
     }
 
-    public static List<MemberCategory> toMemberCategoryList(List<Category> categoryList) {
-
-
-        return categoryList.stream()
-                .map(category ->
-                        MemberCategory.builder()
-                                .category(category)
-                                .build()
-                ).collect(Collectors.toList());
-
-    }
-
-    public static List<MemberTag> toMemberTagList(List<Tag> tagList){
-
-        return tagList.stream().map(tag ->
-                MemberTag.builder()
-                        .tag(tag)
-                        .build()
-        ).collect(Collectors.toList());
-
-    }
 
     public static List<MemberTerm> toMemberTermList(HashMap<Term, Boolean> termList) {
 
@@ -308,7 +281,6 @@ public class MemberConverter {
 
     public static Member toUpdateProfile(Member member, ProfileImg profileImg, String nickname, String introduce) {
         List<MemberTerm> memberTermList = member.getMemberTermList();
-        List<MemberCategory> memberCategoryList = member.getMemberCategoryList();
         List<Item> memberItemList = member.getItemList();
         if (memberItemList == null) {
             memberItemList = new ArrayList<>();
@@ -318,11 +290,9 @@ public class MemberConverter {
             memberTermList = new ArrayList<>();
         }
 
-        if (memberCategoryList == null) {
-            memberCategoryList = new ArrayList<>();
-        }
         return Member.builder()
                 .id(member.getId())
+                .name(member.getName())
                 .nickname(nickname)
                 .password(member.getPassword())
                 .email(member.getEmail())
@@ -330,7 +300,6 @@ public class MemberConverter {
                 .gender(member.getGender())
                 .phone(member.getPhone())
                 .memberRole(MemberRole.BUYER)
-                .memberCategoryList(memberCategoryList)
                 .memberTermList(memberTermList)
                 .itemList(memberItemList)
                 .introduce(introduce)
@@ -442,30 +411,6 @@ public class MemberConverter {
         return addressList;
     }
 
-    public static MemberResponseDTO.CustomInfoDTO toCustomInfoDTO(List<Category> categoryList, List<Tag> tagList){
-        List<MemberResponseDTO.CategoryDTO> category = categoryList.stream().map(
-                c ->{
-                    return MemberResponseDTO.CategoryDTO
-                            .builder()
-                            .id(c.getId())
-                            .name(c.getName())
-                            .build();}
-        ).collect(Collectors.toList());
-
-        List<MemberResponseDTO.TagDTO> tag = tagList.stream().map(
-                t ->{
-                    return MemberResponseDTO.TagDTO.builder()
-                            .id(t.getId())
-                            .name(t.getName())
-                            .build();
-                }
-        ).collect(Collectors.toList());
-
-        return MemberResponseDTO.CustomInfoDTO.builder()
-                .categoryList(category)
-                .tagList(tag)
-                .build();
-    }
 
     public static Declaration toDeclaration(Member member, MemberRequestDTO.DeclareDTO request){
 

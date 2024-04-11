@@ -6,8 +6,6 @@ import com.umc.TheGoods.domain.images.ProfileImg;
 import com.umc.TheGoods.domain.item.Category;
 import com.umc.TheGoods.domain.item.Tag;
 import com.umc.TheGoods.domain.mapping.Tag.CategoryTag;
-import com.umc.TheGoods.domain.mapping.member.MemberCategory;
-import com.umc.TheGoods.domain.mapping.member.MemberTag;
 import com.umc.TheGoods.domain.member.Member;
 import com.umc.TheGoods.domain.mypage.Account;
 import com.umc.TheGoods.domain.mypage.Address;
@@ -36,8 +34,6 @@ public class MemberQueryServiceImpl implements MemberQueryService {
 
     private final AccountRepository accountRepository;
     private final CategoryRepository categoryRepository;
-    private final MemberCategoryRepository memberCategoryRepository;
-    private final MemberTagRepository memberTagRepository;
     private final TagRepository tagRepository;
     private final DeclarationRepository declarationRepository;
 
@@ -81,29 +77,9 @@ public class MemberQueryServiceImpl implements MemberQueryService {
         return accountRepository.findAllByMember_Id(id);
     }
 
-    @Override
-    public List<Category> findCategoryByMember(Member member) {
 
-        List<MemberCategory> memberCategoryList = memberCategoryRepository.findAllByMember(member);
 
-        List<Category> categoryList = memberCategoryList.stream().map(m ->{
-                return categoryRepository.findById(m.getCategory().getId()).orElseThrow(() -> new MemberHandler(ErrorStatus.CATEGORY_NOT_FOUND));
-        }).collect(Collectors.toList());
 
-        return categoryList;
-
-    }
-
-    @Override
-    public List<Tag> findTagByMember(Member member) {
-
-        List<MemberTag> memberTagList = memberTagRepository.findAllByMember(member);
-
-        List<Tag> tagList = memberTagList.stream().map(t ->{
-            return tagRepository.findById(t.getTag().getId()).orElseThrow(() -> new MemberHandler(ErrorStatus.TAG_NOT_FOUND));
-        }).collect(Collectors.toList());
-        return tagList;
-    }
 
     @Override
     public List<Declaration> findDeclarationByMember(Member member) {

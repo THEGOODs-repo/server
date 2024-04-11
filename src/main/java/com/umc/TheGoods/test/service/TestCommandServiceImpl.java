@@ -12,7 +12,6 @@ import com.umc.TheGoods.domain.item.ItemOption;
 import com.umc.TheGoods.domain.item.Tag;
 import com.umc.TheGoods.domain.mapping.Tag.CategoryTag;
 import com.umc.TheGoods.domain.mapping.Tag.ItemTag;
-import com.umc.TheGoods.domain.mapping.member.MemberCategory;
 import com.umc.TheGoods.domain.mapping.member.MemberTerm;
 import com.umc.TheGoods.domain.member.Member;
 import com.umc.TheGoods.domain.member.Term;
@@ -69,17 +68,6 @@ public class TestCommandServiceImpl implements TestCommandService {
         //저장
         Member member = TestConverter.toTestMember(request, encoder);
 
-        // 카테고리 저장 로직
-        List<Category> categoryList = request.getMemberCategory().stream()
-                .map(category -> {
-                    return categoryRepository.findById(category).orElseThrow(() -> new MemberHandler(ErrorStatus.CATEGORY_NOT_FOUND));
-                }).collect(Collectors.toList());
-
-        List<MemberCategory> memberCategoryList = MemberConverter.toMemberCategoryList(categoryList);
-
-        memberCategoryList.forEach(memberCategory -> {
-            memberCategory.setMember(member);
-        });
 
         // 약관동의 저장 로직
         HashMap<Term, Boolean> termMap = new HashMap<>();

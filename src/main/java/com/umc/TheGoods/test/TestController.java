@@ -96,11 +96,9 @@ public class TestController {
         Date date = new Date();
         List<Boolean> termAgreeList = new ArrayList<>();
         termAgreeList.add(true);
-        List<Long> memberCategoryList = new ArrayList<>();
-        memberCategoryList.add(1L);
 
-        MemberRequestDTO.JoinDTO joinBuyerDTO = new MemberRequestDTO.JoinDTO("구매자 테스트 계정", "12345678", "test@gmail.com", date, "01012345678", Gender.MALE, termAgreeList, memberCategoryList);
-        MemberRequestDTO.JoinDTO noLoginUserDTO = new MemberRequestDTO.JoinDTO("no_login_user", "12345678", "nologinuser@gmail.com", date, "01087654321", Gender.MALE, termAgreeList, memberCategoryList);
+        MemberRequestDTO.JoinDTO joinBuyerDTO = new MemberRequestDTO.JoinDTO("구매자 테스트 계정","테스트", "12345678", "test@gmail.com", date, "01012345678", Gender.MALE, termAgreeList);
+        MemberRequestDTO.JoinDTO noLoginUserDTO = new MemberRequestDTO.JoinDTO("no_login_user","비회원", "12345678", "nologinuser@gmail.com", date, "01087654321", Gender.MALE, termAgreeList);
 
 
         memberCommandService.join(joinBuyerDTO);

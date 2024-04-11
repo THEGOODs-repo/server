@@ -48,7 +48,6 @@ public interface MemberCommandService {
 
     Member profileModify(MultipartFile profile, String nickname, String introduce, Member member);
 
-    Member updateRole(Member member);
 
     void updatePhoneName(MemberRequestDTO.PhoneNameUpdateDTO request, Member member);
 
@@ -68,7 +67,6 @@ public interface MemberCommandService {
 
     void deleteAddress(Member member, Long addressId);
 
-    void updateCustomInfo(Long memberId, MemberRequestDTO.CustomInfoDTO request);
 
     void postDeclare(Member member, MemberRequestDTO.DeclareDTO request);
 
