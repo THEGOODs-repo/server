@@ -13,6 +13,7 @@ import com.umc.TheGoods.domain.member.Auth;
 import com.umc.TheGoods.domain.member.Member;
 import com.umc.TheGoods.domain.mypage.Account;
 import com.umc.TheGoods.domain.mypage.Address;
+import com.umc.TheGoods.domain.mypage.ContactTime;
 import com.umc.TheGoods.domain.mypage.Declaration;
 import com.umc.TheGoods.service.MemberService.MemberCommandService;
 import com.umc.TheGoods.service.MemberService.MemberQueryService;
@@ -262,6 +263,15 @@ public class MyPageController {
 
         memberCommandService.postContact(Long.valueOf(authentication.getName().toString()), request);
         return ApiResponse.of(SuccessStatus.MEMBER_CONTACT_SUCCESS,null);
+    }
+
+    @GetMapping(value = "/contact")
+    @Operation(summary = "mypage 연락가능 시간 조회 api")
+    public ApiResponse<?> getContact(Authentication authentication){
+
+        Member member = memberQueryService.findMemberById(Long.valueOf(authentication.getName().toString())).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        ContactTime contactTime = memberCommandService.getContact(member);
+        return ApiResponse.onSuccess(MemberConverter.toContactDTO(contactTime));
     }
 
     @GetMapping(value = "/profile")

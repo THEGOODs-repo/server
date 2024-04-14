@@ -759,5 +759,12 @@ public class MemberCommandServiceImpl implements MemberCommandService {
 
         contactTimeRepository.save(contactTime);
     }
+
+    @Override
+    public ContactTime getContact(Member member) {
+        ContactTime contactTime = contactTimeRepository.findById(member.getId()).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_CONTACT_NOT_FOUND));
+
+        return contactTime;
+    }
 }
 

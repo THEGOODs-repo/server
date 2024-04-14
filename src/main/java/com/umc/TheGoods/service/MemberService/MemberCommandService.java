@@ -6,6 +6,7 @@ import com.umc.TheGoods.domain.member.Auth;
 import com.umc.TheGoods.domain.member.Member;
 import com.umc.TheGoods.domain.mypage.Account;
 import com.umc.TheGoods.domain.mypage.Address;
+import com.umc.TheGoods.domain.mypage.ContactTime;
 import com.umc.TheGoods.redis.domain.RefreshToken;
 import com.umc.TheGoods.web.dto.member.MemberRequestDTO;
 import com.umc.TheGoods.web.dto.member.MemberResponseDTO;
@@ -73,5 +74,7 @@ public interface MemberCommandService {
     void deleteDeclare(Long declarationId, Member member);
 
     void postContact(Long memberId, MemberRequestDTO.ContactDTO request);
+
+    ContactTime getContact(Member member);
 
 }

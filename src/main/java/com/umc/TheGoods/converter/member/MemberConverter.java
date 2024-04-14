@@ -464,4 +464,12 @@ public class MemberConverter {
                 .build();
     }
 
+    public static MemberResponseDTO.ContactResponseDTO toContactDTO(ContactTime contactTime){
+        return MemberResponseDTO.ContactResponseDTO.builder()
+                .start(contactTime.getStartTime())
+                .end(contactTime.getEndTime())
+                .allTime(contactTime.getAllTime())
+                .build();
+    }
+
 }
