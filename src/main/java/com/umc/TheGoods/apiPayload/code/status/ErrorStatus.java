@@ -50,15 +50,16 @@ public enum ErrorStatus implements BaseErrorCode {
     // Member
     MEMBER_NICKNAME_DUPLICATED(HttpStatus.BAD_REQUEST, "MEMBER4001", "중복된 닉네임 입니다."),
     MEMBER_PASSWORD_ERROR(HttpStatus.BAD_REQUEST, "MEMBER4002", "비밀번호가 잘못되었습니다."),
-    MEMBER_EMAIL_NOT_FOUND(HttpStatus.BAD_REQUEST, "MEMBER4003", "이메일이 존재하지 않습니다."),
+    MEMBER_EMAIL_NOT_FOUND(HttpStatus.NOT_FOUND, "MEMBER4003", "이메일이 존재하지 않습니다."),
     MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "MEMBER4004", "해당 회원을 찾을 수 없습니다."),
     MEMBER_PHONE_AUTH_ERROR(HttpStatus.BAD_REQUEST, "MEMBER4005", "유효하지 않는 번호입니다."),
     MEMBER_EMAIL_AUTH_ERROR(HttpStatus.BAD_REQUEST, "MEMBER4006", "유효하지 않는 이메일입니다."),
     MEMBER_PASSWORD_NOT_EQUAL(HttpStatus.BAD_REQUEST, "MEMBER4007", "비밀번호가 일치하지 않습니다."),
-    MEMBER_ACCOUNT_NOT_FOUND(HttpStatus.BAD_REQUEST, "MEMBER4008", "계좌가 존재하지 않습니다"),
-    MEMBER_ADDRESS_NOT_FOUND(HttpStatus.BAD_REQUEST, "MEMBER4009", "주소가 존재하지 않습니다"),
+    MEMBER_ACCOUNT_NOT_FOUND(HttpStatus.NOT_FOUND, "MEMBER4008", "계좌가 존재하지 않습니다"),
+    MEMBER_ADDRESS_NOT_FOUND(HttpStatus.NOT_FOUND, "MEMBER4009", "주소가 존재하지 않습니다"),
     MEMBER_INACTIVATE(HttpStatus.NOT_ACCEPTABLE, "MEMBER40010", "탈퇴한 회원입니다."),
-    MEMBER_NOT_OWNER(HttpStatus.NOT_ACCEPTABLE, "MEMBER40010", "해당 회원이 아닙니다."),
+    MEMBER_NOT_OWNER(HttpStatus.NOT_ACCEPTABLE, "MEMBER40011", "해당 회원이 아닙니다."),
+    MEMBER_CONTACT_NOT_FOUND(HttpStatus.NOT_FOUND,"MEMBER40012", "연락 가능 시간을 조회할 수 없습니다."),
 
     //JWT
 

@@ -31,7 +31,6 @@ public class TestConverter {
                 .gender(Gender.FEMALE)
                 .phone("01012345678")
                 .memberRole(MemberRole.SELLER)
-                .memberCategoryList(new ArrayList<>())
                 .memberTermList(new ArrayList<>())
                 .itemList(new ArrayList<>())
                 .build();

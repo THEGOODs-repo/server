@@ -322,6 +322,15 @@ public class MemberResponseDTO {
         List<DeclarationDTO> declareDTOList;
     }
 
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ContactResponseDTO{
+        Integer start;
+        Integer end;
+        Boolean allTime;
+    }
 
 
 

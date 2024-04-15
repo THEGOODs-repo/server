@@ -26,9 +26,6 @@ public interface MemberQueryService {
 
     List<Account> findAccountById(Long id);
 
-    List<Category> findCategoryByMember(Member member);
-
-    List<Tag> findTagByMember(Member member);
 
     List<Declaration> findDeclarationByMember(Member member);
 }

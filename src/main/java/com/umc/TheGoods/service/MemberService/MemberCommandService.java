@@ -6,6 +6,7 @@ import com.umc.TheGoods.domain.member.Auth;
 import com.umc.TheGoods.domain.member.Member;
 import com.umc.TheGoods.domain.mypage.Account;
 import com.umc.TheGoods.domain.mypage.Address;
+import com.umc.TheGoods.domain.mypage.ContactTime;
 import com.umc.TheGoods.redis.domain.RefreshToken;
 import com.umc.TheGoods.web.dto.member.MemberRequestDTO;
 import com.umc.TheGoods.web.dto.member.MemberResponseDTO;
@@ -48,7 +49,6 @@ public interface MemberCommandService {
 
     Member profileModify(MultipartFile profile, String nickname, String introduce, Member member);
 
-    Member updateRole(Member member);
 
     void updatePhoneName(MemberRequestDTO.PhoneNameUpdateDTO request, Member member);
 
@@ -68,12 +68,13 @@ public interface MemberCommandService {
 
     void deleteAddress(Member member, Long addressId);
 
-    void updateCustomInfo(Long memberId, MemberRequestDTO.CustomInfoDTO request);
 
     void postDeclare(Member member, MemberRequestDTO.DeclareDTO request);
 
     void deleteDeclare(Long declarationId, Member member);
 
     void postContact(Long memberId, MemberRequestDTO.ContactDTO request);
+
+    ContactTime getContact(Member member);
 
 }

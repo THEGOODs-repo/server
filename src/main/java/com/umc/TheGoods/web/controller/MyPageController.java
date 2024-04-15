@@ -13,6 +13,7 @@ import com.umc.TheGoods.domain.member.Auth;
 import com.umc.TheGoods.domain.member.Member;
 import com.umc.TheGoods.domain.mypage.Account;
 import com.umc.TheGoods.domain.mypage.Address;
+import com.umc.TheGoods.domain.mypage.ContactTime;
 import com.umc.TheGoods.domain.mypage.Declaration;
 import com.umc.TheGoods.service.MemberService.MemberCommandService;
 import com.umc.TheGoods.service.MemberService.MemberQueryService;
@@ -61,18 +62,7 @@ public class MyPageController {
     }
 
 
-    @PutMapping(value = "/role/update")
-    @Operation(summary = "사용자 역할 전환 api", description = "BUYER은 SELLER로 SELLER는 BUYER로 역할 변경")
-    public ApiResponse<MemberResponseDTO.RoleUpdateResultDTO> updateRole(Authentication authentication) {
 
-        Member member = memberQueryService.findMemberById(Long.valueOf(authentication.getName().toString())).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
-
-        Member update = memberCommandService.updateRole(member);
-
-
-
-        return ApiResponse.onSuccess(MemberConverter.toUpdateRole(update));
-    }
 
 
     @PostMapping(value = "/address")
@@ -220,26 +210,8 @@ public class MyPageController {
         return ApiResponse.of(SuccessStatus.MEMBER_NOTIFICATION_UPDATE,null);
     }
 
-    @PostMapping(value = "/custom/info")
-    @Operation(summary = "mypage 고객 맞춤 정보 변경 api", description = "request로 카테고리와 태그, 정보이용 동의를 보내면 카테고리와 태그 정보 수정됩니다.")
-    public ApiResponse<?> updateCustomInfo(Authentication authentication,
-                                           @RequestBody MemberRequestDTO.CustomInfoDTO request){
-        Member member = memberQueryService.findMemberById(Long.valueOf(authentication.getName().toString())).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
-        //회원 맞춤 정보 update하는 로직
-        memberCommandService.updateCustomInfo(member.getId(),request);
-        return ApiResponse.of(SuccessStatus.MEMBER_CUSTOM_INFO_UPDATE,null);
-    }
 
-    @GetMapping(value = "/custom/info")
-    @Operation(summary = "mypage 고객 맞춤 정보 조회 api",description = "회원의 카테고리와 태그 정보 가져올 수 있습니다.")
-    public ApiResponse<MemberResponseDTO.CustomInfoDTO> getCustomInfo(Authentication authentication){
-
-        Member member = memberQueryService.findMemberById(Long.valueOf(authentication.getName().toString())).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
-        List<Category> categoryList = memberQueryService.findCategoryByMember(member);
-        List<Tag> tagList = memberQueryService.findTagByMember(member);
-        return ApiResponse.onSuccess(MemberConverter.toCustomInfoDTO(categoryList, tagList));
-    }
 
     /**\
      * 신고 기능
@@ -291,6 +263,15 @@ public class MyPageController {
 
         memberCommandService.postContact(Long.valueOf(authentication.getName().toString()), request);
         return ApiResponse.of(SuccessStatus.MEMBER_CONTACT_SUCCESS,null);
+    }
+
+    @GetMapping(value = "/contact")
+    @Operation(summary = "mypage 연락가능 시간 조회 api")
+    public ApiResponse<?> getContact(Authentication authentication){
+
+        Member member = memberQueryService.findMemberById(Long.valueOf(authentication.getName().toString())).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        ContactTime contactTime = memberCommandService.getContact(member);
+        return ApiResponse.onSuccess(MemberConverter.toContactDTO(contactTime));
     }
 
     @GetMapping(value = "/profile")
