@@ -31,11 +31,9 @@ public class MemberRequestDTO {
         @NotBlank(message = "이메일을 입력해주세요")
         @Email(message = "이메일 형식이 올바르지 않습니다.")
         private String email;
-        @NotBlank(message = "생일을 입력해주세요")
         private Date birthday;
         @NotBlank(message = "휴대폰 번호를 입력해주세요")
         private String phone;
-        @NotBlank(message = "성별을 입력해주세요")
         private Gender gender;
         private List<Boolean> memberTerm;//약관 동의
 
