@@ -11,9 +11,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface CartRepository extends JpaRepository<Cart, Long> {
-
-    Optional<Cart> findByMemberAndItem(Member member, Item item);
-
     List<Cart> findAllByMemberAndItemIdAndCartStatus(Member member, Long itemId, CartStatus cartStatus);
 
     List<Cart> findAllByMemberAndCartStatusOrderByItemIdAsc(Member member, CartStatus cartStatus);
@@ -21,4 +18,5 @@ public interface CartRepository extends JpaRepository<Cart, Long> {
     Optional<Cart> findByMemberAndItemAndItemOptionAndCartStatus(Member member, Item item, ItemOption itemOption, CartStatus cartStatus);
 
     Optional<Cart> findByMemberAndItemAndCartStatus(Member member, Item item, CartStatus cartStatus);
+
 }
