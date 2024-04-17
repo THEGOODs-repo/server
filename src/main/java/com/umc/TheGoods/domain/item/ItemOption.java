@@ -1,7 +1,6 @@
 package com.umc.TheGoods.domain.item;
 
 import com.umc.TheGoods.domain.common.BaseDateTimeEntity;
-import com.umc.TheGoods.domain.order.CartDetail;
 import com.umc.TheGoods.domain.order.OrderDetail;
 import lombok.*;
 
@@ -37,8 +36,6 @@ public class ItemOption extends BaseDateTimeEntity {
     @OneToMany(mappedBy = "itemOption", cascade = CascadeType.ALL)
     private List<OrderDetail> orderDetailList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "itemOption", cascade = CascadeType.ALL)
-    private List<CartDetail> cartDetailList = new ArrayList<>();
 
     // 판매수, 재고 관련 메소드
     public ItemOption updateStock(Integer i) {

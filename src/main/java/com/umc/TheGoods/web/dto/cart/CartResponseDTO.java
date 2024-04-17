@@ -49,14 +49,14 @@ public class CartResponseDTO {
     @AllArgsConstructor
     public static class cartStockDTO {
         Long itemId;
-        List<cartDetailStockDTO> cartDetailStockDTOList;
+        List<cartOptionStockDTO> cartOptionStockDTOList;
     }
 
     @Builder
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class cartDetailStockDTO {
+    public static class cartOptionStockDTO {
         Long itemOptionId;
         Integer stock;
     }

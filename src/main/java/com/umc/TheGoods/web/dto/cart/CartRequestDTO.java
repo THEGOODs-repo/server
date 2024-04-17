@@ -1,8 +1,7 @@
 package com.umc.TheGoods.web.dto.cart;
 
-import com.umc.TheGoods.validation.annotation.ExistCartDetail;
+import com.umc.TheGoods.validation.annotation.ExistCart;
 import com.umc.TheGoods.validation.annotation.ExistItem;
-import com.umc.TheGoods.validation.annotation.ExistItemOption;
 import lombok.Getter;
 
 import javax.validation.Valid;
@@ -14,29 +13,26 @@ import java.util.List;
 public class CartRequestDTO {
 
     @Getter
+    public static class cartAddDTOList {
+        @NotNull
+        @Valid
+        List<cartAddDTO> cartAddDTOList;
+
+    }
+
+    @Getter
     public static class cartAddDTO {
         @NotNull
         @ExistItem
         Long itemId;
 
-        Integer amount;
-
-        @NotNull
-        @Valid
-        List<cartOptionAddDTO> cartOptionAddDTOList;
-
-    }
-
-    @Getter
-    public static class cartOptionAddDTO {
-        @NotNull
-        @ExistItemOption
-        Long itemOptionId;
-
         @Min(1)
         @Max(100000)
         @NotNull
         Integer amount;
+
+        Long itemOptionId;
+
 
     }
 
@@ -50,8 +46,8 @@ public class CartRequestDTO {
     @Getter
     public static class cartUpdateDTO {
         @NotNull
-        @ExistCartDetail
-        Long cartDetailId;
+        @ExistCart
+        Long cartId;
 
         @Min(1)
         @Max(100000)
@@ -60,15 +56,15 @@ public class CartRequestDTO {
     }
 
     @Getter
-    public static class cartDetailDeleteDTO {
+    public static class cartOptionDeleteDTO {
         @NotNull
-        List<Long> cartDetailIdList;
+        List<Long> cartIdList;
     }
 
     @Getter
-    public static class cartDeleteDTO {
+    public static class cartDeleteByItemDTO {
         @NotNull
-        List<Long> cartIdList;
+        List<Long> itemIdList;
     }
 
 }

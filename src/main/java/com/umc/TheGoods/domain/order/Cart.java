@@ -1,13 +1,13 @@
 package com.umc.TheGoods.domain.order;
 
 import com.umc.TheGoods.domain.common.BaseDateTimeEntity;
+import com.umc.TheGoods.domain.enums.CartStatus;
 import com.umc.TheGoods.domain.item.Item;
+import com.umc.TheGoods.domain.item.ItemOption;
 import com.umc.TheGoods.domain.member.Member;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Getter
@@ -29,8 +29,16 @@ public class Cart extends BaseDateTimeEntity {
     @JoinColumn(name = "item_id", nullable = false)
     private Item item;
 
-    @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL)
-    private List<CartDetail> cartDetailList = new ArrayList<>();
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "item_option_id")
+    private ItemOption itemOption;
+
+    @Column(nullable = false)
+    private Integer amount;
+
+    @Enumerated(EnumType.STRING)
+    @Column(columnDefinition = "VARCHAR(20)", nullable = false)
+    private CartStatus cartStatus;
 
     // 연관관계 메소드
     public void setMember(Member member) {
@@ -41,12 +49,12 @@ public class Cart extends BaseDateTimeEntity {
         member.getCartList().add(this);
     }
 
-    public void setItem(Item item) {
-        if (this.item != null) {
-            this.item.getItemCartList().remove(this);
-        }
-        this.item = item;
-        item.getItemCartList().add(this);
+    public void updateAmount(Integer n) {
+        this.amount = n;
+    }
+
+    public void setCartStatus(CartStatus cartStatus) {
+        this.cartStatus = cartStatus;
     }
 
 }
