@@ -1,12 +1,15 @@
 package com.umc.TheGoods.repository.member;
 
+import com.umc.TheGoods.domain.enums.Gender;
 import com.umc.TheGoods.domain.enums.MemberRole;
 import com.umc.TheGoods.domain.member.Member;
+import com.umc.TheGoods.web.dto.member.MemberRequestDTO;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.Optional;
 
 public interface MemberRepository extends JpaRepository<Member, Long> {
@@ -75,5 +78,11 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     @Modifying(clearAutomatically = true)
     @Query("UPDATE Member m SET m.infoTerm = :infoTerm WHERE m.id = :memberId")
     void changeInfoTerm(Long memberId, Boolean infoTerm);
+
+    @Transactional
+    @Modifying(clearAutomatically = true)
+    @Query("UPDATE Member m SET m.name = :name, m.email = :email, m.phone = :phone, m.birthday = :birthday, m.gender = :gender, m.password = :password, m.nickname = :nickname WHERE m.id = :memberId")
+    void reregister(Long memberId, String nickname, String name, String password, String email, Date birthday
+                      ,Gender gender, String phone);
 
 }

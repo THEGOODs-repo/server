@@ -69,7 +69,6 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     private final TokenProvider tokenProvider;
     private final RedisService redisService;
     private final WithdrawReasonRepository withdrawReasonRepository;
-    private final TagRepository tagRepository;
     private final DeclarationRepository declarationRepository;
     private final ContactTimeRepository contactTimeRepository;
     private final ItemRepository itemRepository;
@@ -104,14 +103,40 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     @Override
     public Member join(MemberRequestDTO.JoinDTO request) {
 
-        // userNAme 중복 체크
-        memberRepository.findByNickname(request.getNickname())
-                .ifPresent(user -> {
-                    throw new MemberHandler(ErrorStatus.MEMBER_NICKNAME_DUPLICATED);
-                });
+        Member existingMember = null;
 
-        //저장
-        Member member = MemberConverter.toMember(request, encoder);
+
+        Optional<Member> existingNickname = memberRepository.findByNickname(request.getNickname());
+        if (existingNickname.isPresent()) {
+            if (!existingNickname.get().getMemberStatus().equals(MemberStatus.INACTIVE)) {
+                throw new MemberHandler(ErrorStatus.MEMBER_NICKNAME_DUPLICATED);
+            } else {
+                //탈퇴한 회원인 경우
+                existingMember = existingNickname.get();
+            }
+        }
+
+        Optional<Member> existingEmail = memberRepository.findByEmail(request.getEmail());
+        if (existingEmail.isPresent()) {
+            if (!existingEmail.get().getMemberStatus().equals(MemberStatus.INACTIVE)) {
+                throw new MemberHandler(ErrorStatus.MEMBER_EMAIL_DUPLICATED);
+            } else {
+                //탈퇴한 회원인 경우
+                existingMember = existingEmail.get();
+            }
+        }
+
+        Member member;
+        if (existingMember != null) {
+            //탈퇴한 회원이 다시 회원가입하는 경우
+            existingMember.setMemberStatus(MemberStatus.ACTIVE);
+            memberRepository.reregister(existingMember.getId(),request.getNickname(),
+                    request.getName(), encoder.encode(request.getPassword()), request.getEmail(),
+                    request.getBirthday(), request.getGender(), request.getPhone());
+            return existingMember;
+        } else {
+            member = MemberConverter.toMember(request, encoder);
+        }
 
         // 약관동의 저장 로직
         HashMap<Term, Boolean> termMap = new HashMap<>();
@@ -251,7 +276,12 @@ public class MemberCommandServiceImpl implements MemberCommandService {
         Boolean checkEmail = false;
 
         if (!member.isPresent()) {
+
             checkEmail = true;
+        }else{
+            if(member.get().getMemberStatus().equals(MemberStatus.INACTIVE)){
+                checkEmail =true;
+            }
         }
         return checkEmail;
     }
@@ -264,6 +294,10 @@ public class MemberCommandServiceImpl implements MemberCommandService {
 
         if (!member.isPresent()) {
             checkNickname = true;
+        }else{
+            if(member.get().getMemberStatus().equals(MemberStatus.INACTIVE)){
+                checkNickname =true;
+            }
         }
         return checkNickname;
     }
@@ -666,8 +700,14 @@ public class MemberCommandServiceImpl implements MemberCommandService {
                 .caution(request.getCaution())
                 .member(member)
                 .build();
+
+        //이미 존재하는 탈퇴사유 삭제
+        Optional<WithdrawReason> beforereason = withdrawReasonRepository.findByMember_Id(memberId);
+        if(beforereason.isPresent()){
+            withdrawReasonRepository.delete(beforereason.get());
+        }
         withdrawReasonRepository.save(withdrawReason);
-        member.inactivateStatus();
+        member.setMemberStatus(MemberStatus.INACTIVE);
         memberRepository.save(member);
         List<Item> itemList = itemRepository.findAllByMember(member);
         itemList.stream().forEach(item -> {
@@ -766,5 +806,6 @@ public class MemberCommandServiceImpl implements MemberCommandService {
 
         return contactTime;
     }
+
 }
 

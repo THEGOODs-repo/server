@@ -217,6 +217,7 @@ public class Member extends BaseDateTimeEntity {
         this.profileImg = profileImg;
     }
 
-    public void inactivateStatus(){
-        this.memberStatus = memberStatus.INACTIVE;}
+    public void setMemberStatus(MemberStatus memberStatus){
+        this.memberStatus = memberStatus;
+    }
 }
