@@ -700,6 +700,12 @@ public class MemberCommandServiceImpl implements MemberCommandService {
                 .caution(request.getCaution())
                 .member(member)
                 .build();
+
+        //이미 존재하는 탈퇴사유 삭제
+        Optional<WithdrawReason> beforereason = withdrawReasonRepository.findByMember_Id(memberId);
+        if(beforereason.isPresent()){
+            withdrawReasonRepository.delete(beforereason.get());
+        }
         withdrawReasonRepository.save(withdrawReason);
         member.setMemberStatus(MemberStatus.INACTIVE);
         memberRepository.save(member);
