@@ -4,9 +4,7 @@ import com.umc.TheGoods.domain.common.BaseDateTimeEntity;
 import com.umc.TheGoods.domain.images.PostImg;
 import com.umc.TheGoods.domain.mapping.post.PostLike;
 import com.umc.TheGoods.domain.member.Member;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -15,6 +13,8 @@ import java.util.List;
 @Entity
 @Table(name = "post")
 @Getter
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)  // 생성 로직 규정
 public class Post extends BaseDateTimeEntity {
 

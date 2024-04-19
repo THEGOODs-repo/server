@@ -16,6 +16,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -71,9 +74,14 @@ public class PostController {
         return null;
     }
 
-    @PostMapping("/{postId}")
-    public ApiResponse<PostResponseDto.PostStatusDto> registerPost(@PathVariable Long postId) {
-        return null;
+    @PostMapping("/")
+    public ApiResponse<?> registerPost(@RequestPart(value = "content") String content,
+                                       @RequestPart(value = "postImgList", required = false) List<MultipartFile> postImgList,
+                                       Authentication authentication) {
+        Member member = memberQueryService.findMemberById(Long.valueOf(authentication.getName().toString())).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        postCommandService.registerPost(member,content,postImgList);
+
+        return ApiResponse.of(SuccessStatus.POST_UPLOAD_SUCCESS, null);
     }
 
     @PatchMapping("/{postId}")
