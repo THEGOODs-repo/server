@@ -74,7 +74,7 @@ public class PostController {
         return null;
     }
 
-    @PostMapping("/")
+    @PostMapping("/feed")
     public ApiResponse<?> registerPost(@RequestPart(value = "content") String content,
                                        @RequestPart(value = "postImgList", required = false) List<MultipartFile> postImgList,
                                        Authentication authentication) {
@@ -84,9 +84,15 @@ public class PostController {
         return ApiResponse.of(SuccessStatus.POST_UPLOAD_SUCCESS, null);
     }
 
-    @PatchMapping("/{postId}")
-    public ApiResponse<PostResponseDto.PostStatusDto> updatePost(@PathVariable Long postId) {
-        return null;
+    @PatchMapping("/feed/{postId}")
+    public ApiResponse<PostResponseDto.PostStatusDto> updatePost(@PathVariable Long postId,
+                                                                 @RequestPart(value = "content") String content,
+                                                                 @RequestPart(value = "postImgList", required = false) List<MultipartFile> postImgList,
+                                                                 Authentication authentication) {
+        Member member = memberQueryService.findMemberById(Long.valueOf(authentication.getName().toString())).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        postCommandService.updatePost(member,postId, content,postImgList);
+
+        return ApiResponse.of(SuccessStatus.POST_UPDATE_SUCCESS,null);
     }
 
     @DeleteMapping("/{postId}")

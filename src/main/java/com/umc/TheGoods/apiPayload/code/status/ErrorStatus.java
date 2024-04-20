@@ -75,6 +75,7 @@ public enum ErrorStatus implements BaseErrorCode {
     POST_SELF_FOLLOW(HttpStatus.BAD_REQUEST, "POST4001", "자신을 팔로우 했습니다."),
     POST_ALREADY_FOLLOW(HttpStatus.BAD_REQUEST, "POST4002", "이미 팔로우 했습니다."),
     POST_FOLLOW_NOT_FOUND(HttpStatus.BAD_REQUEST, "POST4003", "해당 팔로우를 찾을수 없습니다."),
+    POST_NOT_FOUND(HttpStatus.BAD_REQUEST, "POST4004", "포스트를 찾을수 없습니다."),
 
 
     //Category

@@ -76,4 +76,28 @@ public class PostCommandServiceImpl implements PostCommandService {
 
         postRepository.save(post);
     }
+
+    @Override
+    public void updatePost(Member member,Long postId, String content, List<MultipartFile> multipartFileList) {
+
+        Post post = postRepository.findById(postId).orElseThrow(() -> new PostHandler(ErrorStatus.POST_NOT_FOUND));
+        post.updatePost(content);
+
+        List<PostImg> postImgList = postImgRepository.findByPostId(postId);
+        postImgRepository.deleteAll(postImgList);
+
+        if (multipartFileList != null) {
+            List<PostImg> newPostImgList = multipartFileList.stream().map(multipartFile -> {
+                String postImgUrl = utilService.uploadS3Img("post", multipartFile);
+
+                PostImg postImg = PostConverter.toPostImg(postImgUrl, post);
+                return postImg;
+            }).collect(Collectors.toList());
+
+            postImgRepository.saveAll(newPostImgList);
+        }
+
+
+
+    }
 }

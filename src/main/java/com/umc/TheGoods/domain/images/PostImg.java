@@ -1,6 +1,7 @@
 package com.umc.TheGoods.domain.images;
 
 import com.umc.TheGoods.domain.community.Post;
+import com.umc.TheGoods.domain.item.Item;
 import lombok.*;
 
 import javax.persistence.*;
@@ -24,4 +25,11 @@ public class PostImg {
 
     @Column(columnDefinition = "TEXT", nullable = false)
     private String url;
+
+    public void setPost(Post post){
+        if(this.post != null)
+            post.getPostImgList().remove(this);
+        this.post = post;
+        post.getPostImgList().add(this);
+    }
 }

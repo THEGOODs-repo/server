@@ -13,4 +13,6 @@ public interface PostCommandService {
 
     void registerPost(Member member, String content, List<MultipartFile> multipartFileList);
 
+    void updatePost(Member member, Long postId, String content, List<MultipartFile> multipartFileList);
+
 }
