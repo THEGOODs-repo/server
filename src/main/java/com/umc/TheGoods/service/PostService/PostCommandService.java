@@ -15,4 +15,6 @@ public interface PostCommandService {
 
     void updatePost(Member member, Long postId, String content, List<MultipartFile> multipartFileList);
 
+    void deletePost(Member member, Long postId);
+
 }
