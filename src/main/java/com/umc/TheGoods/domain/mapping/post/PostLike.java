@@ -3,15 +3,15 @@ package com.umc.TheGoods.domain.mapping.post;
 import com.umc.TheGoods.domain.common.BaseDateTimeEntity;
 import com.umc.TheGoods.domain.community.Post;
 import com.umc.TheGoods.domain.member.Member;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Entity
 @Table(name = "post_like")
 @Getter
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)  // 생성 로직 규정
 public class PostLike extends BaseDateTimeEntity {
 

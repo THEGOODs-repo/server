@@ -17,4 +17,8 @@ public interface PostCommandService {
 
     void deletePost(Member member, Long postId);
 
+    void likePost(Member member, Long postId);
+
+    void unlikePost(Member member, Long postId);
+
 }
