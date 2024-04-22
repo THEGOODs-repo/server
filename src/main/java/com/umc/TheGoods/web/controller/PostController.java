@@ -110,4 +110,20 @@ public class PostController {
         return ApiResponse.of(SuccessStatus.POST_DELETE_SUCCESS, null);
     }
 
+    @PostMapping("/likes/{postId}")
+    public ApiResponse<?> likePost(@PathVariable Long postId,
+                                   Authentication authentication){
+        Member member = memberQueryService.findMemberById(Long.valueOf(authentication.getName().toString())).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        postCommandService.likePost(member, postId);
+        return ApiResponse.of(SuccessStatus.POST_LIKE_SUCCESS,null);
+    }
+
+    @DeleteMapping("/likes/{postId}")
+    public ApiResponse<?> unlikePost(@PathVariable Long postId,
+                                     Authentication authentication){
+        Member member = memberQueryService.findMemberById(Long.valueOf(authentication.getName().toString())).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        postCommandService.unlikePost(member, postId);
+        return ApiResponse.of(SuccessStatus.POST_DELETE_LIKE_SUCCESS,null);
+    }
+
 }

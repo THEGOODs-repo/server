@@ -1,7 +1,9 @@
 package com.umc.TheGoods.converter.post;
 
+
 import com.umc.TheGoods.domain.community.Post;
 import com.umc.TheGoods.domain.images.PostImg;
+import com.umc.TheGoods.domain.mapping.post.PostLike;
 import com.umc.TheGoods.domain.member.Follow;
 import com.umc.TheGoods.domain.member.Member;
 
@@ -27,6 +29,14 @@ public class PostConverter {
         return PostImg.builder()
                 .post(post)
                 .url(url)
+                .build();
+    }
+
+    public static PostLike toPostLike(Member member, Post post){
+
+        return PostLike.builder()
+                .member(member)
+                .post(post)
                 .build();
     }
 }

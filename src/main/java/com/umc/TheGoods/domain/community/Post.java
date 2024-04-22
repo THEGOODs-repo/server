@@ -5,6 +5,8 @@ import com.umc.TheGoods.domain.images.PostImg;
 import com.umc.TheGoods.domain.mapping.post.PostLike;
 import com.umc.TheGoods.domain.member.Member;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicInsert;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -14,6 +16,7 @@ import java.util.List;
 @Table(name = "post")
 @Getter
 @Builder
+@DynamicInsert
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)  // 생성 로직 규정
 public class Post extends BaseDateTimeEntity {
@@ -42,6 +45,13 @@ public class Post extends BaseDateTimeEntity {
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     private List<PostImg> postImgList = new ArrayList<>();
 
+    @ColumnDefault("0")
+    @Column(nullable = false)
+    private Long viewCount;
+
+    @ColumnDefault("0")
+    @Column(nullable = false)
+    private Integer likesCount;
 
     public void updatePost(String content){
         this.content = content;
