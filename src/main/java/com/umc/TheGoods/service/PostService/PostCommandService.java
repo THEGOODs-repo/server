@@ -1,6 +1,7 @@
 package com.umc.TheGoods.service.PostService;
 
 import com.umc.TheGoods.domain.member.Member;
+import com.umc.TheGoods.web.dto.post.PostRequestDto;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -20,5 +21,7 @@ public interface PostCommandService {
     void likePost(Member member, Long postId);
 
     void unlikePost(Member member, Long postId);
+
+    void uploadComment(Member member, Long postId, PostRequestDto.CommentDTO request);
 
 }

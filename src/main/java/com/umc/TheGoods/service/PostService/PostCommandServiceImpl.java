@@ -4,17 +4,16 @@ import com.umc.TheGoods.apiPayload.code.status.ErrorStatus;
 import com.umc.TheGoods.apiPayload.exception.handler.MemberHandler;
 import com.umc.TheGoods.apiPayload.exception.handler.PostHandler;
 import com.umc.TheGoods.converter.post.PostConverter;
+import com.umc.TheGoods.domain.community.Comment;
 import com.umc.TheGoods.domain.community.Post;
 import com.umc.TheGoods.domain.images.PostImg;
 import com.umc.TheGoods.domain.mapping.post.PostLike;
 import com.umc.TheGoods.domain.member.Follow;
 import com.umc.TheGoods.domain.member.Member;
 import com.umc.TheGoods.repository.member.MemberRepository;
-import com.umc.TheGoods.repository.post.FollowRepository;
-import com.umc.TheGoods.repository.post.PostLikeRepository;
-import com.umc.TheGoods.repository.post.PostImgRepository;
-import com.umc.TheGoods.repository.post.PostRepository;
+import com.umc.TheGoods.repository.post.*;
 import com.umc.TheGoods.service.UtilService;
+import com.umc.TheGoods.web.dto.post.PostRequestDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -37,6 +36,7 @@ public class PostCommandServiceImpl implements PostCommandService {
     private final UtilService utilService;
     private final PostImgRepository postImgRepository;
     private final PostLikeRepository postLikeRepository;
+    private final CommentRepository commentRepository;
 
     @Override
     public void follow(Long followingId, Member follower) {
@@ -130,5 +130,20 @@ public class PostCommandServiceImpl implements PostCommandService {
         }
         PostLike postLike = postLikeRepository.findByPostIdAndMemberId(postId,member.getId());
         postLikeRepository.delete(postLike);
+    }
+
+    @Override
+    public void uploadComment(Member member, Long postId, PostRequestDto.CommentDTO request) {
+        Post post = postRepository.findById(postId).orElseThrow(() -> new PostHandler(ErrorStatus.POST_NOT_FOUND));
+        Comment comment = PostConverter.toComment(member, post, request.getComment());
+
+        Comment parentComment;
+        if (request.getParentId() != null) {
+            parentComment = commentRepository.findById(request.getParentId())
+                    .orElseThrow(() -> new PostHandler(ErrorStatus.POST_COMMENT_NOT_FOUND));
+            comment.updateParent(parentComment);
+        }
+
+        commentRepository.save(comment);
     }
 }
