@@ -22,21 +22,24 @@ public class CartResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class cartViewDTO {
-        Long cartId;
         String sellerName;
         Long itemId;
         String itemName;
         String itemImg;
         Integer deliveryFee;
-        List<cartDetailViewDTO> cartDetailViewDTOList;
+        List<cartOptionViewDTO> cartOptionViewDTOList;
+
+        public void addCartOptionViewDTO(cartOptionViewDTO cartOptionViewDTO) {
+            this.cartOptionViewDTOList.add(cartOptionViewDTO);
+        }
     }
 
     @Builder
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class cartDetailViewDTO {
-        Long cartDetailId;
+    public static class cartOptionViewDTO {
+        Long cartId;
         Long optionId;
         String optionName;
         Long price;

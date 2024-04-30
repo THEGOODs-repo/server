@@ -57,24 +57,24 @@ public class CartController {
         return ApiResponse.onSuccess("장바구니 담기 성공");
     }
 
-//    @GetMapping
-//    @Operation(summary = "나의 장바구니 목록 조회 API", description = "나의 장바구니 목록을 조회하는 API 입니다. (구매자 회원용)")
-//    @ApiResponses(value = {
-//            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
-//    })
-//    public ApiResponse<CartResponseDTO.cartViewListDTO> cartView(Authentication authentication) {
-//        // 비회원인 경우 처리 불가
-//        if (authentication == null) {
-//            throw new MemberHandler(ErrorStatus._UNAUTHORIZED);
-//        }
-//
-//        // request에서 member id 추출해 Member 엔티티 찾기
-//        Member member = memberQueryService.findMemberById(Long.valueOf(authentication.getName().toString())).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
-//
-//        List<Cart> cartList = cartQueryService.getCartList(member);
-//
-//        return ApiResponse.onSuccess(CartConverter.toCartViewListDTO(cartList));
-//    }
+    @GetMapping
+    @Operation(summary = "나의 장바구니 목록 조회 API", description = "나의 장바구니 목록을 조회하는 API 입니다. (구매자 회원용)")
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
+    })
+    public ApiResponse<CartResponseDTO.cartViewListDTO> cartView(Authentication authentication) {
+        // 비회원인 경우 처리 불가
+        if (authentication == null) {
+            throw new MemberHandler(ErrorStatus._UNAUTHORIZED);
+        }
+
+        // request에서 member id 추출해 Member 엔티티 찾기
+        Member member = memberQueryService.findMemberById(Long.valueOf(authentication.getName().toString())).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        List<Cart> cartList = cartQueryService.getCartsByMember(member);
+
+        return ApiResponse.onSuccess(CartConverter.toCartViewListDTO(cartList));
+    }
 
     @PutMapping
     @Operation(summary = "장바구니 수량 수정 API", description = "해당 장바구니 내역의 담은 수량을 수정하는 API 입니다.")

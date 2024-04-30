@@ -27,5 +27,10 @@ public class CartQueryServiceImpl implements CartQueryService {
         return cartRepository.findAllByMemberAndItemIdAndCartStatus(member, itemId, CartStatus.ACTIVE);
     }
 
+    @Override
+    public List<Cart> getCartsByMember(Member member) {
+        return cartRepository.findAllByMemberAndCartStatusOrderByItemIdAsc(member, CartStatus.ACTIVE);
+    }
+
 
 }
