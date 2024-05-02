@@ -10,4 +10,6 @@ public interface CartQueryService {
     boolean isExistCart(Long cartId);
 
     List<Cart> getCartsByItem(Long itemId, Member member);
+
+    List<Cart> getCartsByMember(Member member);
 }
