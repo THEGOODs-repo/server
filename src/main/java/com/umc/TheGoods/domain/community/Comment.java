@@ -5,6 +5,8 @@ import com.umc.TheGoods.domain.mapping.comment.CommentLike;
 import com.umc.TheGoods.domain.mapping.comment.CommentMention;
 import com.umc.TheGoods.domain.member.Member;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicInsert;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -14,6 +16,7 @@ import java.util.List;
 @Table(name = "comment")
 @Getter
 @Builder
+@DynamicInsert
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)  // 생성 로직 규정
 public class Comment extends BaseDateTimeEntity {
@@ -30,6 +33,10 @@ public class Comment extends BaseDateTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")
     private Post post;
+
+    @ColumnDefault("0")
+    @Column(nullable = false)
+    private Integer likesCount;
 
     /**
      * 대댓글 관련

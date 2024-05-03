@@ -4,6 +4,7 @@ package com.umc.TheGoods.converter.post;
 import com.umc.TheGoods.domain.community.Comment;
 import com.umc.TheGoods.domain.community.Post;
 import com.umc.TheGoods.domain.images.PostImg;
+import com.umc.TheGoods.domain.mapping.comment.CommentLike;
 import com.umc.TheGoods.domain.mapping.post.PostLike;
 import com.umc.TheGoods.domain.member.Follow;
 import com.umc.TheGoods.domain.member.Member;
@@ -46,6 +47,13 @@ public class PostConverter {
         return Comment.builder()
                 .content(comment)
                 .post(post)
+                .member(member)
+                .build();
+    }
+
+    public static CommentLike toCommentLike(Member member, Comment comment){
+        return CommentLike.builder()
+                .comment(comment)
                 .member(member)
                 .build();
     }

@@ -7,6 +7,7 @@ import com.umc.TheGoods.converter.post.PostConverter;
 import com.umc.TheGoods.domain.community.Comment;
 import com.umc.TheGoods.domain.community.Post;
 import com.umc.TheGoods.domain.images.PostImg;
+import com.umc.TheGoods.domain.mapping.comment.CommentLike;
 import com.umc.TheGoods.domain.mapping.post.PostLike;
 import com.umc.TheGoods.domain.member.Follow;
 import com.umc.TheGoods.domain.member.Member;
@@ -37,6 +38,7 @@ public class PostCommandServiceImpl implements PostCommandService {
     private final PostImgRepository postImgRepository;
     private final PostLikeRepository postLikeRepository;
     private final CommentRepository commentRepository;
+    private final CommentLikeRepository commentLikeRepository;
 
     @Override
     public void follow(Long followingId, Member follower) {
@@ -117,20 +119,21 @@ public class PostCommandServiceImpl implements PostCommandService {
     @Override
     public void likePost(Member member, Long postId) {
         Post post = postRepository.findById(postId).orElseThrow(() -> new PostHandler(ErrorStatus.POST_NOT_FOUND));
-        postRepository.updateLikeCount(post.getId());
+        Optional<PostLike> postLike = postLikeRepository.findByMember_IdAndPost_Id(member.getId(), postId);
 
-        postLikeRepository.save(PostConverter.toPostLike(member, post));
-    }
+        if(postLike.isPresent()) {
+            if (post.getLikesCount() > 0) {
+                postRepository.updateUnlikeCount(postId);
+            }
 
-    @Override
-    public void unlikePost(Member member, Long postId) {
-        Post post = postRepository.findById(postId).orElseThrow(() -> new PostHandler(ErrorStatus.POST_NOT_FOUND));
-        if(post.getLikesCount()>0){
-            postRepository.updateUnlikeCount(postId);
+            postLikeRepository.delete(postLike.get());
+        }else {
+            postRepository.updateLikeCount(post.getId());
+
+            postLikeRepository.save(PostConverter.toPostLike(member, post));
         }
-        PostLike postLike = postLikeRepository.findByPostIdAndMemberId(postId,member.getId());
-        postLikeRepository.delete(postLike);
     }
+
 
     @Override
     public void uploadComment(Member member, Long postId, PostRequestDto.CommentDTO request) {
@@ -159,4 +162,22 @@ public class PostCommandServiceImpl implements PostCommandService {
 
 
     }
+
+    @Override
+    public void likeComment(Member member, Long commentId) {
+
+        Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new PostHandler(ErrorStatus.POST_COMMENT_NOT_FOUND));
+        Optional<CommentLike> commentLike = commentLikeRepository.findByMember_IdAndComment_Id(member.getId(), commentId);
+
+        if(commentLike.isPresent()){
+            if(comment.getLikesCount() > 0){
+                commentRepository.updateUnlikeCount(commentId);
+            }
+            commentLikeRepository.delete(commentLike.get());
+        }else {
+            commentRepository.updateLikeCount(commentId);
+            commentLikeRepository.save(PostConverter.toCommentLike(member, comment));
+        }
+    }
+
 }
