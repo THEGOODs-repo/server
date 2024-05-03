@@ -13,4 +13,11 @@ public class PostRequestDto {
         private Long parentId;
         private String comment;
     }
+
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class UpdateCommentDTO {
+        private String comment;
+    }
 }

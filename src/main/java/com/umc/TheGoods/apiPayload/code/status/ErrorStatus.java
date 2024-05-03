@@ -77,6 +77,7 @@ public enum ErrorStatus implements BaseErrorCode {
     POST_FOLLOW_NOT_FOUND(HttpStatus.BAD_REQUEST, "POST4003", "해당 팔로우를 찾을수 없습니다."),
     POST_NOT_FOUND(HttpStatus.BAD_REQUEST, "POST4004", "포스트를 찾을수 없습니다."),
     POST_COMMENT_NOT_FOUND(HttpStatus.BAD_REQUEST,"POST4005", "해당 댓글을 찾을 수 없습니다."),
+    POST_COMMENT_NOT_UPDATE(HttpStatus.BAD_REQUEST, "POST4006", "해당 댓글을 수정할 수 없습니다."),
 
 
     //Category

@@ -146,4 +146,17 @@ public class PostCommandServiceImpl implements PostCommandService {
 
         commentRepository.save(comment);
     }
+
+    @Override
+    public void updateComment(Member member, Long postId, Long commentId, PostRequestDto.UpdateCommentDTO request) {
+
+        Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new PostHandler(ErrorStatus.POST_COMMENT_NOT_FOUND));
+        if(!comment.getMember().equals(member)){
+            throw new PostHandler(ErrorStatus.POST_COMMENT_NOT_UPDATE);
+        }
+
+        commentRepository.updateComment(commentId, request.getComment());
+
+
+    }
 }
