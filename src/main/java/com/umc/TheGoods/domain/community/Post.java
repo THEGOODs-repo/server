@@ -23,12 +23,15 @@ public class Post extends BaseDateTimeEntity {
     @Column(name = "post_id")
     private Long id;
 
+    @Column(columnDefinition = "VARCHAR(200)", nullable = false)
+    private String title;
+
+    @Column(columnDefinition = "TEXT", nullable = false)
+    private String contentImg;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
-
-    @Column(columnDefinition = "TEXT", nullable = false)
-    private String content;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     private List<PostLike> postLikeList = new ArrayList<>();
