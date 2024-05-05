@@ -11,6 +11,12 @@ import java.util.List;
 
 public class PostResponseDto {
 
+    private Long id;
+    private String title;
+    private String contentImg;
+    private String createdAt;
+    private String updatedAt;
+
     @Builder
     @Getter
     @NoArgsConstructor

@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -66,22 +67,31 @@ public class PostController {
         return ApiResponse.of(SuccessStatus.POST_DELETE_FOLLOW_SUCCESS,null);
     }
 
+    /**
+     * Post CRUD
+     */
+
     @GetMapping("/{postId}")
-    public ApiResponse<PostResponseDto.PostViewDto> post(@PathVariable Long postId) {
-        return null;
+    @Operation(summary = "피드 단건 조회", description = "조회하려는 피드의 id가 필요합니다.")
+    public ApiResponse<PostResponseDto.PostViewDto> getPostById(@PathVariable Long postId) {
+        PostResponseDto.PostViewDto postViewDto = postCommandService.getPostById(postId);
+        return ResponseEntity.ok(postViewDto);
     }
 
     @PostMapping("/{postId}")
+    @Operation(summary = "피드 등록", description = "")
     public ApiResponse<PostResponseDto.PostStatusDto> registerPost(@PathVariable Long postId) {
         return null;
     }
 
     @PatchMapping("/{postId}")
+    @Operation(summary = "피드 삭제", description = "")
     public ApiResponse<PostResponseDto.PostStatusDto> updatePost(@PathVariable Long postId) {
         return null;
     }
 
     @DeleteMapping("/{postId}")
+    @Operation(summary = "수정", description = "")
     public ApiResponse<PostResponseDto.PostStatusDto> deletePost(@PathVariable Long postId) {
         return null;
     }
