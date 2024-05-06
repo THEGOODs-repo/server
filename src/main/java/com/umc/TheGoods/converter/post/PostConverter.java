@@ -1,6 +1,7 @@
 package com.umc.TheGoods.converter.post;
 
 
+import com.umc.TheGoods.domain.community.Comment;
 import com.umc.TheGoods.domain.community.Post;
 import com.umc.TheGoods.domain.images.PostImg;
 import com.umc.TheGoods.domain.mapping.post.PostLike;
@@ -37,6 +38,15 @@ public class PostConverter {
         return PostLike.builder()
                 .member(member)
                 .post(post)
+                .build();
+    }
+
+    public static Comment toComment(Member member, Post post, String comment){
+
+        return Comment.builder()
+                .content(comment)
+                .post(post)
+                .member(member)
                 .build();
     }
 }
