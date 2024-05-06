@@ -1,15 +1,16 @@
 package com.umc.TheGoods.domain.images;
 
 import com.umc.TheGoods.domain.community.Post;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import com.umc.TheGoods.domain.item.Item;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Entity
 @Table(name = "post_img")
 @Getter
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class PostImg {
 
@@ -24,4 +25,11 @@ public class PostImg {
 
     @Column(columnDefinition = "TEXT", nullable = false)
     private String url;
+
+    public void setPost(Post post){
+        if(this.post != null)
+            post.getPostImgList().remove(this);
+        this.post = post;
+        post.getPostImgList().add(this);
+    }
 }
