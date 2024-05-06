@@ -132,7 +132,8 @@ public class PostController {
     }
 
     @PostMapping("/{postId}/comment")
-    @Operation(summary = "피드 댓글 등록 API", description = "postId: 댓글 등록할 피드, content: 댓글 내용 ")
+    @Operation(summary = "피드 댓글 등록 API", description = "parentId: 댓글인 경우 null 대댓글이라면 작성하려는 댓글 id," +
+                                                            "postId: 댓글 등록할 피드, content: 댓글 내용 ")
     public ApiResponse<?> uploadComment(@PathVariable(name = "postId") Long postId,
                                         Authentication authentication,
                                         @RequestBody PostRequestDto.CommentDTO request) {
@@ -141,5 +142,21 @@ public class PostController {
 
         return ApiResponse.of(SuccessStatus.POST_COMMENT_SUCCESS, null);
     }
+
+    @PutMapping("/{postId}/comment/{commentId}")
+    @Operation(summary = "피드 댓글 수정 API", description = "postId: 댓글 수정할 피드, commentId : 수정할 댓글, content: 댓글 내용")
+    public ApiResponse<?> updateComment(@PathVariable(name ="postId") Long postId,
+                                        @PathVariable(name ="commentId") Long commentId,
+                                        @RequestBody PostRequestDto.UpdateCommentDTO requet,
+                                        Authentication authentication) {
+        Member member = memberQueryService.findMemberById(Long.valueOf(authentication.getName().toString())).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        postCommandService.updateComment(member, postId, commentId, requet);
+
+        return ApiResponse.of(SuccessStatus.POST_UPDATE_COMMENT_SUCCESS, null);
+
+    }
+
+
+
 
 }
