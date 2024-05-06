@@ -26,6 +26,7 @@ public enum SuccessStatus implements BaseCode {
     POST_FOLLOW_SUCCESS(HttpStatus.OK, "POST2001", "팔로우 성공입니다."),
     POST_DELETE_FOLLOW_SUCCESS(HttpStatus.OK, "POST2002", "팔로우 취소 성공입니다."),
     POST_UPLOAD_SUCCESS(HttpStatus.OK, "POST2003", "포스트 업로드 성공입니다."),
+    POST_UPDATE_SUCCESS(HttpStatus.OK, "POST2004", "포스트 업데이트 성공입니다.")
     ;
 
     private final HttpStatus httpStatus;

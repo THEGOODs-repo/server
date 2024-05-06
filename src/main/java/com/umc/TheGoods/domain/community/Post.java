@@ -41,4 +41,9 @@ public class Post extends BaseDateTimeEntity {
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     private List<PostImg> postImgList = new ArrayList<>();
+
+
+    public void updatePost(String content){
+        this.content = content;
+    }
 }
