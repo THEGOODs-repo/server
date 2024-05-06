@@ -27,7 +27,7 @@ public class Post extends BaseDateTimeEntity {
     private Long id;
 
     @Column(columnDefinition = "VARCHAR(200)", nullable = false)
-    private String title;
+    private String content;
 
     @Column(columnDefinition = "TEXT", nullable = false)
     private String contentImg;
@@ -53,7 +53,7 @@ public class Post extends BaseDateTimeEntity {
     @Column(nullable = false)
     private Integer likesCount;
 
-    public void updatePost(String content){
+    public void updatePost(String content) {
         this.content = content;
     }
 }
