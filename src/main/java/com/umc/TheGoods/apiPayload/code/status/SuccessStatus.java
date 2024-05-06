@@ -32,7 +32,9 @@ public enum SuccessStatus implements BaseCode {
     POST_DELETE_LIKE_SUCCESS(HttpStatus.OK, "POST2007", "포스트 좋아요 취소 성공입니다."),
     POST_COMMENT_SUCCESS(HttpStatus.OK, "POST2008", "포스트 댓글 달기 성공입니다."),
     POST_DELETE_COMMENT_SUCCESS(HttpStatus.OK,"POST2009", "포스트 댓글 삭제 성공입니다."),
-    POST_UPDATE_COMMENT_SUCCESS(HttpStatus.OK, "POST2010", "포스트 댓글 수정 성공입니다.")
+    POST_UPDATE_COMMENT_SUCCESS(HttpStatus.OK, "POST2010", "포스트 댓글 수정 성공입니다."),
+    POST_COMMENT_LIKE_SUCCESS(HttpStatus.OK, "POST2011", "포스트 댓글 좋아요 성공입니다."),
+    POST_DELETE_COMMENT_LIKE_SUCCESS(HttpStatus.OK,"POST2012", "포스트 댓글 좋아요 취소 성공입니다.")
     ;
 
     private final HttpStatus httpStatus;
