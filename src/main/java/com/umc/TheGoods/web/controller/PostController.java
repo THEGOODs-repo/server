@@ -4,7 +4,6 @@ import com.umc.TheGoods.apiPayload.ApiResponse;
 import com.umc.TheGoods.apiPayload.code.status.ErrorStatus;
 import com.umc.TheGoods.apiPayload.code.status.SuccessStatus;
 import com.umc.TheGoods.apiPayload.exception.handler.MemberHandler;
-import com.umc.TheGoods.domain.member.Auth;
 import com.umc.TheGoods.domain.member.Member;
 import com.umc.TheGoods.service.MemberService.MemberQueryService;
 import com.umc.TheGoods.service.PostService.PostCommandService;
@@ -14,9 +13,11 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -47,7 +48,7 @@ public class PostController {
     @PostMapping("/follow/{followingId}")
     @Operation(summary = "팔로우 API", description = "팔로우 하려는 사람의 id를 request로 주시면 됩니다.")
     public ApiResponse<?> follow(Authentication authentication,
-                                 @RequestParam(name = "followingId") Long followingId){
+                                 @RequestParam(name = "followingId") Long followingId) {
 
         Member member = memberQueryService.findMemberById(Long.valueOf(authentication.getName().toString())).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
         //팔로우 기능
@@ -59,12 +60,12 @@ public class PostController {
     @PostMapping("/follow/delete/{followingId}")
     @Operation(summary = "팔로우 취소 API", description = "팔로우 취소하려는 사람의 id를 request로 주시면 됩니다.")
     public ApiResponse<?> deleteFollow(Authentication authentication,
-                                       @RequestParam(name = "followingId") Long followingId){
+                                       @RequestParam(name = "followingId") Long followingId) {
 
         Long memberId = Long.valueOf(authentication.getName().toString());
         //팔로우 취소 기능
-        postCommandService.deleteFollow(followingId,memberId);
-        return ApiResponse.of(SuccessStatus.POST_DELETE_FOLLOW_SUCCESS,null);
+        postCommandService.deleteFollow(followingId, memberId);
+        return ApiResponse.of(SuccessStatus.POST_DELETE_FOLLOW_SUCCESS, null);
     }
 
     /**
@@ -74,14 +75,18 @@ public class PostController {
     @GetMapping("/{postId}")
     @Operation(summary = "피드 단건 조회", description = "조회하려는 피드의 id가 필요합니다.")
     public ApiResponse<PostResponseDto.PostViewDto> getPostById(@PathVariable Long postId) {
-        PostResponseDto.PostViewDto postViewDto = postCommandService.getPostById(postId);
-        return ResponseEntity.ok(postViewDto);
+        return null;
     }
 
-    @PostMapping("/{postId}")
-    @Operation(summary = "피드 등록", description = "")
-    public ApiResponse<PostResponseDto.PostStatusDto> registerPost(@PathVariable Long postId) {
-        return null;
+
+    @PostMapping("/")
+    public ApiResponse<?> registerPost(@RequestPart(value = "content") String content,
+                                       @RequestPart(value = "postImgList", required = false) List<MultipartFile> postImgList,
+                                       Authentication authentication) {
+        Member member = memberQueryService.findMemberById(Long.valueOf(authentication.getName().toString())).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        postCommandService.registerPost(member, content, postImgList);
+
+        return ApiResponse.of(SuccessStatus.POST_UPLOAD_SUCCESS, null);
     }
 
     @PatchMapping("/{postId}")

@@ -1,15 +1,15 @@
 package com.umc.TheGoods.domain.images;
 
 import com.umc.TheGoods.domain.community.Post;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Entity
 @Table(name = "post_img")
 @Getter
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class PostImg {
 
