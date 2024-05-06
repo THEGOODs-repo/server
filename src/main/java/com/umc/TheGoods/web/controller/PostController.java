@@ -102,9 +102,12 @@ public class PostController {
     }
 
     @DeleteMapping("/{postId}")
-    @Operation(summary = "수정", description = "")
-    public ApiResponse<PostResponseDto.PostStatusDto> deletePost(@PathVariable Long postId) {
-        return null;
+    public ApiResponse<PostResponseDto.PostStatusDto> deletePost(@PathVariable Long postId,
+                                                                 Authentication authentication) {
+        Member member = memberQueryService.findMemberById(Long.valueOf(authentication.getName().toString())).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        postCommandService.deletePost(member, postId);
+
+        return ApiResponse.of(SuccessStatus.POST_DELETE_SUCCESS, null);
     }
 
 }
