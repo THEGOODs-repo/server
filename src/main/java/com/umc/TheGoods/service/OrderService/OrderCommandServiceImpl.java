@@ -3,13 +3,16 @@ package com.umc.TheGoods.service.OrderService;
 import com.umc.TheGoods.apiPayload.code.status.ErrorStatus;
 import com.umc.TheGoods.apiPayload.exception.handler.OrderHandler;
 import com.umc.TheGoods.converter.order.OrderConverter;
+import com.umc.TheGoods.domain.enums.CartStatus;
 import com.umc.TheGoods.domain.enums.OrderStatus;
 import com.umc.TheGoods.domain.item.Item;
 import com.umc.TheGoods.domain.item.ItemOption;
 import com.umc.TheGoods.domain.member.Member;
+import com.umc.TheGoods.domain.order.Cart;
 import com.umc.TheGoods.domain.order.OrderDetail;
 import com.umc.TheGoods.domain.order.OrderItem;
 import com.umc.TheGoods.domain.order.Orders;
+import com.umc.TheGoods.repository.cart.CartRepository;
 import com.umc.TheGoods.repository.item.ItemOptionRepository;
 import com.umc.TheGoods.repository.item.ItemRepository;
 import com.umc.TheGoods.repository.order.OrderItemRepository;
@@ -30,6 +33,7 @@ public class OrderCommandServiceImpl implements OrderCommandService {
     private final OrderItemRepository orderItemRepository;
     private final ItemRepository itemRepository;
     private final ItemOptionRepository itemOptionRepository;
+    private final CartRepository cartRepository;
 
     @Override
     public Orders create(OrderRequestDTO.OrderAddDTO request, Member member) {
@@ -92,8 +96,22 @@ public class OrderCommandServiceImpl implements OrderCommandService {
                     // OrderItem 주문 상품 합산 금액 업데이트
                     orderItem.updateTotalPrice(orderDetail.getOrderPrice());
                 }
+
+                // 장바구니에서 주문 요청하는 경우, cartId에 해당하는 장바구니 내역 삭제
+                if (orderDetailDTO.getCartId() != null) {
+                    Cart cart = cartRepository.findById(orderDetailDTO.getCartId()).orElseThrow(() -> new OrderHandler(ErrorStatus.CART_NOT_FOUND));
+
+                    // 해당 cart 내역을 수정할 권한 있는지 검증
+                    if (!cart.getMember().equals(member)) {
+                        throw new OrderHandler(ErrorStatus.NOT_CART_OWNER);
+                    }
+
+                    cart.setCartStatus(CartStatus.USER_DEL);
+                }
             });
             orderItem.updateTotalPrice(Long.valueOf(item.getDeliveryFee()));
+
+
         });
 
         return orders;
