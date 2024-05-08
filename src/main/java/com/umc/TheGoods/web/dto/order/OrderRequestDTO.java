@@ -65,6 +65,8 @@ public class OrderRequestDTO {
 
     @Getter
     public static class OrderDetailDTO {
+        Long cartId; // 장바구니에서 주문 요청하는 경우, cartId 값 필요
+
         Long itemOptionId;
 
         @Min(1)
