@@ -67,9 +67,9 @@ public class MemberConverter {
                 .build();
     }
 
-    public static MemberResponseDTO.NewTokenDTO toNewTokenDTO(String accessToken, String refreshToken) {
+    public static MemberResponseDTO.NewTokenDTO toNewTokenDTO(String accessToken, LocalDateTime time) {
         return MemberResponseDTO.NewTokenDTO.builder()
-                .refreshToken(refreshToken)
+                .accessExpireTime(time)
                 .accessToken(accessToken)
                 .build();
     }

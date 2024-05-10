@@ -2,6 +2,7 @@ package com.umc.TheGoods.service.MemberService;
 
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.umc.TheGoods.apiPayload.ApiResponse;
 import com.umc.TheGoods.domain.member.Auth;
 import com.umc.TheGoods.domain.member.Member;
 import com.umc.TheGoods.domain.mypage.Account;
@@ -12,6 +13,8 @@ import com.umc.TheGoods.web.dto.member.MemberRequestDTO;
 import com.umc.TheGoods.web.dto.member.MemberResponseDTO;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
+
 
 public interface MemberCommandService {
 
@@ -21,7 +24,7 @@ public interface MemberCommandService {
 
     Member join(MemberRequestDTO.JoinDTO request);
 
-    MemberResponseDTO.LoginResultDTO login(MemberRequestDTO.LoginDTO request);
+    MemberResponseDTO.LoginResultDTO login(MemberRequestDTO.LoginDTO request, HttpServletResponse response);
     void logout(String accessToken, Member member);
     String regenerateAccessToken(RefreshToken refreshToken);
 
@@ -39,13 +42,13 @@ public interface MemberCommandService {
 
     Boolean confirmEmailAuth(MemberRequestDTO.EmailAuthConfirmDTO request);
 
-    String emailAuthCreateJWT(MemberRequestDTO.EmailAuthConfirmDTO request);
+    MemberResponseDTO.LoginResultDTO emailAuthCreateJWT(MemberRequestDTO.EmailAuthConfirmDTO request, HttpServletResponse response);
 
     Boolean updatePassword(MemberRequestDTO.PasswordUpdateDTO request, Member member);
 
-    String kakaoAuth(String code);
+    ApiResponse<?> kakaoAuth(String code, HttpServletResponse response);
 
-    String naverAuth(String code, String state);
+    ApiResponse<?> naverAuth(String code, String state, HttpServletResponse response);
 
     Member profileModify(MultipartFile profile, String nickname, String introduce, Member member);
 

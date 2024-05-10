@@ -44,7 +44,8 @@ public class MemberResponseDTO {
     @AllArgsConstructor
     public static class LoginResultDTO {
         String accessToken;
-        RefreshToken refreshToken;
+        LocalDateTime accessExpireTime;
+
     }
 
     @Builder
@@ -241,7 +242,7 @@ public class MemberResponseDTO {
     @NoArgsConstructor
     public static class NewTokenDTO{
         private String accessToken;
-        private String refreshToken;
+        private LocalDateTime accessExpireTime;
     }
 
 

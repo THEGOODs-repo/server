@@ -61,6 +61,7 @@ public enum ErrorStatus implements BaseErrorCode {
     MEMBER_NOT_OWNER(HttpStatus.NOT_ACCEPTABLE, "MEMBER4011", "해당 회원이 아닙니다."),
     MEMBER_CONTACT_NOT_FOUND(HttpStatus.NOT_FOUND,"MEMBER4012", "연락 가능 시간을 조회할 수 없습니다."),
     MEMBER_EMAIL_DUPLICATED(HttpStatus.BAD_REQUEST, "MEMBER4013", "중복된 이메일입니다."),
+    MEMBER_EMAIL_INCORRECT(HttpStatus.BAD_REQUEST, "MEMBER4014", "잘못된 이메일입니다."),
 
     //JWT
 
