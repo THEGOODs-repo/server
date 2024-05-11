@@ -41,8 +41,11 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -74,10 +77,10 @@ public class MemberController {
     //password
     @PostMapping("/login")
     @Operation(summary = "로그인 API", description = "request 파라미터 : 이메일, 비밀번호(String)")
-    public ApiResponse<MemberResponseDTO.LoginResultDTO> login(@RequestBody MemberRequestDTO.LoginDTO request) {
+    public ApiResponse<MemberResponseDTO.LoginResultDTO> login(@RequestBody MemberRequestDTO.LoginDTO request, HttpServletResponse response) {
 
 
-        return ApiResponse.onSuccess(memberCommandService.login(request));
+        return ApiResponse.onSuccess(memberCommandService.login(request,response));
     }
 
     @Operation(summary = "로그아웃 API", description = "로그아웃 API 입니다.")
@@ -92,10 +95,20 @@ public class MemberController {
 
     @Operation(summary = "리프레쉬 토큰을 이용해 accessToken 재발급 API ️", description = "리프레쉬 토큰으로 accessToken 재발급하는 API입니다.")
     @PostMapping("/token/regenerate")
-    public ApiResponse<MemberResponseDTO.NewTokenDTO> getNewToken(@RequestBody MemberRequestDTO.RefreshTokenDTO request) {
+    public ApiResponse<MemberResponseDTO.NewTokenDTO> getNewToken(@RequestBody MemberRequestDTO.RefreshTokenDTO request,
+                                                                  HttpServletResponse response) {
         RefreshToken newRefreshToken = redisService.reGenerateRefreshToken(request);
         String accessToken = memberCommandService.regenerateAccessToken(newRefreshToken);
-        return ApiResponse.onSuccess(MemberConverter.toNewTokenDTO(accessToken, newRefreshToken.getToken()));
+
+        LocalDateTime currentDateTime = LocalDateTime.now();
+        LocalDateTime accessExpireTime = currentDateTime.plusHours(6);
+
+        Cookie cookie = new Cookie("refreshToken", newRefreshToken.getToken());
+        cookie.setHttpOnly(true);
+
+        response.addCookie(cookie);
+
+        return ApiResponse.onSuccess(MemberConverter.toNewTokenDTO(accessToken,accessExpireTime));
     }
 
     @PostMapping("/jwt/test")
@@ -170,16 +183,16 @@ public class MemberController {
 
     @PostMapping("email/auth/verify")
     @Operation(summary = "비밀번호 찾기에서 사용되는 email 인증 코드 검증 api", description = "request: 이메일, 코드 response: 인증완료 true")
-    public ApiResponse<MemberResponseDTO.EmailAuthConfirmResultDTO> emailAuth(@RequestBody MemberRequestDTO.EmailAuthConfirmDTO request) {
+    public ApiResponse<MemberResponseDTO.LoginResultDTO> emailAuth(@RequestBody MemberRequestDTO.EmailAuthConfirmDTO request, HttpServletResponse response) {
         Boolean checkEmail = memberCommandService.confirmEmailAuth(request);
 
 
         if (checkEmail == true) {
-            String jwt = memberCommandService.emailAuthCreateJWT(request);
-            return ApiResponse.onSuccess(MemberConverter.toEmailAuthConfirmResultDTO(checkEmail, jwt));
+
+            return ApiResponse.onSuccess(memberCommandService.emailAuthCreateJWT(request,response));
         }
 
-        return ApiResponse.onSuccess(MemberConverter.toEmailAuthConfirmResultDTO(checkEmail, null));
+        return ApiResponse.onFailure(ErrorStatus.MEMBER_EMAIL_INCORRECT.getCode(),ErrorStatus.MEMBER_EMAIL_INCORRECT.getMessage(), null);
 
     }
 
@@ -201,35 +214,22 @@ public class MemberController {
 
     @GetMapping("/kakao/callback")
     @Operation(summary = "카카오 소셜 로그인 api", description = "callback 용도 api여서 swagger에서 test 안됩니다")
-    public ApiResponse<?> kakaoCallback(@RequestParam String code) {
+    public ApiResponse<?> kakaoCallback(@RequestParam String code, HttpServletResponse response) {
 
-        String result = memberCommandService.kakaoAuth(code);
+        return memberCommandService.kakaoAuth(code, response);
 
         //반환한 카카오 프로필에서 기존 회원이면 jwt 토큰 반환 아니면 회원가입 진행
         //토큰 반환은 쉽지만 회원가입 로직으로 보내야하면 false 반환해서 회원가입 진행하도록하기
 
-        if (result.startsWith("010")) {
-            String phone = result.substring(0, 11);
-            String email = result.substring(11);
-            return ApiResponse.onFailure("로그인 실패", "회원가입 필요", MemberConverter.toSocialJoinResultDTO(phone, email));
-        }
 
-        return ApiResponse.onSuccess(MemberConverter.toSocialLoginResultDTO(result));
     }
 
     @GetMapping("/naver/callback")
     @Operation(summary = "네이버 소셜 로그인 api", description = "callback 용도 api여서 swagger에서 test 안됩니다")
-    public ApiResponse<?> naverCallback(@RequestParam String code, String state) {
+    public ApiResponse<?> naverCallback(@RequestParam String code, String state, HttpServletResponse response) {
 
-        String result = memberCommandService.naverAuth(code, state);
+        return memberCommandService.naverAuth(code, state, response);
 
-        if (result.startsWith("010")) {
-            String phone = result.substring(0, 11);
-            String email = result.substring(11);
-            return ApiResponse.onFailure("로그인 실패", "회원가입 필요", MemberConverter.toSocialJoinResultDTO(phone, email));
-        }
-
-        return ApiResponse.onSuccess(MemberConverter.toSocialLoginResultDTO(result));
     }
 
 
