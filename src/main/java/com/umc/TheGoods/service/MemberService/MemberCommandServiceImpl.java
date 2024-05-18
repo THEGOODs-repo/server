@@ -179,6 +179,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
         // refresh 생성후 쿠키로 만들고 response 헤더에 담기
         RefreshToken refreshToken = redisService.generateRefreshToken(request.getEmail());
         Cookie cookie = new Cookie("refreshToken",refreshToken.getToken());
+        cookie.setSecure(true);
         cookie.setHttpOnly(true);
         cookie.setPath("/");
         response.addCookie(cookie);
@@ -408,6 +409,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
         RefreshToken refreshToken = redisService.generateRefreshToken(request.getEmail());
         Cookie cookie = new Cookie("refreshToken",refreshToken.getToken());
         cookie.setHttpOnly(true);
+        cookie.setSecure(true);
         cookie.setPath("/");
         response.addCookie(cookie);
 
@@ -529,6 +531,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
             // refresh 생성후 쿠키로 만들고 response 헤더에 담기
             RefreshToken refreshToken = redisService.generateRefreshToken(member.get().getEmail());
             Cookie cookie = new Cookie("refreshToken",refreshToken.getToken());
+            cookie.setSecure(true);
             cookie.setHttpOnly(true);
             cookie.setPath("/");
             res.addCookie(cookie);
@@ -633,6 +636,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
             RefreshToken refreshToken = redisService.generateRefreshToken(member.get().getEmail());
             Cookie cookie = new Cookie("refreshToken",refreshToken.getToken());
             cookie.setHttpOnly(true);
+            cookie.setSecure(true);
             cookie.setPath("/");
             res.addCookie(cookie);
 
