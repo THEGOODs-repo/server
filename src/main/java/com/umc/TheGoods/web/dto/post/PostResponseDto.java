@@ -1,8 +1,13 @@
 package com.umc.TheGoods.web.dto.post;
 
 import com.umc.TheGoods.domain.community.Post;
+import com.umc.TheGoods.domain.images.PostImg;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -28,5 +33,29 @@ public class PostResponseDto {
         public PostListViewDto(List<PostResponseDto> posts) {
             this.posts = posts;
         }
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class PostViewDto {
+        Long id;
+        String title;
+        String content;
+        LocalDateTime createdDate;
+        LocalDateTime updatedDate;
+        Integer likes;
+        List<PostImg> images;
+        Long writerId;
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class PostStatusDto {
+        Long postId;
+        String status;
     }
 }
