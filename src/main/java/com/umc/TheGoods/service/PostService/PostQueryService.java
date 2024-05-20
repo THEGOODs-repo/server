@@ -6,7 +6,5 @@ import java.util.List;
 
 public interface PostQueryService {
 
-    static List<PostResponseDto> getAllPostsSortedByLikes() {
-        return null;
-    }
+    List<PostResponseDto> getAllPostsSortedByLikes();
 }

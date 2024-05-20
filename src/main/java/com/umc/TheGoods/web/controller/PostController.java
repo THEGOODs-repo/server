@@ -8,6 +8,7 @@ import com.umc.TheGoods.domain.member.Member;
 import com.umc.TheGoods.service.MemberService.MemberQueryService;
 import com.umc.TheGoods.service.PostService.PostCommandService;
 import com.umc.TheGoods.service.PostService.PostQueryService;
+import com.umc.TheGoods.service.PostService.PostQueryServiceImpl;
 import com.umc.TheGoods.web.dto.post.PostRequestDto;
 import com.umc.TheGoods.web.dto.post.PostResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
@@ -29,6 +30,7 @@ public class PostController {
     final PostQueryService queryService;
     private final MemberQueryService memberQueryService;
     final PostCommandService postCommandService;
+    private final PostQueryServiceImpl postQueryServiceImpl;
 
     @GetMapping("/")
     @Operation(summary = "인기 사장님 피드 전체 조회 API", description = "포스트의 기본 디폴트 정렬로, 좋아요 순으로 내림차순 정렬합니다.")
@@ -37,7 +39,8 @@ public class PostController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON404", description = "Fail, 실패")
     })
     public ApiResponse<PostResponseDto.PostListViewDto> getPostByLikes() {
-        List<PostResponseDto> posts = PostQueryService.getAllPostsSortedByLikes();
+        PostQueryService postQueryService = postQueryServiceImpl;
+        List<PostResponseDto> posts = postQueryService.getAllPostsSortedByLikes();
         return ApiResponse.of(SuccessStatus.POST_GET_SUCCESS, new PostResponseDto.PostListViewDto(posts));
     }
 
