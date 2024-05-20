@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface TestCommandService {
 
-    Member addMember(TestRequestDTO.setMemberDTO request, MultipartFile multipartFile);
+    Member addMember(TestRequestDTO.setMemberDTO request);
 
     Item addItem(Member member, TestRequestDTO.setItemDTO request, MultipartFile itemThumbnail, List<MultipartFile> itemImgList);
 }
