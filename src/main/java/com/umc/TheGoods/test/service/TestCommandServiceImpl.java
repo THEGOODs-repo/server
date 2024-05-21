@@ -5,7 +5,6 @@ import com.umc.TheGoods.apiPayload.exception.handler.MemberHandler;
 import com.umc.TheGoods.converter.item.ItemOptionConverter;
 import com.umc.TheGoods.converter.member.MemberConverter;
 import com.umc.TheGoods.domain.images.ItemImg;
-import com.umc.TheGoods.domain.images.ProfileImg;
 import com.umc.TheGoods.domain.item.Category;
 import com.umc.TheGoods.domain.item.Item;
 import com.umc.TheGoods.domain.item.ItemOption;
@@ -57,7 +56,7 @@ public class TestCommandServiceImpl implements TestCommandService {
 
 
     @Override
-    public Member addMember(TestRequestDTO.setMemberDTO request, MultipartFile multipartFile) {
+    public Member addMember(TestRequestDTO.setMemberDTO request) {
         // userName 중복 체크
         memberRepository.findByNickname(request.getNickname())
                 .ifPresent(user -> {
@@ -67,7 +66,6 @@ public class TestCommandServiceImpl implements TestCommandService {
 
         //저장
         Member member = TestConverter.toTestMember(request, encoder);
-
 
         // 약관동의 저장 로직
         HashMap<Term, Boolean> termMap = new HashMap<>();
@@ -80,12 +78,6 @@ public class TestCommandServiceImpl implements TestCommandService {
         memberTermList.forEach(memberTerm -> {
             memberTerm.setMember(member);
         });
-
-        String profileUrl = utilService.uploadS3Img("member", multipartFile);
-        ProfileImg profileImg = TestConverter.toProfileImg(profileUrl);
-        profileImg.setMember(member);
-
-        profileImgRepository.save(profileImg);
 
         memberRepository.save(member);
         return member;
