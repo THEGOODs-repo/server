@@ -169,21 +169,6 @@ public class MemberConverter {
                 .build();
     }
 
-    public static MemberResponseDTO.EmailAuthConfirmResultDTO toEmailAuthConfirmResultDTO(Boolean checkEmail, String jwt) {
-
-
-        return MemberResponseDTO.EmailAuthConfirmResultDTO.builder()
-                .checkEmail(checkEmail)
-                .jwt(jwt)
-                .build();
-    }
-
-    public static MemberResponseDTO.SocialLoginResultDTO toSocialLoginResultDTO(String result) {
-
-        return MemberResponseDTO.SocialLoginResultDTO.builder()
-                .result(result)
-                .build();
-    }
 
     public static MemberResponseDTO.SocialJoinResultDTO toSocialJoinResultDTO(String phone, String email) {
 
@@ -307,20 +292,6 @@ public class MemberConverter {
                 .build();
     }
 
-    public static MemberResponseDTO.RoleUpdateResultDTO toUpdateRole(Member member) {
-
-        return MemberResponseDTO.RoleUpdateResultDTO.builder()
-                .role(member.getMemberRole())
-                .build();
-    }
-
-    public static MemberResponseDTO.PhoneNameUpdateResultDTO toUpdatePhoneName(Member member) {
-
-        return MemberResponseDTO.PhoneNameUpdateResultDTO.builder()
-                .name(member.getName())
-                .phone(member.getPhone())
-                .build();
-    }
 
     public static Address toAddress(MemberRequestDTO.AddressDTO request,Member member){
         return Address.builder()
@@ -347,6 +318,7 @@ public class MemberConverter {
     }
 
 
+
     public static MemberResponseDTO.AddressResultDTO toPostAddressDTO(String address){
 
         return MemberResponseDTO.AddressResultDTO.builder()
@@ -364,25 +336,6 @@ public class MemberConverter {
     }
 
 
-    public static MemberResponseDTO.MyPageOrderItemDTO toMyPageOrderItemDTO(OrderItem orderItem, Item item){
-
-        List<ItemResponseDTO.ItemImgResponseDTO> itemImgResponseDTOList = item.getItemImgList().stream()
-                .map(ItemConverter::getItemImgDTO)
-                .filter(ItemResponseDTO.ItemImgResponseDTO::getIsThumbNail).collect(Collectors.toList());
-
-        List<String> itemOptionList = item.getItemOptionList().stream()
-                .map(ItemOption::getName).collect(Collectors.toList());
-
-        return MemberResponseDTO.MyPageOrderItemDTO.builder()
-                .id(orderItem.getId())
-                .imageUrl(itemImgResponseDTOList.get(0).getItemImgUrl())
-                .option(itemOptionList)
-                .name(item.getName())
-                .orderStatus(orderItem.getStatus())
-                .price(item.getPrice())
-                .time(orderItem.getCreatedAt())
-                .build();
-    }
 
     public static List<MemberResponseDTO.AccountDTO> toGetAccountDTO(List<Account> account){
 
@@ -411,6 +364,14 @@ public class MemberConverter {
         return addressList;
     }
 
+    public static MemberResponseDTO.AddressAndAccountDTO toGetAddressAndAccountDTO(List<Address> address, List<Account> account){
+
+
+        return MemberResponseDTO.AddressAndAccountDTO.builder()
+                .accountDTO(toGetAccountDTO(account))
+                .addressDTO(toGetAddressDTO(address))
+                .build();
+    }
 
     public static Declaration toDeclaration(Member member, MemberRequestDTO.DeclareDTO request){
 
