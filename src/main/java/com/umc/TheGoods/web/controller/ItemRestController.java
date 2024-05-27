@@ -15,7 +15,6 @@ import com.umc.TheGoods.validation.annotation.CheckPage;
 import com.umc.TheGoods.validation.annotation.ExistItem;
 import com.umc.TheGoods.web.dto.item.ItemRequestDTO;
 import com.umc.TheGoods.web.dto.item.ItemResponseDTO;
-import com.umc.TheGoods.web.dto.member.MemberDetail;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
@@ -59,8 +58,8 @@ public class ItemRestController {
         return ApiResponse.onSuccess(ItemConverter.toUploadItemResultDTO(item));
     }
 
-    @GetMapping("/seller/item/{itemId}")
-    @Operation(summary = "상품 조회 API", description = "상품 조회를 위한 API이며, path variable로 입력 값을 받는다. " +
+    @GetMapping("/item/{itemId}")
+    @Operation(summary = "상품 상세 조회 API", description = "상품 상세 정보 조회를 위한 API이며, path variable로 입력 값을 받는다. " +
             "itemId : 조회할 상품의 id")
     @Parameters(value = {
             @Parameter(name = "itemId", description = "조회할 상품의 id 입니다.")
@@ -174,50 +173,50 @@ public class ItemRestController {
         return ApiResponse.onSuccess(ItemConverter.itemPreviewListDTO(itemPage));
     }
 
-    @GetMapping("/item/steady")
-    @Operation(summary = "꾸준히 사랑받는 상품 추천 API", description = "판매 시작일이 6개월 이전인 상품을 조회수 순으로 정렬해 조회하는 API 입니다. \n\n" +
-            "page : 상품 조회 페이지 번호")
-    @Parameters(value = {
-            @Parameter(name = "page", description = "페이지 번호, 1 이상의 숫자를 입력해주세요."),
-    })
-    public ApiResponse<ItemResponseDTO.ItemPreviewListDTO> getSteadySaleItemList(@CheckPage @RequestParam Integer page,
-                                                                                 Authentication authentication) {
-        Page<Item> itemPage = itemQueryService.getSteadySaleItemList(page - 1);
+//    @GetMapping("/item/steady")
+//    @Operation(summary = "꾸준히 사랑받는 상품 추천 API", description = "판매 시작일이 6개월 이전인 상품을 조회수 순으로 정렬해 조회하는 API 입니다. \n\n" +
+//            "page : 상품 조회 페이지 번호")
+//    @Parameters(value = {
+//            @Parameter(name = "page", description = "페이지 번호, 1 이상의 숫자를 입력해주세요."),
+//    })
+//    public ApiResponse<ItemResponseDTO.ItemPreviewListDTO> getSteadySaleItemList(@CheckPage @RequestParam Integer page,
+//                                                                                 Authentication authentication) {
+//        Page<Item> itemPage = itemQueryService.getSteadySaleItemList(page - 1);
+//
+//        return ApiResponse.onSuccess(ItemConverter.itemPreviewListDTO(itemPage));
+//    }
 
-        return ApiResponse.onSuccess(ItemConverter.itemPreviewListDTO(itemPage));
-    }
+//    @GetMapping("/count/tags/item")
+//    @Operation(summary = "태그가 많이 달려있는 상품 추천 API", description = "태그가 많이 달려있는 상품을 조회하는 API이며, request parameter로 입력 값을 받습니다. \n\n" +
+//            "page : 상품 조회 페이지 번호")
+//    @Parameters(value = {
+//            @Parameter(name = "page", description = "페이지 번호, 1 이상의 숫자를 입력해주세요."),
+//    })
+//    @ApiResponses({
+//            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공")
+//    })
+//    public ApiResponse<ItemResponseDTO.ItemPreviewListDTO> tagCountItemList(@CheckPage @RequestParam Integer page) {
+//
+//        Page<Item> itemPage = itemQueryService.getItemByTagCount(page - 1);
+//
+//        return ApiResponse.onSuccess(ItemConverter.itemPreviewListDTO(itemPage));
+//    }
 
-    @GetMapping("/count/tags/item")
-    @Operation(summary = "태그가 많이 달려있는 상품 추천 API", description = "태그가 많이 달려있는 상품을 조회하는 API이며, request parameter로 입력 값을 받습니다. \n\n" +
-            "page : 상품 조회 페이지 번호")
-    @Parameters(value = {
-            @Parameter(name = "page", description = "페이지 번호, 1 이상의 숫자를 입력해주세요."),
-    })
-    @ApiResponses({
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공")
-    })
-    public ApiResponse<ItemResponseDTO.ItemPreviewListDTO> tagCountItemList(@CheckPage @RequestParam Integer page) {
-
-        Page<Item> itemPage = itemQueryService.getItemByTagCount(page - 1);
-
-        return ApiResponse.onSuccess(ItemConverter.itemPreviewListDTO(itemPage));
-    }
-
-    @GetMapping("/delivery-date/item")
-    @Operation(summary = "배송기간이 빠른 상품 추천 API", description = "배송기간이 빠른 상품을 조회하는 API이며, request parameter로 입력 값을 받습니다. \n\n" +
-            "page : 상품 조회 페이지 번호")
-    @Parameters(value = {
-            @Parameter(name = "page", description = "페이지 번호, 1 이상의 숫자를 입력해주세요."),
-    })
-    @ApiResponses({
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공")
-    })
-    public ApiResponse<ItemResponseDTO.ItemPreviewListDTO> deliveryDateItemList(@CheckPage @RequestParam Integer page) {
-
-        Page<Item> itemPage = itemQueryService.getItemByDeliveryDate(page - 1);
-
-        return ApiResponse.onSuccess(ItemConverter.itemPreviewListDTO(itemPage));
-    }
+//    @GetMapping("/delivery-date/item")
+//    @Operation(summary = "배송기간이 빠른 상품 추천 API", description = "배송기간이 빠른 상품을 조회하는 API이며, request parameter로 입력 값을 받습니다. \n\n" +
+//            "page : 상품 조회 페이지 번호")
+//    @Parameters(value = {
+//            @Parameter(name = "page", description = "페이지 번호, 1 이상의 숫자를 입력해주세요."),
+//    })
+//    @ApiResponses({
+//            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공")
+//    })
+//    public ApiResponse<ItemResponseDTO.ItemPreviewListDTO> deliveryDateItemList(@CheckPage @RequestParam Integer page) {
+//
+//        Page<Item> itemPage = itemQueryService.getItemByDeliveryDate(page - 1);
+//
+//        return ApiResponse.onSuccess(ItemConverter.itemPreviewListDTO(itemPage));
+//    }
 
     @GetMapping("/search/item")
     @Operation(summary = "판매 상품 검색 API", description = "상품 검색을 위한 API이며, request parameter로 입력 값을 받습니다. \n\n" +

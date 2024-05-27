@@ -51,9 +51,8 @@ public class SpringSecurityConfig {
                         "/api/members/email/auth", "/api/members/email/auth/verify", "/api/members/email/duplicate",
                         "/api/members/kakao/callback", "/api/members/naver/callback", "/api/members/nickname/duplicate",
                         "/api/members/password/update", "/api/members/phone/auth", "/api/members/phone/auth/**",
-                        "/api/item/today", "/api/item/topsale", "/api/item/steady", "/api/count/tags/item",
-                        "/api/delivery-date/item", "/api/item/main", "/api/item/{itemId}/related", "/api/order/api/nologin/order",
-                        "/api/seller/item/{itemId}",
+                        "/api/item/today", "/api/item/topsale",
+                        "/api/item/main", "/api/item/{itemId}/related", "/api/order/api/nologin/order",
                         "/api/setItemData", "/api/search/item"
                 );
     }
