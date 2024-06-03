@@ -12,10 +12,7 @@ import com.umc.TheGoods.domain.mapping.member.MemberTerm;
 import com.umc.TheGoods.domain.member.Auth;
 import com.umc.TheGoods.domain.member.Member;
 import com.umc.TheGoods.domain.member.Term;
-import com.umc.TheGoods.domain.mypage.Account;
-import com.umc.TheGoods.domain.mypage.Address;
-import com.umc.TheGoods.domain.mypage.ContactTime;
-import com.umc.TheGoods.domain.mypage.Declaration;
+import com.umc.TheGoods.domain.mypage.*;
 import com.umc.TheGoods.domain.order.OrderItem;
 import com.umc.TheGoods.service.ItemService.ItemQueryService;
 import com.umc.TheGoods.web.dto.item.ItemResponseDTO;
@@ -432,5 +429,14 @@ public class MemberConverter {
                 .allTime(contactTime.getAllTime())
                 .build();
     }
+
+    public static WithdrawReason toWithdrawReason(MemberRequestDTO.WithdrawReasonDTO request){
+        return WithdrawReason.builder()
+                .reason(request.getReason())
+                .caution(request.getCaution())
+                .build();
+    }
+
+
 
 }

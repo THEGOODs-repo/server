@@ -197,11 +197,10 @@ public class MyPageController {
         return ApiResponse.onSuccess(MemberConverter.toGetAddressAndAccountDTO(addressList,accountList));
     }
 
-    @DeleteMapping(value = "/delete")
+    @PostMapping(value = "/delete")
     @Operation(summary = "회원 탈퇴 api", description = "request: 회원 탈퇴 사유 번호로 주시면 됩니다")
     public ApiResponse<?> deleteMember(@RequestBody MemberRequestDTO.WithdrawReasonDTO request,
                                        Authentication authentication){
-
 
         memberCommandService.deleteMember(request, Long.valueOf(authentication.getName().toString()));
         return ApiResponse.of(SuccessStatus.MEMBER_DELETE_SUCCESS, null);

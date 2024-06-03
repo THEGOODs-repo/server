@@ -32,8 +32,4 @@ public class WithdrawReason extends BaseDateTimeEntity {
     @Column(nullable = false)
     private Integer reason; // 탈퇴 사유
 
-
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
-    private Member member;
 }
