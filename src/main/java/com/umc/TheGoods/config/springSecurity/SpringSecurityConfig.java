@@ -53,7 +53,7 @@ public class SpringSecurityConfig {
                         "/api/members/password/update", "/api/members/phone/auth", "/api/members/phone/auth/**",
                         "/api/item/today", "/api/item/topsale",
                         "/api/item/main", "/api/item/{itemId}/related", "/api/order/api/nologin/order",
-                        "/api/setItemData", "/api/search/item", "api/item/{itemId}"
+                        "/api/setItemData", "/api/search/item", "/api/item/{itemId}"
                 );
     }
 
