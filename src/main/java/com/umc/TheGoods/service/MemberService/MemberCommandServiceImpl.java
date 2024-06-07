@@ -748,6 +748,13 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     public void deleteMember(MemberRequestDTO.WithdrawReasonDTO request, Long memberId) {
 
         Member member = memberRepository.findById(memberId).orElseThrow(()-> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        //Order 있으면 계정 삭제 x
+
+        //배송중일때 탈퇴 x
+
+        //판매자가 수익금이 있는 경우
+
+
         WithdrawReason withdrawReason = MemberConverter.toWithdrawReason(request);
 
         withdrawReasonRepository.save(withdrawReason);
@@ -755,15 +762,21 @@ public class MemberCommandServiceImpl implements MemberCommandService {
         member.setMemberStatus(MemberStatus.INACTIVE, LocalDateTime.now());
         memberRepository.save(member);
 
-
+        //판매자가 등록한 Item이 있는경우 INACTIVE로 변경
         List<Item> itemList = itemRepository.findAllByMember(member);
         itemList.stream().forEach(item -> {
             item.updateStatus(ItemStatus.INACTIVE);
         });
 
-        
+        //INACTIVE로 바뀐 Item 주문이 있는 경우 주문 취소하고 환불 처리
+
+
+
+
+
         return;
     }
+
 
     public boolean checkDeregister(Member member){
 
@@ -856,7 +869,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
         return contactTime;
     }
 
-    //@Scheduled(cron = "0 0 0 * * ?") // 매일 자정에 실행
+    //@Scheduled(cron = "0 0 0 1 * ?") // 매월 1일에 실행
     @Transactional
     public void deleteOldMembers() {
         LocalDateTime oneWeekAgo = LocalDateTime.now().minusWeeks(1);
@@ -867,6 +880,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
 
             memberRepository.deleteById(memberId);
         }
+
     }
 
 }

@@ -148,7 +148,7 @@ public class Member extends BaseDateTimeEntity {
     private List<Notification> notification = new ArrayList<>();
 
     // item 양방향 매핑
-    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "member", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH})
     private List<Item> itemList = new ArrayList<>();
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
@@ -167,7 +167,7 @@ public class Member extends BaseDateTimeEntity {
     private List<Cart> cartList = new ArrayList<>();
 
     // orders 양방향 매핑
-    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "member", cascade =  {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH})
     private List<Orders> ordersList = new ArrayList<>();
 
     // tag_search 양방향 매핑
@@ -213,7 +213,7 @@ public class Member extends BaseDateTimeEntity {
     private List<Inquiry> incommingInquiryList = new ArrayList<>();
 
     // Payment 양방향 매핑
-    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "member", cascade =  {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH})
     private List<Payment> paymentList = new ArrayList<>();
 
     public void setProfileImg(ProfileImg profileImg) {
