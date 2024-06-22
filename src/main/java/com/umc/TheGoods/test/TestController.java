@@ -36,8 +36,8 @@ public class TestController {
     public ApiResponse<TestResponseDTO.addItemDTO> setItemData(
             @RequestPart(value = "request") @Valid TestRequestDTO.setItemDTO request,
             @RequestPart(value = "itemThumbnail") MultipartFile itemThumbnail,
-            @RequestPart(value = "itemImgList", required = false) List<MultipartFile> itemImgList,
-            @RequestPart(value = "sellerProfile") MultipartFile sellerProfile
+            @RequestPart(value = "itemImgList", required = false) List<MultipartFile> itemImgList
+            //@RequestPart(value = "sellerProfile") MultipartFile sellerProfile
     ) {
         log.info("=========================== 회원 찾기 시작 =======================");
 
@@ -52,18 +52,19 @@ public class TestController {
             termAgreeList.add(true);
             termAgreeList.add(true);
             termAgreeList.add(true);
+            termAgreeList.add(true);
 
 
             // 선호 카테고리 랜덤 설정
             List<Long> memberCategoryList = new ArrayList<>();
             long leftLimit = 1L;
-            long rightLimit = 6L;
+            long rightLimit = 4L;
             long generatedLong = leftLimit + (long) (Math.random() * (rightLimit - leftLimit));
             memberCategoryList.add(generatedLong);
 
             // 회원 가입
             TestRequestDTO.setMemberDTO sellerDTO = new TestRequestDTO.setMemberDTO(request.sellerName, request.itemUuid, termAgreeList, memberCategoryList);
-            seller = testCommandService.addMember(sellerDTO, sellerProfile);
+            seller = testCommandService.addMember(sellerDTO);
         } else {
             log.info("=========================== 닉네임으로 회원 찾음 ================================");
 
@@ -97,8 +98,8 @@ public class TestController {
         List<Boolean> termAgreeList = new ArrayList<>();
         termAgreeList.add(true);
 
-        MemberRequestDTO.JoinDTO joinBuyerDTO = new MemberRequestDTO.JoinDTO("구매자 테스트 계정","테스트", "12345678", "test@gmail.com", date, "01012345678", Gender.MALE, termAgreeList);
-        MemberRequestDTO.JoinDTO noLoginUserDTO = new MemberRequestDTO.JoinDTO("no_login_user","비회원", "12345678", "nologinuser@gmail.com", date, "01087654321", Gender.MALE, termAgreeList);
+        MemberRequestDTO.JoinDTO joinBuyerDTO = new MemberRequestDTO.JoinDTO("구매자 테스트 계정", "테스트", "12345678", "test@gmail.com", date, "01012345678", Gender.MALE, termAgreeList);
+        MemberRequestDTO.JoinDTO noLoginUserDTO = new MemberRequestDTO.JoinDTO("no_login_user", "비회원", "12345678", "nologinuser@gmail.com", date, "01087654321", Gender.MALE, termAgreeList);
 
 
         memberCommandService.join(joinBuyerDTO);

@@ -3,6 +3,7 @@ package com.umc.TheGoods.service.MemberService;
 import antlr.Token;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.umc.TheGoods.apiPayload.ApiResponse;
 import com.umc.TheGoods.apiPayload.code.status.ErrorStatus;
 import com.umc.TheGoods.apiPayload.exception.handler.MemberHandler;
 import com.umc.TheGoods.config.MailConfig;
@@ -44,6 +45,8 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -159,7 +162,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
      * @return
      */
     @Override
-    public MemberResponseDTO.LoginResultDTO login(MemberRequestDTO.LoginDTO request) {
+    public MemberResponseDTO.LoginResultDTO login(MemberRequestDTO.LoginDTO request, HttpServletResponse response) {
 
         //email 없음
         Member selectedMember = memberRepository.findByEmail(request.getEmail())
@@ -173,10 +176,22 @@ public class MemberCommandServiceImpl implements MemberCommandService {
             throw new MemberHandler(ErrorStatus.MEMBER_PASSWORD_ERROR);
         }
 
+        // refresh 생성후 쿠키로 만들고 response 헤더에 담기
+        RefreshToken refreshToken = redisService.generateRefreshToken(request.getEmail());
+        Cookie cookie = new Cookie("refreshToken",refreshToken.getToken());
+        cookie.setSecure(true);
+        cookie.setHttpOnly(true);
+        cookie.setPath("/");
+        response.addCookie(cookie);
+
+        LocalDateTime currentDateTime = LocalDateTime.now();
+        LocalDateTime accessExpireTime = currentDateTime.plusHours(6);
+
+
 
         return MemberResponseDTO.LoginResultDTO.builder()
                 .accessToken(redisService.saveLoginStatus(selectedMember.getId(), tokenProvider.createAccessToken(selectedMember.getId(), selectedMember.getMemberRole().toString() , request.getEmail(), Arrays.asList(new SimpleGrantedAuthority("USER")))))
-                .refreshToken(redisService.generateRefreshToken(request.getEmail()))
+                .accessExpireTime(accessExpireTime)
                 .build();
 
     }
@@ -382,7 +397,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     }
 
     @Override
-    public String emailAuthCreateJWT(MemberRequestDTO.EmailAuthConfirmDTO request) {
+    public MemberResponseDTO.LoginResultDTO emailAuthCreateJWT(MemberRequestDTO.EmailAuthConfirmDTO request, HttpServletResponse response) {
 
         Member member = memberRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
@@ -390,7 +405,23 @@ public class MemberCommandServiceImpl implements MemberCommandService {
         List<String> roles = new ArrayList<>();
         roles.add("ROLE_USER");
 
-        return tokenProvider.createAccessToken(member.getId(), member.getMemberRole().toString() , member.getEmail(), Arrays.asList(new SimpleGrantedAuthority("USER")));
+        // refresh 생성후 쿠키로 만들고 response 헤더에 담기
+        RefreshToken refreshToken = redisService.generateRefreshToken(request.getEmail());
+        Cookie cookie = new Cookie("refreshToken",refreshToken.getToken());
+        cookie.setHttpOnly(true);
+        cookie.setSecure(true);
+        cookie.setPath("/");
+        response.addCookie(cookie);
+
+        LocalDateTime currentDateTime = LocalDateTime.now();
+        LocalDateTime accessExpireTime = currentDateTime.plusHours(6);
+
+        return MemberResponseDTO.LoginResultDTO.builder()
+                .accessToken(redisService.saveLoginStatus(member.getId(), tokenProvider.createAccessToken(member.getId(), member.getMemberRole().toString() , request.getEmail(), Arrays.asList(new SimpleGrantedAuthority("USER")))))
+                .accessExpireTime(accessExpireTime)
+                .build();
+
+
     }
 
     @Override
@@ -407,7 +438,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
 
     @Override
     @Transactional
-    public String kakaoAuth(String code) {
+    public ApiResponse<?> kakaoAuth(String code, HttpServletResponse res) {
 
         String jwt;
 
@@ -486,21 +517,42 @@ public class MemberCommandServiceImpl implements MemberCommandService {
 
         Optional<Member> member = memberRepository.findByPhone(phone);
 
+        LocalDateTime currentDateTime = LocalDateTime.now();
+        LocalDateTime accessExpireTime = currentDateTime.plusHours(6);
+
+
+
         if (member.isPresent()) {
 
             if(!this.checkDeregister(member.orElseThrow())){
                 throw new MemberHandler(ErrorStatus.MEMBER_INACTIVATE);
             }
-            return tokenProvider.createAccessToken(member.get().getId(), member.get().getMemberRole().toString() , member.get().getEmail(), Arrays.asList(new SimpleGrantedAuthority("USER")));
+
+            // refresh 생성후 쿠키로 만들고 response 헤더에 담기
+            RefreshToken refreshToken = redisService.generateRefreshToken(member.get().getEmail());
+            Cookie cookie = new Cookie("refreshToken",refreshToken.getToken());
+            cookie.setSecure(true);
+            cookie.setHttpOnly(true);
+            cookie.setPath("/");
+            res.addCookie(cookie);
+
+
+            return ApiResponse.onSuccess(MemberResponseDTO.LoginResultDTO.builder()
+                    .accessToken(redisService.saveLoginStatus(member.get().getId(), tokenProvider.createAccessToken(member.get().getId(), member.get().getMemberRole().toString() , member.get().getEmail(), Arrays.asList(new SimpleGrantedAuthority("USER")))))
+                    .accessExpireTime(accessExpireTime)
+                    .build());
 
         }
 
-        return phone + kakaoProfile.getKakao_account().email;
+        return ApiResponse.onFailure("MEMBER401", "로그인 실패 회원가입 필요", MemberConverter.toSocialJoinResultDTO(phone, kakaoProfile.getKakao_account().email));
+
+
+
     }
 
     @Override
     @Transactional
-    public String naverAuth(String code, String state) {
+    public ApiResponse<?> naverAuth(String code, String state, HttpServletResponse res) {
         RestTemplate rt = new RestTemplate();
 
 
@@ -571,17 +623,33 @@ public class MemberCommandServiceImpl implements MemberCommandService {
 
         Optional<Member> member = memberRepository.findByPhone(phone);
 
+        LocalDateTime currentDateTime = LocalDateTime.now();
+        LocalDateTime accessExpireTime = currentDateTime.plusHours(6);
+
         if (member.isPresent()) {
 
             if(!this.checkDeregister(member.orElseThrow())){
                 throw new MemberHandler(ErrorStatus.MEMBER_INACTIVATE);
             }
 
-            return tokenProvider.createAccessToken(member.get().getId(), member.get().getMemberRole().toString() , member.get().getEmail(), Arrays.asList(new SimpleGrantedAuthority("USER")));
+            // refresh 생성후 쿠키로 만들고 response 헤더에 담기
+            RefreshToken refreshToken = redisService.generateRefreshToken(member.get().getEmail());
+            Cookie cookie = new Cookie("refreshToken",refreshToken.getToken());
+            cookie.setHttpOnly(true);
+            cookie.setSecure(true);
+            cookie.setPath("/");
+            res.addCookie(cookie);
+
+            return ApiResponse.onSuccess(MemberResponseDTO.LoginResultDTO.builder()
+                    .accessToken(redisService.saveLoginStatus(member.get().getId(), tokenProvider.createAccessToken(member.get().getId(), member.get().getMemberRole().toString() , member.get().getEmail(), Arrays.asList(new SimpleGrantedAuthority("USER")))))
+                    .accessExpireTime(accessExpireTime)
+                    .build());
 
         }
 
-        return phone + naverProfile.getResponse().email;
+
+
+        return ApiResponse.onFailure("MEMBER401","로그인 실패 회원가입 필요",MemberConverter.toSocialJoinResultDTO(phone, naverProfile.getResponse().email));
     }
 
     @Override

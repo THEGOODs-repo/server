@@ -26,7 +26,7 @@ public class TestConverter {
         return Member.builder()
                 .nickname(request.getNickname())
                 .password(encoder.encode("12345678"))
-                .email(request.getUuid() + "@gmail.com")
+                .email(request.getNickname() + "@gmail.com")
                 .birthday(date)
                 .gender(Gender.FEMALE)
                 .phone("01012345678")
