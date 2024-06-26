@@ -2,7 +2,6 @@ package com.umc.TheGoods.domain.item;
 
 import com.umc.TheGoods.domain.common.BaseDateTimeEntity;
 import com.umc.TheGoods.domain.enums.ReviewStatus;
-import com.umc.TheGoods.domain.images.ReviewImg;
 import com.umc.TheGoods.domain.member.Member;
 import com.umc.TheGoods.domain.order.OrderItem;
 import lombok.*;
@@ -44,8 +43,25 @@ public class Review extends BaseDateTimeEntity {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_item_id", nullable = false)
     private OrderItem orderItem;
+//
+//    @OneToOne(mappedBy = "review", cascade = CascadeType.ALL)
+//    private ReviewImg reviewImg;
 
-    @OneToOne(mappedBy = "review", cascade = CascadeType.ALL)
-    private ReviewImg reviewImg;
+    // 연관관계 메소드
+    public void setMember(Member member) {
+        if (this.member != null) {
+            this.member.getReviewList().remove(this);
+        }
+        this.member = member;
+        this.member.getReviewList().add(this);
+    }
+
+    public void setItem(Item item) {
+        if (this.item != null) {
+            this.item.getReviewList().remove(this);
+        }
+        this.item = item;
+        this.item.getReviewList().add(this);
+    }
 
 }
