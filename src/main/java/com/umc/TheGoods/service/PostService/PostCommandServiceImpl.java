@@ -43,30 +43,30 @@ public class PostCommandServiceImpl implements PostCommandService {
     @Override
     public void follow(Long followingId, Member follower) {
 
-        if(followingId.equals(follower.getId())){
+        if (followingId.equals(follower.getId())) {
             throw new PostHandler(ErrorStatus.POST_SELF_FOLLOW);
         }
-        Optional<Follow> check = followRepository.findByFollowingIdAndFollowerId(followingId,follower.getId());
-        if(!check.isEmpty()){
+        Optional<Follow> check = followRepository.findByFollowingIdAndFollowerId(followingId, follower.getId());
+        if (!check.isEmpty()) {
             throw new PostHandler(ErrorStatus.POST_ALREADY_FOLLOW);
         }
 
-        Member following = memberRepository.findById(followingId).orElseThrow(()->new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
-        Follow follow = PostConverter.toFollow(follower,following);
+        Member following = memberRepository.findById(followingId).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        Follow follow = PostConverter.toFollow(follower, following);
         followRepository.save(follow);
     }
 
     @Override
     public void deleteFollow(Long followingId, Long followerId) {
 
-        Follow follow = followRepository.findByFollowingIdAndFollowerId(followingId,followerId).orElseThrow(() -> new PostHandler(ErrorStatus.POST_FOLLOW_NOT_FOUND));
+        Follow follow = followRepository.findByFollowingIdAndFollowerId(followingId, followerId).orElseThrow(() -> new PostHandler(ErrorStatus.POST_FOLLOW_NOT_FOUND));
 
         followRepository.delete(follow);
     }
 
     @Override
     public void registerPost(Member member, String content, List<MultipartFile> multipartFileList) {
-        Post post = PostConverter.toPost(member,content);
+        Post post = PostConverter.toPost(member, content);
 
         postRepository.save(post);
         if (multipartFileList != null) {
@@ -84,7 +84,7 @@ public class PostCommandServiceImpl implements PostCommandService {
     }
 
     @Override
-    public void updatePost(Member member,Long postId, String content, List<MultipartFile> multipartFileList) {
+    public void updatePost(Member member, Long postId, String content, List<MultipartFile> multipartFileList) {
 
         Post post = postRepository.findById(postId).orElseThrow(() -> new PostHandler(ErrorStatus.POST_NOT_FOUND));
         post.updatePost(content);
@@ -104,7 +104,6 @@ public class PostCommandServiceImpl implements PostCommandService {
         }
 
 
-
     }
 
 
@@ -121,13 +120,13 @@ public class PostCommandServiceImpl implements PostCommandService {
         Post post = postRepository.findById(postId).orElseThrow(() -> new PostHandler(ErrorStatus.POST_NOT_FOUND));
         Optional<PostLike> postLike = postLikeRepository.findByMember_IdAndPost_Id(member.getId(), postId);
 
-        if(postLike.isPresent()) {
+        if (postLike.isPresent()) {
             if (post.getLikesCount() > 0) {
                 postRepository.updateUnlikeCount(postId);
             }
 
             postLikeRepository.delete(postLike.get());
-        }else {
+        } else {
             postRepository.updateLikeCount(post.getId());
 
             postLikeRepository.save(PostConverter.toPostLike(member, post));
@@ -154,7 +153,7 @@ public class PostCommandServiceImpl implements PostCommandService {
     public void updateComment(Member member, Long postId, Long commentId, PostRequestDto.UpdateCommentDTO request) {
 
         Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new PostHandler(ErrorStatus.POST_COMMENT_NOT_FOUND));
-        if(!comment.getMember().equals(member)){
+        if (!comment.getMember().equals(member)) {
             throw new PostHandler(ErrorStatus.POST_COMMENT_NOT_UPDATE);
         }
 
@@ -169,15 +168,14 @@ public class PostCommandServiceImpl implements PostCommandService {
         Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new PostHandler(ErrorStatus.POST_COMMENT_NOT_FOUND));
         Optional<CommentLike> commentLike = commentLikeRepository.findByMember_IdAndComment_Id(member.getId(), commentId);
 
-        if(commentLike.isPresent()){
-            if(comment.getLikesCount() > 0){
+        if (commentLike.isPresent()) {
+            if (comment.getLikesCount() > 0) {
                 commentRepository.updateUnlikeCount(commentId);
             }
             commentLikeRepository.delete(commentLike.get());
-        }else {
+        } else {
             commentRepository.updateLikeCount(commentId);
             commentLikeRepository.save(PostConverter.toCommentLike(member, comment));
         }
     }
-
 }

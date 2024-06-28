@@ -26,6 +26,4 @@ public interface PostCommandService {
     void updateComment(Member member, Long postId, Long commentId, PostRequestDto.UpdateCommentDTO request);
 
     void likeComment(Member member, Long commentId);
-
-
 }
