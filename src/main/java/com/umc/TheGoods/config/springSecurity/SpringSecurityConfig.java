@@ -26,7 +26,6 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 public class SpringSecurityConfig {
 
 
-
     private final CustomAccessDeniedHandler accessDeniedHandler;
     private final CustomAuthenticationEntryPoint authenticationEntryPoint;
     private final JwtAuthenticationExceptionHandler exceptionFilter;
@@ -36,8 +35,9 @@ public class SpringSecurityConfig {
     private String secretKey;
 
     private final UrlBasedCorsConfigurationSource corsConfigurationSource;
+
     @Bean
-    public WebSecurityCustomizer webSecurityCustomizer(){
+    public WebSecurityCustomizer webSecurityCustomizer() {
         return (web) -> web.ignoring()
                 .antMatchers(
                         "/favicon.ico",
@@ -48,13 +48,15 @@ public class SpringSecurityConfig {
                         "/swagger-resources/**",
                         "/v3/api-docs/**",
                         "/api/members/login", "/api/members/token/regenerate", "/api/members/join",
-                        "/api/members/email/auth","/api/members/email/auth/verify","/api/members/email/duplicate",
-                        "/api/members/kakao/callback","/api/members/naver/callback", "/api/members/nickname/duplicate",
-                        "/api/members/password/update","/api/members/phone/auth","/api/members/phone/auth/**",
-                        "/api/item/today", "/api/item/topsale","/api/item/steady", "/api/count/tags/item",
-                        "/api/delivery-date/item" ,"/api/item/main", "/api/item/{itemId}/related" ,"/api/order/api/nologin/order"
+                        "/api/members/email/auth", "/api/members/email/auth/verify", "/api/members/email/duplicate",
+                        "/api/members/kakao/callback", "/api/members/naver/callback", "/api/members/nickname/duplicate",
+                        "/api/members/password/update", "/api/members/phone/auth", "/api/members/phone/auth/**",
+                        "/api/item/today", "/api/item/topsale",
+                        "/api/item/main", "/api/item/{itemId}/related", "/api/order/api/nologin/order",
+                        "/api/setItemData", "/api/search/item", "/api/item/{itemId}"
                 );
     }
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
 

@@ -3,7 +3,6 @@ package com.umc.TheGoods.domain.order;
 import com.umc.TheGoods.domain.common.BaseDateTimeEntity;
 import com.umc.TheGoods.domain.enums.OrderStatus;
 import com.umc.TheGoods.domain.item.Item;
-import com.umc.TheGoods.domain.item.Review;
 import com.umc.TheGoods.domain.types.DeliveryType;
 import com.umc.TheGoods.web.dto.order.OrderRequestDTO;
 import lombok.*;
@@ -87,8 +86,8 @@ public class OrderItem extends BaseDateTimeEntity {
     @OneToOne(mappedBy = "orderItem", cascade = CascadeType.ALL)
     private OrderCancel orderCancel;
 
-    @OneToOne(mappedBy = "orderItem", cascade = CascadeType.ALL)
-    private Review review;
+//    @OneToOne(mappedBy = "orderItem", cascade = CascadeType.ALL)
+//    private Review review;
 
     public void setOrders(Orders orders) {
         if (this.orders != null) {

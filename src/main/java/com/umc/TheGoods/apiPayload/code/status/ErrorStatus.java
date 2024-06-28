@@ -44,6 +44,9 @@ public enum ErrorStatus implements BaseErrorCode {
     CART_DETAIL_NOT_FOUND(HttpStatus.NOT_FOUND, "CART4004", "해당 장바구니 상세 내역을 찾을 수 없습니다"),
     DELETE_CART_DETAIL_FAILED(HttpStatus.BAD_REQUEST, "CART4005", "장바구니 상세 내역을 삭제할 수 없습니다."),
 
+    // 리뷰 관련 에러
+    REVIEW_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "REVIEW4001", "이미 리뷰를 작성한 주문내역 입니다."),
+
     // test
     TEMP_EXCEPTION(HttpStatus.BAD_REQUEST, "TEMP4001", "테스트"),
 
@@ -59,7 +62,7 @@ public enum ErrorStatus implements BaseErrorCode {
     MEMBER_ADDRESS_NOT_FOUND(HttpStatus.NOT_FOUND, "MEMBER4009", "주소가 존재하지 않습니다"),
     MEMBER_INACTIVATE(HttpStatus.NOT_ACCEPTABLE, "MEMBER4010", "탈퇴한 회원입니다."),
     MEMBER_NOT_OWNER(HttpStatus.NOT_ACCEPTABLE, "MEMBER4011", "해당 회원이 아닙니다."),
-    MEMBER_CONTACT_NOT_FOUND(HttpStatus.NOT_FOUND,"MEMBER4012", "연락 가능 시간을 조회할 수 없습니다."),
+    MEMBER_CONTACT_NOT_FOUND(HttpStatus.NOT_FOUND, "MEMBER4012", "연락 가능 시간을 조회할 수 없습니다."),
     MEMBER_EMAIL_DUPLICATED(HttpStatus.BAD_REQUEST, "MEMBER4013", "중복된 이메일입니다."),
     MEMBER_EMAIL_INCORRECT(HttpStatus.BAD_REQUEST, "MEMBER4014", "잘못된 이메일입니다."),
 
@@ -77,7 +80,7 @@ public enum ErrorStatus implements BaseErrorCode {
     POST_ALREADY_FOLLOW(HttpStatus.BAD_REQUEST, "POST4002", "이미 팔로우 했습니다."),
     POST_FOLLOW_NOT_FOUND(HttpStatus.BAD_REQUEST, "POST4003", "해당 팔로우를 찾을수 없습니다."),
     POST_NOT_FOUND(HttpStatus.BAD_REQUEST, "POST4004", "포스트를 찾을수 없습니다."),
-    POST_COMMENT_NOT_FOUND(HttpStatus.BAD_REQUEST,"POST4005", "해당 댓글을 찾을 수 없습니다."),
+    POST_COMMENT_NOT_FOUND(HttpStatus.BAD_REQUEST, "POST4005", "해당 댓글을 찾을 수 없습니다."),
     POST_COMMENT_NOT_UPDATE(HttpStatus.BAD_REQUEST, "POST4006", "해당 댓글을 수정할 수 없습니다."),
 
 
