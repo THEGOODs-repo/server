@@ -28,6 +28,8 @@ import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 
 import javax.persistence.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -112,6 +114,8 @@ public class Member extends BaseDateTimeEntity {
     @ColumnDefault("false")
     private Boolean infoTerm;
 
+    private LocalDateTime deletedAt;
+
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<MemberTerm> memberTermList = new ArrayList<>();
@@ -134,18 +138,17 @@ public class Member extends BaseDateTimeEntity {
     @OneToOne(mappedBy = "member")
     private Revenue revenue;
 
-    @OneToOne(mappedBy = "member")
-    private WithdrawReason withdrawReason;
 
     @OneToOne(mappedBy = "member")
     private ProfileImg profileImg;
+
 
     //notification 양방향 매핑
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<Notification> notification = new ArrayList<>();
 
     // item 양방향 매핑
-    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "member", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH})
     private List<Item> itemList = new ArrayList<>();
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
@@ -164,7 +167,7 @@ public class Member extends BaseDateTimeEntity {
     private List<Cart> cartList = new ArrayList<>();
 
     // orders 양방향 매핑
-    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "member", cascade =  {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH})
     private List<Orders> ordersList = new ArrayList<>();
 
     // tag_search 양방향 매핑
@@ -210,14 +213,15 @@ public class Member extends BaseDateTimeEntity {
     private List<Inquiry> incommingInquiryList = new ArrayList<>();
 
     // Payment 양방향 매핑
-    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "member", cascade =  {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH})
     private List<Payment> paymentList = new ArrayList<>();
 
     public void setProfileImg(ProfileImg profileImg) {
         this.profileImg = profileImg;
     }
 
-    public void setMemberStatus(MemberStatus memberStatus){
+    public void setMemberStatus(MemberStatus memberStatus, LocalDateTime time){
         this.memberStatus = memberStatus;
+        this.deletedAt = time;
     }
 }

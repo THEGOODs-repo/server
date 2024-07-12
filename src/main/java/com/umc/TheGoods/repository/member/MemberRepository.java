@@ -9,7 +9,9 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 public interface MemberRepository extends JpaRepository<Member, Long> {
@@ -79,10 +81,5 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     @Query("UPDATE Member m SET m.infoTerm = :infoTerm WHERE m.id = :memberId")
     void changeInfoTerm(Long memberId, Boolean infoTerm);
 
-    @Transactional
-    @Modifying(clearAutomatically = true)
-    @Query("UPDATE Member m SET m.name = :name, m.email = :email, m.phone = :phone, m.birthday = :birthday, m.gender = :gender, m.password = :password, m.nickname = :nickname WHERE m.id = :memberId")
-    void reregister(Long memberId, String nickname, String name, String password, String email, Date birthday
-                      ,Gender gender, String phone);
-
+    List<Member> findAllByDeletedAtBefore(LocalDateTime dateTime);
 }

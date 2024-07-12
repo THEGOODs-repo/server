@@ -92,37 +92,6 @@ public class OrderQueryServiceImpl implements OrderQueryService {
     }
 
 
-    @Override
-    public MemberResponseDTO.MyPageOrderItemListDTO getMyPageOrderItemList(Member member, OrderStatus orderStatus, Integer pageIdx) {
 
-        Page<OrderItem> orderItemList;
-
-
-        if (orderStatus == null) { // orderStatus 값이 없으면 전체 상태 조회 (필터링X)
-            orderItemList = orderItemRepository.findAllByOrdersIn(member.getOrdersList(), PageRequest.of(pageIdx, pageSize, Sort.by(Sort.Direction.DESC, "createdAt")));
-        } else { // orderStatus 값에 맞는 내역만 필터링
-            orderItemList = orderItemRepository.findAllByStatusAndOrdersIn(orderStatus, member.getOrdersList(), PageRequest.of(pageIdx, pageSize, Sort.by(Sort.Direction.DESC, "createdAt")));
-        }
-
-
-        List<OrderItem> itemList = orderItemList.getContent();
-        List<MemberResponseDTO.MyPageOrderItemDTO> itemListDTOList = itemList.stream()
-                .map(i ->{
-                    Item item = itemRepository.findItemByOrderItem(i.getId());
-                    return MemberConverter.toMyPageOrderItemDTO(i,item);
-
-                }).collect(Collectors.toList());
-
-        return MemberResponseDTO.MyPageOrderItemListDTO.builder()
-                .itemList(itemListDTOList)
-                .isFirst(orderItemList.isFirst())
-                .isLast(orderItemList.isLast())
-                .listSize(orderItemList.getSize())
-                .totalPage(orderItemList.getTotalPages())
-                .totalElements(orderItemList.getTotalElements())
-                .build();
-
-
-    }
 
 }

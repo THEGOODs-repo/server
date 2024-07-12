@@ -225,6 +225,17 @@ public class MemberResponseDTO {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
+    public static class AddressAndAccountDTO{
+
+        List<MemberResponseDTO.AddressDTO> addressDTO;
+        List<MemberResponseDTO.AccountDTO> accountDTO;
+
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class AccountDTO {
 
         Long id;
@@ -246,32 +257,6 @@ public class MemberResponseDTO {
     }
 
 
-    @Builder
-    @Getter
-    @AllArgsConstructor
-    @NoArgsConstructor
-    public static class MyPageOrderItemDTO{
-        private Long id;
-        private String imageUrl;
-        private Long price;
-        private OrderStatus orderStatus;
-        private String name;
-        private LocalDateTime time;
-        private List<String> option;
-    }
-
-    @Builder
-    @Getter
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class MyPageOrderItemListDTO {
-        List<MemberResponseDTO.MyPageOrderItemDTO> itemList;
-        Integer listSize;
-        Integer totalPage;
-        Long totalElements;
-        Boolean isFirst;
-        Boolean isLast;
-    }
 
     @Builder
     @Getter

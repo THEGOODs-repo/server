@@ -25,5 +25,5 @@ public interface OrderQueryService {
 
     boolean isExistOrderItem(Long id);
 
-    MemberResponseDTO.MyPageOrderItemListDTO getMyPageOrderItemList(Member member, OrderStatus orderStatus, Integer pageIdx);
+
 }

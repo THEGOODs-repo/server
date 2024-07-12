@@ -1,6 +1,5 @@
 package com.umc.TheGoods.service.MemberService;
 
-import antlr.Token;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.umc.TheGoods.apiPayload.ApiResponse;
@@ -10,21 +9,16 @@ import com.umc.TheGoods.config.MailConfig;
 import com.umc.TheGoods.config.springSecurity.provider.TokenProvider;
 import com.umc.TheGoods.converter.member.MemberConverter;
 import com.umc.TheGoods.domain.enums.ItemStatus;
-import com.umc.TheGoods.domain.enums.MemberRole;
 import com.umc.TheGoods.domain.enums.MemberStatus;
 import com.umc.TheGoods.domain.images.ProfileImg;
-import com.umc.TheGoods.domain.item.Category;
 import com.umc.TheGoods.domain.item.Item;
-import com.umc.TheGoods.domain.item.Tag;
 import com.umc.TheGoods.domain.mapping.member.MemberTerm;
 import com.umc.TheGoods.domain.member.Auth;
 import com.umc.TheGoods.domain.member.Member;
 import com.umc.TheGoods.domain.member.Term;
 import com.umc.TheGoods.domain.mypage.*;
-import com.umc.TheGoods.domain.types.SocialType;
 import com.umc.TheGoods.redis.domain.RefreshToken;
 import com.umc.TheGoods.redis.service.RedisService;
-import com.umc.TheGoods.repository.TagRepository;
 import com.umc.TheGoods.repository.item.ItemRepository;
 import com.umc.TheGoods.repository.member.*;
 import com.umc.TheGoods.service.UtilService;
@@ -36,6 +30,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -49,7 +44,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
+
 
 
 
@@ -76,9 +71,9 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     private final ContactTimeRepository contactTimeRepository;
     private final ItemRepository itemRepository;
 
+
     @Value("${jwt.token.secret}")
     private String key; // 토큰 만들어내는 key값
-    private int expiredMs = 1000 * 60 * 60 * 24 * 5;// 토큰 만료 시간 1일
 
     @Value("${social.kakao.client-id}")
     private String kakao_client_id;
@@ -106,40 +101,23 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     @Override
     public Member join(MemberRequestDTO.JoinDTO request) {
 
-        Member existingMember = null;
+
 
 
         Optional<Member> existingNickname = memberRepository.findByNickname(request.getNickname());
         if (existingNickname.isPresent()) {
-            if (!existingNickname.get().getMemberStatus().equals(MemberStatus.INACTIVE)) {
-                throw new MemberHandler(ErrorStatus.MEMBER_NICKNAME_DUPLICATED);
-            } else {
-                //탈퇴한 회원인 경우
-                existingMember = existingNickname.get();
-            }
+            throw new MemberHandler(ErrorStatus.MEMBER_NICKNAME_DUPLICATED);
+
         }
 
         Optional<Member> existingEmail = memberRepository.findByEmail(request.getEmail());
         if (existingEmail.isPresent()) {
-            if (!existingEmail.get().getMemberStatus().equals(MemberStatus.INACTIVE)) {
-                throw new MemberHandler(ErrorStatus.MEMBER_EMAIL_DUPLICATED);
-            } else {
-                //탈퇴한 회원인 경우
-                existingMember = existingEmail.get();
-            }
+            throw new MemberHandler(ErrorStatus.MEMBER_EMAIL_DUPLICATED);
+
         }
 
-        Member member;
-        if (existingMember != null) {
-            //탈퇴한 회원이 다시 회원가입하는 경우
-            existingMember.setMemberStatus(MemberStatus.ACTIVE);
-            memberRepository.reregister(existingMember.getId(),request.getNickname(),
-                    request.getName(), encoder.encode(request.getPassword()), request.getEmail(),
-                    request.getBirthday(), request.getGender(), request.getPhone());
-            return existingMember;
-        } else {
-            member = MemberConverter.toMember(request, encoder);
-        }
+        Member member = MemberConverter.toMember(request, encoder);
+
 
         // 약관동의 저장 로직
         HashMap<Term, Boolean> termMap = new HashMap<>();
@@ -758,31 +736,47 @@ public class MemberCommandServiceImpl implements MemberCommandService {
         return memberRepository.existsById(memberId);
     }
 
+
+    /*
+    회원 탈퇴시 1주일 동안 기록 남겨두고 1주일 후 완전히 삭제 되도록 구현
+    탈퇴 기록 남기고 회원 db에서 사라져도 member와 연관된 테이블 member_id null로 변경
+    회원 삭제 했을 때 같이 삭제 되어도 되는 것 : 포스트, 댓글, 리뷰, 주소, 계좌, 프로필, 장바구니
+    회원 삭제 했을 때 같이 삭제 되면 안되는 것 : 탈퇴 사유, 아이템, 주문 내역, 결제 기록
+     */
     @Override
     @Transactional
     public void deleteMember(MemberRequestDTO.WithdrawReasonDTO request, Long memberId) {
 
         Member member = memberRepository.findById(memberId).orElseThrow(()-> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
-        WithdrawReason withdrawReason = WithdrawReason.builder()
-                .reason(request.getReason())
-                .caution(request.getCaution())
-                .member(member)
-                .build();
+        //Order 있으면 계정 삭제 x
 
-        //이미 존재하는 탈퇴사유 삭제
-        Optional<WithdrawReason> beforereason = withdrawReasonRepository.findByMember_Id(memberId);
-        if(beforereason.isPresent()){
-            withdrawReasonRepository.delete(beforereason.get());
-        }
+        //배송중일때 탈퇴 x
+
+        //판매자가 수익금이 있는 경우
+
+
+        WithdrawReason withdrawReason = MemberConverter.toWithdrawReason(request);
+
         withdrawReasonRepository.save(withdrawReason);
-        member.setMemberStatus(MemberStatus.INACTIVE);
+
+        member.setMemberStatus(MemberStatus.INACTIVE, LocalDateTime.now());
         memberRepository.save(member);
+
+        //판매자가 등록한 Item이 있는경우 INACTIVE로 변경
         List<Item> itemList = itemRepository.findAllByMember(member);
         itemList.stream().forEach(item -> {
             item.updateStatus(ItemStatus.INACTIVE);
         });
+
+        //INACTIVE로 바뀐 Item 주문이 있는 경우 주문 취소하고 환불 처리
+
+
+
+
+
         return;
     }
+
 
     public boolean checkDeregister(Member member){
 
@@ -873,6 +867,20 @@ public class MemberCommandServiceImpl implements MemberCommandService {
         ContactTime contactTime = contactTimeRepository.findById(member.getId()).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_CONTACT_NOT_FOUND));
 
         return contactTime;
+    }
+
+    //@Scheduled(cron = "0 0 0 1 * ?") // 매월 1일에 실행
+    @Transactional
+    public void deleteOldMembers() {
+        LocalDateTime oneWeekAgo = LocalDateTime.now().minusWeeks(1);
+        List<Member> membersToDelete = memberRepository.findAllByDeletedAtBefore(oneWeekAgo);
+
+        for (Member member : membersToDelete) {
+            Long memberId = member.getId();
+
+            memberRepository.deleteById(memberId);
+        }
+
     }
 
 }
